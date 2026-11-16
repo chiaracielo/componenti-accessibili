@@ -1,0 +1,3605 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Componenti di design accessibili – Accessibility Days 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,600;0,700;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-alt: #f1f5f9;
+      --text: #0f172a;
+      --text-muted: #334155;
+      --border: #64748b;
+      --border-subtle: #cbd5e1;
+      --primary: #1d4ed8;
+      --primary-contrast: #ffffff;
+      /* Palette dedicata per Attenzioni extra / Bonus (ambra/oro caldo ad alto contrasto) */
+      --extra-bg: #fffbeb;
+      --extra-header-bg: #fef3c7;
+      --extra-border: #d97706;
+      --extra-text: #78350f;
+      /* Palette dedicata per Varianti / Stati / Errori (indaco/viola) */
+      --variant-bg: #faf5ff;
+      --variant-header-bg: #f3e8ff;
+      --variant-border: #7e22ce;
+      --variant-text: #581c87;
+
+      --focus-ring: #0f172a;
+      --focus-bg: #fde047;
+      --radius: 8px;
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+      --font-main: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --surface: #1e293b;
+        --surface-alt: #334155;
+        --text: #f8fafc;
+        --text-muted: #cbd5e1;
+        --border: #94a3b8;
+        --border-subtle: #475569;
+        --primary: #60a5fa;
+        --primary-contrast: #0f172a;
+
+        --extra-bg: #271f14;
+        --extra-header-bg: #451a03;
+        --extra-border: #f59e0b;
+        --extra-text: #fde68a;
+
+        --variant-bg: #231733;
+        --variant-header-bg: #3b0764;
+        --variant-border: #c084fc;
+        --variant-text: #e9d5ff;
+
+        --focus-ring: #fde047;
+        --focus-bg: #1e293b;
+      }
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-main);
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.55;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
+    button, input, select {
+      font-family: inherit;
+    }
+
+    /* Focus visibile ad alto contrasto (WCAG 2.4.7, 2.4.13, 1.4.11) */
+    :focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    /* Skip Link (WCAG 2.4.1) */
+    .skip-links {
+      position: absolute;
+      top: -120px;
+      left: 0.75rem;
+      z-index: 1000;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .skip-links a:focus {
+      position: fixed;
+      top: 0.75rem;
+      left: 0.75rem;
+      background: var(--focus-bg);
+      color: #0f172a;
+      font-weight: 700;
+      padding: 0.65rem 1rem;
+      border: 2px solid #0f172a;
+      border-radius: var(--radius);
+      text-decoration: none;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 2px solid var(--border-subtle);
+      padding: 1.25rem 1.5rem;
+    }
+    .header-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .subtitle {
+      margin: 0.25rem 0 0;
+      color: var(--text-muted);
+      font-size: 0.98rem;
+    }
+    .subtitle a {
+      color: var(--primary);
+      font-weight: 600;
+      text-underline-offset: 3px;
+    }
+
+    /* Layout principale responsive (WCAG 1.4.10 Reflow) */
+    .layout {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem 3rem;
+      display: grid;
+      grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
+      gap: 1.75rem;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Sidebar Navigazione Componenti */
+    nav.sidebar {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 1rem;
+      box-shadow: var(--shadow);
+    }
+    .nav-group-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--text-muted);
+      margin: 1.15rem 0 0.45rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .comp-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .comp-btn {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.98rem;
+      font-weight: 400;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+    }
+    .comp-btn:hover {
+      background: var(--surface-alt);
+    }
+    .comp-btn[aria-current="true"] {
+      background: var(--primary);
+      color: var(--primary-contrast);
+      font-weight: 700;
+    }
+
+    /* Pannello Filtri */
+    .filters-panel {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 1.75rem;
+      box-shadow: var(--shadow);
+    }
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      align-items: end;
+    }
+    .field-group label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      font-size: 0.95rem;
+    }
+    input[type="search"], select {
+      width: 100%;
+      min-height: 44px;
+      padding: 0.5rem 0.75rem;
+      font-size: 1rem;
+      color: var(--text);
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 6px;
+    }
+    fieldset {
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 0.65rem 0.85rem;
+      margin: 1rem 0 0;
+    }
+    legend {
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0 0.35rem;
+    }
+    .checkbox-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.25rem;
+    }
+    .checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      min-height: 44px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .checkbox-label input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary);
+    }
+    .filter-actions {
+      margin-top: 0.85rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .reset-btn {
+      min-height: 44px;
+      padding: 0.45rem 0.9rem;
+      background: var(--surface-alt);
+      color: var(--text);
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .reset-btn:hover {
+      border-color: var(--primary);
+    }
+    .status-live {
+      font-weight: 600;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* Blocco Componente */
+    .component-block {
+      margin-top: 2.5rem;
+      padding-top: 1.75rem;
+      border-top: 2px solid var(--border-subtle);
+    }
+    .component-block:first-child {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+    .comp-header {
+      margin-bottom: 1.5rem;
+    }
+    .comp-header-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      box-shadow: var(--shadow);
+    }
+    .comp-title-wrap {
+      flex: 1 1 280px;
+    }
+    .comp-header h2 {
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+    .comp-type-tag {
+      font-weight: 600;
+      font-size: 0.6em;
+      color: var(--text-muted);
+      vertical-align: middle;
+    }
+    .comp-illustration {
+      flex: 0 0 auto;
+      background: var(--bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 0.35rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .comp-illustration svg {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    .warning-banner {
+      margin-top: 0.65rem;
+      padding: 0.75rem 1rem;
+      border-left: 5px solid #b45309;
+      background: #fef3c7;
+      color: #451a03;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    /* Indice gerarchico della scheda (sostituisce le chip piatte) */
+    .toc-box {
+      margin-top: 1rem;
+      padding: 1rem 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .toc-title {
+      margin: 0 0 0.75rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .toc-columns {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem 1.75rem;
+    }
+    .toc-group-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin: 0 0 0.45rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .toc-tree, .toc-sublist {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .toc-tree > li {
+      margin-bottom: 0.3rem;
+    }
+    .toc-sublist {
+      margin-top: 0.2rem;
+      margin-left: 0.65rem;
+      padding-left: 0.75rem;
+      border-left: 2px solid var(--border-subtle);
+    }
+    .toc-sublist > li {
+      margin-bottom: 0.2rem;
+    }
+    .toc-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      min-height: 32px;
+      padding: 0.15rem 0.25rem;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.94rem;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .toc-link:hover {
+      color: var(--text);
+    }
+    .toc-sublist .toc-link {
+      font-weight: 400;
+      font-size: 0.9rem;
+    }
+
+    /* Box relazioni Atomi nei componenti complessi */
+    .relations-box {
+      margin-top: 1rem;
+      padding: 0.85rem 1.1rem;
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+    }
+    .relations-box h3 {
+      margin: 0 0 0.25rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+    .relations-hint {
+      margin: 0 0 0.6rem;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+    .rel-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.45rem;
+      margin-top: 0.45rem;
+    }
+    .rel-chip {
+      min-height: 38px;
+      padding: 0.3rem 0.75rem;
+      background: var(--surface-alt);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      text-decoration: underline;
+    }
+    .rel-chip:hover {
+      background: var(--primary);
+      color: var(--primary-contrast);
+      border-color: var(--primary);
+    }
+
+    /* Sotto-sezioni concettuali: distinzione marcata per Attenzioni extra (Bonus) e Varianti/Stati/Errori */
+    .concept-group {
+      margin-top: 1.85rem;
+      scroll-margin-top: 1rem;
+    }
+    .concept-heading {
+      margin: 0 0 0.95rem;
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--text);
+      padding: 0.5rem 0.9rem;
+      background: var(--surface-alt);
+      border-left: 5px solid var(--primary);
+      border-radius: 0 6px 6px 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+    }
+    .heading-main-part {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+    .sec-icon {
+      flex: 0 0 auto;
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Stile marcato per Attenzioni extra (senso di bonus / approfondimento extra) */
+    .concept-group.extra-group {
+      padding: 1.15rem;
+      background: var(--extra-bg);
+      border: 2px solid var(--extra-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .concept-group.extra-group .concept-heading {
+      background: var(--extra-header-bg);
+      color: var(--extra-text);
+      border-left: 6px solid var(--extra-border);
+    }
+
+    /* Stile marcato per Varianti / Stati / Errori */
+    .concept-group.variant-group {
+      padding: 1.15rem;
+      background: var(--variant-bg);
+      border: 2px solid var(--variant-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .concept-group.variant-group .concept-heading {
+      background: var(--variant-header-bg);
+      color: var(--variant-text);
+      border-left: 6px solid var(--variant-border);
+    }
+
+    .group-kind-tag {
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--text);
+      border: 1.5px solid currentColor;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* Card Regole */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr));
+      gap: 1rem;
+    }
+    article.rule-card {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 1rem 1.15rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.85rem;
+    }
+    .card-title {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+    .card-note {
+      margin: 0.5rem 0 0;
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      white-space: pre-line;
+    }
+
+    /* Badge WCAG linkati puntualmente alle WCAG 2.2 IT + Best Practice */
+    .badges-list {
+      list-style: none;
+      margin: 0;
+      padding: 0.65rem 0 0;
+      border-top: 1px dashed var(--border-subtle);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+    .wcag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.65rem;
+      border-radius: 5px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+    a.wcag-badge {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    a.wcag-badge:hover {
+      filter: brightness(0.95);
+    }
+    .badge-percepibile { background: #fee2e2; color: #7f1d1d; border-color: #f87171; }
+    .badge-utilizzabile { background: #dbeafe; color: #1e3a8a; border-color: #60a5fa; }
+    .badge-comprensibile { background: #dcfce7; color: #14532d; border-color: #4ade80; }
+    .badge-robusto { background: #fef3c7; color: #78350f; border-color: #fbbf24; }
+    .badge-bp { background: #f3e8ff; color: #4c1d95; border-color: #c084fc; }
+
+    /* Modale nativa (<dialog>) per consultare gli atomi senza lasciare la scheda complessa */
+    dialog.atom-dialog {
+      width: min(92vw, 960px);
+      max-height: 86vh;
+      padding: 0;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      color: var(--text);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+    }
+    dialog.atom-dialog::backdrop {
+      background: rgba(15, 23, 42, 0.65);
+    }
+    .dialog-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--surface);
+      border-bottom: 2px solid var(--border-subtle);
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .dialog-header h2 {
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+    .dialog-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .dialog-btn {
+      min-height: 44px;
+      padding: 0.45rem 0.9rem;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      border: 2px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text);
+    }
+    .dialog-btn.primary {
+      background: var(--primary);
+      color: var(--primary-contrast);
+      border-color: var(--primary);
+    }
+    .dialog-body {
+      padding: 1.25rem;
+    }
+    .modal-illustration-wrap {
+      margin-bottom: 1.25rem;
+      padding: 0.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    footer {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      border-top: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+    footer a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="skip-links">
+    <a href="#main-content">Vai ai contenuti e ai filtri</a>
+    <a href="#nav-componenti">Vai all'elenco dei componenti</a>
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <div>
+        <h1>Componenti di design accessibili</h1>
+        <p class="subtitle">Workshop per gli Accessibility Days 2026 · <a href="https://www.linkedin.com/in/chiaracielo-longobardi-a140737/">ChiaraCielo Longobardi</a> · Riferimenti normativi: <a href="https://www.w3.org/Translations/WCAG22-it/" target="_blank" rel="noopener noreferrer">WCAG 2.2 (Traduzione Italiana W3C)</a></p>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav id="nav-componenti" class="sidebar" aria-label="Elenco componenti">
+      <button type="button" class="comp-btn" data-comp="ALL" aria-current="true">
+        <span>Tutti i componenti</span>
+      </button>
+
+      <h2 class="nav-group-title">Componenti base (Atomi)</h2>
+      <ul class="comp-list" id="list-atomi"></ul>
+
+      <h2 class="nav-group-title">Componenti complessi (Molecole)</h2>
+      <ul class="comp-list" id="list-molecole"></ul>
+    </nav>
+
+    <main id="main-content" tabindex="-1">
+      <section class="filters-panel" aria-label="Filtri di ricerca">
+        <div class="filters-grid">
+          <div class="field-group">
+            <label for="search-input">Cerca nelle regole o nei criteri WCAG</label>
+            <input type="search" id="search-input" placeholder="Es. focus, 1.4.3, screen reader, contrasto...">
+          </div>
+
+          <div class="field-group">
+            <label for="scope-select">Ambito progettuale</label>
+            <select id="scope-select">
+              <option value="ALL">Tutti gli ambiti</option>
+              <option value="colore">Colore e contrasto</option>
+              <option value="dimensioni">Dimensioni e target</option>
+              <option value="focus">Focus e tastiera</option>
+              <option value="label">Label, testi e linguaggio</option>
+              <option value="stati">Stati e messaggi di stato</option>
+            </select>
+          </div>
+        </div>
+
+        <fieldset>
+          <legend>Livello di conformità WCAG / Best Practice</legend>
+          <div class="checkbox-row">
+            <label class="checkbox-label"><input type="checkbox" name="level" value="A" checked> Livello A</label>
+            <label class="checkbox-label"><input type="checkbox" name="level" value="AA" checked> Livello AA</label>
+            <label class="checkbox-label"><input type="checkbox" name="level" value="AAA" checked> Livello AAA</label>
+            <label class="checkbox-label"><input type="checkbox" name="level" value="BP" checked> Best Practice</label>
+          </div>
+        </fieldset>
+
+        <div class="filter-actions">
+          <p class="status-live" role="status" aria-live="polite" id="results-status">Caricamento regole...</p>
+          <button type="button" class="reset-btn" id="reset-filters">Reimposta filtri</button>
+        </div>
+      </section>
+
+      <div id="content-area"></div>
+    </main>
+  </div>
+
+  <dialog id="atom-modal" class="atom-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-header">
+      <h2 id="dialog-title">Dettaglio componente base</h2>
+      <div class="dialog-actions">
+        <button type="button" class="dialog-btn primary" id="dialog-go-full">Apri pagina completa</button>
+        <button type="button" class="dialog-btn" id="dialog-close" aria-label="Chiudi finestra di consultazione">Chiudi (ESC)</button>
+      </div>
+    </div>
+    <div class="dialog-body" id="dialog-body"></div>
+  </dialog>
+
+  <footer>
+    <p>Quest'opera è distribuita con licenza <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)</a>.</p>
+  </footer>
+
+  <script type="application/json" id="comp-data">
+[
+  {
+    "id": "bottoni",
+    "name": "Bottoni",
+    "type": "atomo",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "colore",
+        "cosa": "Contrasto di label e icone con lo sfondo del bottone.",
+        "wcag": [
+          "1.4.3 Contrasto (minimo) - AA",
+          "1.4.6 Contrasto (avanzato) - AAA",
+          "1.4.11 Contrasto in contenuti non testuali - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "colore",
+        "cosa": "Contrasto del bottone con lo sfondo.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Non è normato dalle WCAG che il bottone debba avere sufficiente contrasto con lo sfondo, ma se perde di affordance diventa difficoltoso capire che si tratta di un bottone."
+      },
+      {
+        "section": "colore",
+        "cosa": "Label chiara su sfondo scuro (dark mode).",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Ottimizzare la dimensione o spessore del font (font per il dark mode)."
+      },
+      {
+        "section": "dimensioni",
+        "cosa": "Dimensione del bottone.",
+        "wcag": [
+          "2.5.8 Dimensione dell'obiettivo (minimo) - AA",
+          "2.5.5 Dimensione dell'obiettivo (avanzato) - AAA"
+        ],
+        "note": "Le indicazioni per mobile : 48px × 48px (Android), 44px × 44px (Apple, mobile)."
+      },
+      {
+        "section": "label",
+        "cosa": "Un bottone deve essere tale anche in codice.",
+        "wcag": [
+          "4.1.2 Nome, ruolo, valore - A"
+        ],
+        "note": "Non usare elementi differenti (es. div) forzandoli ad essere dei bottoni. Questo serve anche a mantenere comportamenti standard ed evitare che non siano navigabili da tastiera."
+      },
+      {
+        "section": "label",
+        "cosa": "Deve essere chiaro lo scopo del bottone (evitare: clicca qui, scopri di più).",
+        "wcag": [
+          "1.3.6 Identificare lo scopo - AA"
+        ],
+        "note": "Non deve essere solo chiaro che si tratti di un bottone, ma deve essere chiaro anche il suo scopo, a dove porterà."
+      },
+      {
+        "section": "ATTENZIONI EXTRA e VARIANTI",
+        "cosa": "Evitare indicazioni spaziali per indicare dove si trova un bottone.",
+        "wcag": [
+          "1.3.3 Caratteristiche sensoriali - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "ATTENZIONI EXTRA e VARIANTI",
+        "cosa": "Il testo sul bottone deve essere ridimensionabile.",
+        "wcag": [
+          "1.4.4 Ridimensionamento del testo - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "ATTENZIONI EXTRA e VARIANTI",
+        "cosa": "Se ci sono feedback o microinterazioni devono essere contestuali al bottone.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "ATTENZIONI EXTRA e VARIANTI · bottoni solo con icona",
+        "cosa": "Attenzione ai bottoni formati solo da un'icona. Deve essere chiaro a cosa si riferisce l'icona.",
+        "wcag": [
+          "1.1.1 Contenuti non testuali - A"
+        ],
+        "note": "Il bottone deve specificare la destinazione/scopo."
+      },
+      {
+        "section": "ATTENZIONI EXTRA e VARIANTI · gruppi di bottoni",
+        "cosa": "Nei gruppi di bottoni il tab naviga fra i bottoni (di cui va definito l'ordine) e enter o space li attiva.",
+        "wcag": [
+          "2.4.3 Ordine del focus - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "ATTENZIONI EXTRA e VARIANTI · bottoni fluttuanti",
+        "cosa": "I bottoni fluttuanti devono ricevere focus per primi.",
+        "wcag": [
+          "2.4.3 Ordine del focus - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "STATI",
+        "cosa": "Ricordarsi di progettare tutti gli stati di un bottone.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Default\nHover (:hover)\nFocus (:focus / :focus-visible)\nAttivo / Pressed (:active)\nSelezionato\nDisabilitato\nLoading"
+      },
+      {
+        "section": "STATI",
+        "cosa": "Il cambiamento di stato va annunciato a chi naviga con tecnologia assistiva.",
+        "wcag": [
+          "3.2.5 Cambiamenti su richiesta - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "STATI · focus",
+        "cosa": "Lo stato di focus non deve essere mai rimosso e deve essere visibile.",
+        "wcag": [
+          "2.4.7 Focus visibile - AA"
+        ],
+        "note": "Il focus deve essere visibile."
+      },
+      {
+        "section": "STATI · focus",
+        "cosa": "Lo stato di focus deve essere BEN visibile.",
+        "wcag": [
+          "2.4.13 Aspetto del focus - AAA"
+        ],
+        "note": "Il focus deve:\n1) essere di dimensioni adeguate (almeno corrispondente all'area di un perimetro spesso 2px attorno al componente);\n2) i pixel tra lo stato di default e quello di focus devono avere una variazione di contrasto di almeno 3:1."
+      },
+      {
+        "section": "STATI · focus",
+        "cosa": "Lo stato di focus deve essere BEN visibile.",
+        "wcag": [
+          "1.4.11 Contrasto in contenuti non testuali - AA"
+        ],
+        "note": "Il focus deve avere sufficiente contrasto con lo sfondo (almeno 3:1)."
+      },
+      {
+        "section": "STATI · disabilitato",
+        "cosa": "Attenzione ai bottoni disabilitati: hanno scarso contrasto, non sono navigabili da tastiera e non forniscono feedback agli screen reader. Da usare con cautela.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "link",
+    "name": "Link",
+    "type": "atomo",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "colore",
+        "cosa": "Il colore non deve essere l'unico modo per identificare un link.",
+        "wcag": [
+          "1.4.1 Uso del colore - A"
+        ],
+        "note": "Non può essere usato solo il colore per identificare un link. Una buona prassi (che aumenta la riconoscibilità) è mantenere la sottolineatura, ma possono essere anche abbinati altri espedienti grafici come icone o effetti del testo. Di per sé non è una violazione WCAG che link e testo abbiano lo stesso colore, ma si tratta di un errore di usabilità."
+      },
+      {
+        "section": "colore",
+        "cosa": "Contrasto del link con il resto del testo.",
+        "wcag": [
+          "1.4.1 Uso del colore - A"
+        ],
+        "note": "Se si rimuove la sottolineatura ad un link, deve essere garantito un contrasto di almeno 3:1 con il resto del testo e un ulteriore segno grafico all'hover."
+      },
+      {
+        "section": "colore",
+        "cosa": "Contrasto con lo sfondo.",
+        "wcag": [
+          "1.4.3 Contrasto (minimo) - AA",
+          "1.4.6 Contrasto (avanzato) - AAA"
+        ],
+        "note": "Vale lo stesso contrasto richiesto per il testo."
+      },
+      {
+        "section": "dimensioni",
+        "cosa": "Dimensione del link.",
+        "wcag": [
+          "2.5.8 Dimensione dell'obiettivo (minimo) - AA",
+          "2.5.5 Dimensione dell'obiettivo (avanzato) - AAA"
+        ],
+        "note": "Se si tratta di un link inline è un'eccezione: può essere della dimensione del testo.\nLe indicazioni per mobile: 48px × 48px (Android), 44px × 44px (Apple, mobile)."
+      },
+      {
+        "section": "label",
+        "cosa": "Deve essere chiaro lo scopo del link (evitare: clicca qui, scopri di più). Link con lo stesso nome devono sempre portare alla stessa destinazione.",
+        "wcag": [
+          "2.4.4 Scopo del collegamento (nel contesto) - A",
+          "2.4.9 Scopo del collegamento (solo collegamento) - AAA"
+        ],
+        "note": "Per il livello A, lo scopo può essere dedotto dal contesto immediatamente adiacente (es. la stessa frase o paragrafo), meglio se precede il link."
+      },
+      {
+        "section": "ATTENZIONI EXTRA e VARIANTI",
+        "cosa": "link che apre in una nuova scheda.",
+        "wcag": [
+          "3.2.5 Cambiamenti su richiesta - AAA"
+        ],
+        "note": "I link dovrebbero sempre aprire nella stessa scheda, per mantenere contesto ed essere più chiari per chi usa le tecnologie assistive ma anche per chi ha una disabilità cognitiva."
+      },
+      {
+        "section": "ATTENZIONI EXTRA e VARIANTI · link che è un'immagine",
+        "cosa": "Se un'immagine è un link, il suo testo alternativo (alt-text) non deve essere una descrizione estetica ma deve esplicitare la funzione e la destinazione del collegamento.",
+        "wcag": [
+          "2.4.4 Scopo del collegamento (nel contesto) - A",
+          "1.1.1 Contenuti non testuali - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "STATI",
+        "cosa": "Ricordarsi di progettare tutti gli stati di un link.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Default\nHover (:hover)\nFocus (:focus / :focus-visible)\nAttivo (:active)\nSelezionato\nVisitato"
+      },
+      {
+        "section": "STATI",
+        "cosa": "Il cambiamento di stato va annunciato a chi naviga con tecnologia assistiva.",
+        "wcag": [
+          "3.2.5 Cambiamenti su richiesta - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "STATI · focus",
+        "cosa": "Lo stato di focus non deve essere mai rimosso e deve essere visibile.",
+        "wcag": [
+          "2.4.7 Focus visibile - AA"
+        ],
+        "note": "Il focus deve essere visibile."
+      },
+      {
+        "section": "STATI · focus",
+        "cosa": "Lo stato di focus deve essere BEN visibile.",
+        "wcag": [
+          "2.4.13 Aspetto del focus - AAA"
+        ],
+        "note": "Il focus deve:\n1) essere di dimensioni adeguate (almeno corrispondente all'area di un perimetro spesso 2px attorno al componente);\n2) i pixel tra lo stato di default e quello di focus devono avere una variazione di contrasto di almeno 3:1."
+      },
+      {
+        "section": "STATI · focus",
+        "cosa": "Lo stato di focus deve essere BEN visibile.",
+        "wcag": [
+          "1.4.11 Contrasto in contenuti non testuali - AA"
+        ],
+        "note": "Il focus deve avere sufficiente contrasto con lo sfondo (almeno 3:1)"
+      }
+    ]
+  },
+  {
+    "id": "campi-di-input",
+    "name": "Campi di input",
+    "type": "atomo",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "colore",
+        "cosa": "Contrasto del campo (o del bordo de campo)",
+        "wcag": [
+          "1.4.11 Contrasto in contenuti non testuali - AA"
+        ],
+        "note": "Il campo (o il suo bordo) devono avere un contrasto di almeno 3:1 con lo sfondo."
+      },
+      {
+        "section": "dimensioni",
+        "cosa": "Dimensione del campo.",
+        "wcag": [
+          "2.5.8 Dimensione dell'obiettivo (minimo) - AA",
+          "2.5.5 Dimensione dell'obiettivo (avanzato) - AAA"
+        ],
+        "note": "Le indicazioni per mobile: 48px × 48px (Android), 44px × 44px (Apple, mobile)."
+      },
+      {
+        "section": "label",
+        "cosa": "La label deve essere sempre visibile.",
+        "wcag": [
+          "3.3.2 Etichette o istruzioni - A"
+        ],
+        "note": "Non va utilizzato il placeholder come label."
+      },
+      {
+        "section": "label",
+        "cosa": "La label deve essere associata al campo anche in codice.",
+        "wcag": [
+          "1.3.1 Informazioni e correlazioni - A"
+        ],
+        "note": "Un bottone deve essere tale anche in codice, utilizzando gli attributi HTML for e id."
+      },
+      {
+        "section": "label",
+        "cosa": "Label e nome accessibile devono corrispondere.",
+        "wcag": [
+          "2.5.3 Etichetta nel nome - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "VARIANTI · radio button, checkbox, tendine",
+        "cosa": "Il cambiamento di stato deve essere notificato anche da screen reader.",
+        "wcag": [
+          "4.1.3 Messaggi di stato - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "VARIANTI · toggle",
+        "cosa": "Limitarne l'uso.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "I toggle sono complessi da utilizzare e comprendere (soprattutto per chi ha disabilità cognitive)."
+      },
+      {
+        "section": "ATTENZIONI EXTRA",
+        "cosa": "Permettere l'autocomplete.",
+        "wcag": [
+          "3.3.7 Inserimento ridondante - A"
+        ],
+        "note": "Permettere l'autocomplete in generale, ma soprattutto riguardo ai campi già inseriti nel flusso (coperto dalle WCAG)."
+      },
+      {
+        "section": "ATTENZIONI EXTRA",
+        "cosa": "Indicare il formato e fornire esempi.",
+        "wcag": [
+          "3.3.2 Etichette o istruzioni - A"
+        ],
+        "note": "Rendere chiaro il formato richiesto per l'input (anche alle tecnologie assistive)."
+      },
+      {
+        "section": "ATTENZIONI EXTRA",
+        "cosa": "Indicare quali campi sono richiesti e quali facoltativi.",
+        "wcag": [
+          "3.3.2 Etichette o istruzioni - A"
+        ],
+        "note": "L'informazione deve essere chiara sia a livello visivo che per chi naviga con le tecnologie assistive."
+      },
+      {
+        "section": "ATTENZIONI EXTRA",
+        "cosa": "Fare attenzione all'ordine con cui gli elementi entrano in focus.",
+        "wcag": [
+          "2.4.3 Ordine del focus - A"
+        ],
+        "note": "I campi possono essere affiancati, ma è preferibile incolonnarli uno sull'altro."
+      },
+      {
+        "section": "STATI · focus",
+        "cosa": "Lo stato di focus non deve essere mai rimosso e deve essere visibile.",
+        "wcag": [
+          "2.4.7 Focus visibile - AA"
+        ],
+        "note": "Il focus deve essere visibile."
+      },
+      {
+        "section": "STATI · focus",
+        "cosa": "Lo stato di focus deve essere BEN visibile.",
+        "wcag": [
+          "2.4.13 Aspetto del focus - AAA"
+        ],
+        "note": "Il focus deve:\n1) essere di dimensioni adeguate (almeno corrispondente all'area di un perimetro spesso 2px attorno al componente);\n2) i pixel tra lo stato di default e quello di focus devono avere una variazione di contrasto di almeno 3:1."
+      },
+      {
+        "section": "STATI · focus",
+        "cosa": "Lo stato di focus deve essere BEN visibile.",
+        "wcag": [
+          "1.4.11 Contrasto in contenuti non testuali - AA"
+        ],
+        "note": "Il focus deve avere sufficiente contrasto con lo sfondo (almeno 3:1)."
+      },
+      {
+        "section": "STATI · disabilitato",
+        "cosa": "Attenzione ai campi disabilitati: hanno scarso contrasto, non sono navigabili da tastiera e non forniscono feedback agli screen reader. Da usare con cautela.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "icone-e-icon-buttons",
+    "name": "Icone e icon buttons",
+    "type": "atomo",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "aspetti visivi",
+        "cosa": "Contrasto colore sufficiente con lo sfondo.",
+        "wcag": [
+          "1.4.3 Contrasto (minimo) - AA",
+          "1.4.6 Contrasto (avanzato) - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "aspetti visivi",
+        "cosa": "Tratto adeguato alle dimensioni.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "aspetti comunicativi",
+        "cosa": "Abbinare le icone ad una label.",
+        "wcag": [
+          "Best practice"
+        ],
+        "note": "Il significato delle icone non è universale. Abbinarle a una label permette di alleviare il carico cognitivo e favorisce la memorabilità."
+      },
+      {
+        "section": "aspetti comunicativi",
+        "cosa": "Coerenza",
+        "wcag": [
+          "3.2.4 Identificazione coerente - AA"
+        ],
+        "note": "Un'icona deve rappresentare una funzione. Una funzione deve essere rappresentata sempre dalla stessa icona."
+      },
+      {
+        "section": "aspetti comunicativi",
+        "cosa": "Label accessibile",
+        "wcag": [
+          "1.1.1 Contenuti non testuali - A"
+        ],
+        "note": "L'icona deve essere comprensibile anche dalla tecnologia assistiva. Se necessario va inserito il testo alternativo, ma è importante evitare le ripetizioni se sono associate ad una label visibile."
+      },
+      {
+        "section": "ATTENZIONI EXTRA e VARIANTI",
+        "cosa": "Se attive → dimensioni adeguate.",
+        "wcag": [
+          "2.5.5 Dimensione dell'obiettivo (avanzato) - AAA",
+          "2.5.8 Dimensione dell'obiettivo (minimo) - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "ATTENZIONI EXTRA e VARIANTI",
+        "cosa": "Evitare il movimento e le microinterazioni",
+        "wcag": [
+          "Best Practice",
+          "2.3.1 Tre lampeggiamenti o inferiore alla soglia - A"
+        ],
+        "note": "Icone che si muovono posso essere un elemento di disturbo per le persone con disturbi dell'attenzione. Possono provocare anche nausea e vertigini per persone con disturbi vestibolari.\nLampeggiamenti multipli possono innescare crisi epilettiche."
+      }
+    ]
+  },
+  {
+    "id": "intestazioni",
+    "name": "Intestazioni",
+    "type": "atomo",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "aspetti generali",
+        "cosa": "Le intestazioni vanno usate per distinguere le varie sezioni.",
+        "wcag": [
+          "2.4.10 Intestazioni di sezione - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "aspetti generali",
+        "cosa": "Le intestazioni devono mantenere un ordine logico che consenta di comprendere la gerarchia delle informazioni.",
+        "wcag": [
+          "1.3.1 Informazioni e correlazioni - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "aspetti generali",
+        "cosa": "Le parole scelte devono essere chiare.",
+        "wcag": [
+          "2.4.6 Intestazioni ed etichette - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "aspetti generali",
+        "cosa": "Non saltare livelli gerarchici.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Non è una violazione di criteri WCAG, ma potrebbe rendere la comprensione della gerarchia più complessa."
+      },
+      {
+        "section": "aspetti generali",
+        "cosa": "Non utilizzare più di un H1.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Non è una violazione di criteri WCAG, ma potrebbe rendere più complesso comprendere l'argomento principale della pagina."
+      },
+      {
+        "section": "aspetti visivi",
+        "cosa": "Contrasto colore sufficiente con lo sfondo.",
+        "wcag": [
+          "1.4.3 Contrasto (minimo) - AA",
+          "1.4.6 Contrasto (avanzato) - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "aspetti visivi",
+        "cosa": "Font chiaro e leggibile.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "aspetti visivi",
+        "cosa": "Distinzioni visive per identificarle.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Dimensione, peso del font, colore, spaziature."
+      },
+      {
+        "section": "in codice",
+        "cosa": "Ogni titolo deve essere un'intestazione.",
+        "wcag": [
+          "4.1.2 Nome, ruolo, valore - A"
+        ],
+        "note": "Utilizzando i tag H (H1-H6)."
+      }
+    ]
+  },
+  {
+    "id": "testi-e-errori",
+    "name": "Testi e errori",
+    "type": "atomo",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "aspetti visivi",
+        "cosa": "Contrasto colore sufficiente con lo sfondo.",
+        "wcag": [
+          "1.4.3 Contrasto (minimo) - AA",
+          "1.4.6 Contrasto (avanzato) - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "aspetti visivi",
+        "cosa": "Non vanno date indicazioni usando solo il colore.",
+        "wcag": [
+          "1.4.1 Uso del colore - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "aspetti visivi",
+        "cosa": "Font chiaro e leggibile.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "aspetti visivi",
+        "cosa": "Dimensione del font.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Evitare di usare dimensioni troppo piccole (idealmente per il testo a correre scegliere una dimensione di 16px)."
+      },
+      {
+        "section": "aspetti visivi",
+        "cosa": "Personalizzabile.",
+        "wcag": [
+          "1.4.12 Spaziatura del testo - AA"
+        ],
+        "note": "Deve essere possibile personalizzare le spaziature di interlinea (anche spazio tra i paragrafi), spaziatura tra le lettere e le parole."
+      },
+      {
+        "section": "aspetti visivi",
+        "cosa": "Interlinea e spazio tra i paragrafi, lunghezza di riga.",
+        "wcag": [
+          "1.4.8 Presentazione visiva - AAA"
+        ],
+        "note": "L'interlinea deve essere 1,5 volte la dimensione del testo, non giustificato (allineamento a sinistra), lunghezza di linea 80 caratteri, deve essere possibile la personalizzazione."
+      },
+      {
+        "section": "aspetti funzionali",
+        "cosa": "Il testo deve essere ridimensionabile fino al 200%.",
+        "wcag": [
+          "1.4.4 Ridimensionamento del testo - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "linguaggio",
+        "cosa": "Va usato un linguaggio chiaro e semplice.",
+        "wcag": [
+          "3.1.5 Livello di lettura - AAA",
+          "3.1.3 Parole inusuali - AAA",
+          "3.1.4 Abbreviazioni - AAA",
+          "1.3.3 Caratteristiche sensoriali - A"
+        ],
+        "note": "Il linguaggio deve essere semplice, meglio in forma attiva, senza doppie negazioni.\nEvitare gergo tecnico, metafore.\nEvitare abbreviazioni non spiegate.\nEvitare di dare indicazioni usando solo caratteristiche sensoriali."
+      },
+      {
+        "section": "ERRORI",
+        "cosa": "Non vanno date indicazioni usando solo il colore.",
+        "wcag": [
+          "1.4.1 Uso del colore - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "ERRORI",
+        "cosa": "Va usato un linguaggio chiaro e semplice.",
+        "wcag": [
+          "3.1.5 Livello di lettura - AAA",
+          "3.1.3 Parole inusuali - AAA",
+          "3.1.4 Abbreviazioni - AAA",
+          "1.3.3 Caratteristiche sensoriali - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "ERRORI",
+        "cosa": "Deve essere possibile identificare cosa ha generato l'errore.",
+        "wcag": [
+          "3.3.1 Identificazione di errori - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "ERRORI",
+        "cosa": "L'errore deve comparire in prossimità dell'elemento che l'ha generato.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "ERRORI",
+        "cosa": "Deve essere chiaro come risolvere un errore.",
+        "wcag": [
+          "3.3.3 Suggerimenti per gli errori - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "ERRORI",
+        "cosa": "Devono essere annunciati anche alle tecnologie assistive.",
+        "wcag": [
+          "4.1.3 Messaggi di stato - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "ERRORI · pagina 404",
+        "cosa": "Va usato un linguaggio chiaro e semplice.",
+        "wcag": [
+          "3.1.5 Livello di lettura - AAA",
+          "3.1.3 Parole inusuali - AAA",
+          "3.1.4 Abbreviazioni - AAA",
+          "1.3.3 Caratteristiche sensoriali - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "ERRORI · pagina 404",
+        "cosa": "Deve essere fornita una via d'uscita chiara.",
+        "wcag": [
+          "3.3.3 Suggerimenti per gli errori - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "ERRORI · stati vuoti",
+        "cosa": "Va usato un linguaggio chiaro e semplice.",
+        "wcag": [
+          "3.1.5 Livello di lettura - AAA",
+          "3.1.3 Parole inusuali - AAA",
+          "3.1.4 Abbreviazioni - AAA",
+          "1.3.3 Caratteristiche sensoriali - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "ERRORI · stati vuoti",
+        "cosa": "Deve essere chiaro come proseguire.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "immagini",
+    "name": "Immagini",
+    "type": "atomo",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "testo alternativo",
+        "cosa": "Ogni immagine non decorativa deve avere un'alternativa testuale.",
+        "wcag": [
+          "1.1.1 Contenuti non testuali - A"
+        ],
+        "note": "Per la maggior parte delle immagini si tratta dell'alt text. Qualche indicazione utile è pensare al contesto; descrivere soggetto, azione e contesto; evitare di iniziare con \"foto di/immagine di\"."
+      },
+      {
+        "section": "testo alternativo",
+        "cosa": "Le immagini decorative devo essere segnalate come tali.",
+        "wcag": [
+          "1.1.1 Contenuti non testuali - A"
+        ],
+        "note": "L'alt text va inserito e lasciato vuoto se l'immagine è decorativa (es. elemento puramente decorativo, ripetizione di informazioni testuali già in pagina, immagini di stock)."
+      },
+      {
+        "section": "VARIANTI · immagini di testo",
+        "cosa": "Se le immagini contengono testo, questo deve essere leggibile e garantire un contrasto sufficiente.",
+        "wcag": [
+          "1.4.3 Contrasto (minimo) - AA"
+        ],
+        "note": "Sarebbe preferibile evitare di inserire del testo come immagine, ma se necessario deve comunque essere garantito un sufficiente contrasto colore."
+      },
+      {
+        "section": "VARIANTI · testo su immagini",
+        "cosa": "Il testo posizionato sulle immagini deve essere leggibile.",
+        "wcag": [
+          "1.4.3 Contrasto (minimo) - AA"
+        ],
+        "note": "Alcune strategie sono: usare un overlay su tutta l'immagine o solo sotto al testo. Deve essere garantito un contrasto sufficiente nel punto più critico dell'immagine."
+      },
+      {
+        "section": "VARIANTI · loghi",
+        "cosa": "Se l'immagine è un logo, la sua descrizione alternativa deve indicare la sua funzione.",
+        "wcag": [
+          "1.1.1 Contenuti non testuali - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "VARIANTI · immagini-link",
+        "cosa": "Se l'immagine è un link, la sua descrizione alternativa deve indicare la sua funzione o destinazione.",
+        "wcag": [
+          "1.1.1 Contenuti non testuali - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "VARIANTI · immagini di hero",
+        "cosa": "Evitare scroll in parallasse o permettere di fermare l'animazione.",
+        "wcag": [
+          "2.2.2 Pausa, stop, nascondi - A"
+        ],
+        "note": "Può generare vertigini nelle persone con disturbi vestibolari."
+      }
+    ]
+  },
+  {
+    "id": "loader-e-progress-bar",
+    "name": "Loader e progress bar",
+    "type": "atomo",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "colore",
+        "cosa": "Contrasto",
+        "wcag": [
+          "1.4.11 Contrasto in contenuti non testuali - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "movimento",
+        "cosa": "Verificare che non ci siano lampeggiamenti critici.",
+        "wcag": [
+          "2.3.1 Tre lampeggiamenti o inferiore alla soglia - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "movimento",
+        "cosa": "Consentire a chi naviga di bloccare le animazioni (se durano più di 5 secondi).",
+        "wcag": [
+          "2.2.2 Pausa, stop, nascondi - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "testi",
+        "cosa": "Abbinare con un contenuto testuale esplicativo.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "aggiornamenti",
+        "cosa": "Gli avanzamenti devono essere chiari anche alle tecnologie assistive.",
+        "wcag": [
+          "4.1.3 Messaggi di stato - AA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "chips-e-tags",
+    "name": "Chips e tags",
+    "type": "atomo",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "colore",
+        "cosa": "Contrasto di label e icone con lo sfondo della chip/tag.",
+        "wcag": [
+          "1.4.3 Contrasto (minimo) - AA",
+          "1.4.6 Contrasto (avanzato) - AAA",
+          "1.4.11 Contrasto in contenuti non testuali - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "colore",
+        "cosa": "Contrasto della chip con lo sfondo.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Non è normato dalle WCAG che una chip/bottone debba avere sufficiente contrasto con lo sfondo, ma se perde di affordance diventa difficoltoso capire che si tratta di un bottone."
+      },
+      {
+        "section": "colore",
+        "cosa": "Non solo colore.",
+        "wcag": [
+          "1.4.1 Uso del colore - A"
+        ],
+        "note": "Non utilizzare solo il colore per identificare la categoria del tag/chip."
+      },
+      {
+        "section": "dimensioni",
+        "cosa": "Dimensione",
+        "wcag": [
+          "2.5.8 Dimensione dell'obiettivo (minimo) - AA",
+          "2.5.5 Dimensione dell'obiettivo (avanzato) - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "label",
+        "cosa": "Il testo scelto per l'etichetta deve essere chiaro e comprensibile.",
+        "wcag": [
+          "2.4.6 Intestazioni ed etichette - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "STATI",
+        "cosa": "Se interattive, ricordarsi di progettare tutti gli stati.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Default\nHover\nFocus\nAttivo\nSelezionato\nDisabilitato"
+      },
+      {
+        "section": "STATI",
+        "cosa": "Il cambiamento di stato va annunciato a chi naviga con tecnologia assistiva.",
+        "wcag": [
+          "3.2.5 Cambiamenti su richiesta - AAA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "toggle-e-switch",
+    "name": "Toggle e switch",
+    "type": "atomo",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "colore",
+        "cosa": "Contrasto di label e icone con lo sfondo.",
+        "wcag": [
+          "1.4.3 Contrasto (minimo) - AA",
+          "1.4.6 Contrasto (avanzato) - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "colore",
+        "cosa": "Contrasto del toggle con lo sfondo.",
+        "wcag": [
+          "1.4.11 Contrasto in contenuti non testuali - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "colore",
+        "cosa": "Non solo colore",
+        "wcag": [
+          "1.4.1 Uso del colore - A"
+        ],
+        "note": "Non utilizzare solo il colore per identificare il cambiamento di stato."
+      },
+      {
+        "section": "dimensioni",
+        "cosa": "Dimensione",
+        "wcag": [
+          "2.5.8 Dimensione dell'obiettivo (minimo) - AA",
+          "2.5.5 Dimensione dell'obiettivo (avanzato) - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "label",
+        "cosa": "Deve essere inserita una label chiara, sempre visibile e posizionata in modo intuitivo.",
+        "wcag": [
+          "2.4.6 Intestazioni ed etichette - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "STATI",
+        "cosa": "Ricordarsi di progettare tutti gli stati.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Attivo\nInattivo\nFocus (:focus / :focus-visible)"
+      },
+      {
+        "section": "STATI",
+        "cosa": "Il cambiamento di stato va annunciato a chi naviga con tecnologia assistiva.",
+        "wcag": [
+          "3.2.5 Cambiamenti su richiesta - AAA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "tabelle",
+    "name": "Tabelle",
+    "type": "atomo",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "colore",
+        "cosa": "Contrasto",
+        "wcag": [
+          "1.4.11 Contrasto in contenuti non testuali - AA",
+          "1.4.3 Contrasto (minimo) - AA",
+          "1.4.6 Contrasto (avanzato) - AAA"
+        ],
+        "note": "Assicurarsi che i bordi siano sufficientemente visibili.\nVerificare che i testi siano leggibili rispetto a ogni sfondo."
+      },
+      {
+        "section": "colore",
+        "cosa": "Colore",
+        "wcag": [
+          "1.4.1 Uso del colore - A"
+        ],
+        "note": "Non utilizzare solo il colore per differenziare i dati."
+      },
+      {
+        "section": "design",
+        "cosa": "Evitare celle unite o divise, tabelle innestate",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Se necessario spacchettare in più tabelle."
+      },
+      {
+        "section": "design",
+        "cosa": "Usare le intestazioni per le righe e le colonne.",
+        "wcag": [
+          "1.3.1 Informazioni e correlazioni - A",
+          "4.1.2 Nome, ruolo, valore - A"
+        ],
+        "note": "Le intestazioni devono essere chiare anche per chi naviga con tecnologie assistive. In codice va utilizato il tag <th> (anziché solo <td> e <tr>)."
+      },
+      {
+        "section": "design",
+        "cosa": "Se la tabella è complessa aggiungere una didascalia (caption) descrittiva.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "La didascalia deve essere disponibile anche in codice."
+      },
+      {
+        "section": "responsive",
+        "cosa": "Verificare che sia possibile zoommare una tabella.",
+        "wcag": [
+          "Best Practice",
+          "1.4.10 Ricalcolo del flusso - AA"
+        ],
+        "note": "Le tabelle sono un'eccezione al criterio 1.4.10 Reflow, ma se lo scroll peggiora l'esperienza notevolmente si potrebbe capire se una tabella sia la scelta giusta per comunicare quell'informazione."
+      },
+      {
+        "section": "VARIANTI · Tabelle di comparazione",
+        "cosa": "Fornire tabelle di comparazione per prezzi e caratteristiche allevia il carico cognitivo e supporta la memoria.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "form",
+    "name": "Form",
+    "type": "molecola",
+    "warning": "",
+    "always": [
+      "Bottoni",
+      "Link",
+      "Campi di input",
+      "Intestazioni",
+      "Testi e errori"
+    ],
+    "sometimes": [
+      "Icone e icon buttons",
+      "Immagini",
+      "Loader e progress bar",
+      "Toggle e switch"
+    ],
+    "items": [
+      {
+        "section": "struttura",
+        "cosa": "Fornire delle istruzioni iniziali per chiarire lo scopo del form.",
+        "wcag": [
+          "3.3.2 Etichette o istruzioni - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "struttura",
+        "cosa": "Suddividere il contenuto in blocchi piccoli e gestibili (step).",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Parzialmente legato a:\n2.4.10 - Section Headings: Organizzare il contenuto in sezioni chiaramente identificate.\n3.3.2 - Labels or Instructions: Fornire indicazioni chiare per ogni step."
+      },
+      {
+        "section": "interazione e stati",
+        "cosa": "Evitare i timeout.",
+        "wcag": [
+          "2.2.6 Termine del tempo - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "interazione e stati",
+        "cosa": "Cambiamento di stato.",
+        "wcag": [
+          "4.1.3 Messaggi di stato - AA"
+        ],
+        "note": "Avvisare dei cambiamenti di contesto (es.submit) anche chi usa uno screenreader."
+      },
+      {
+        "section": "interazione e stati",
+        "cosa": "Non chiedere di inserire più volte gli stessi dati.",
+        "wcag": [
+          "3.3.7 Inserimento ridondante - A"
+        ],
+        "note": "Nel passaggio tra stati (es. da utente ospite a loggato), i dati già inseriti non devono andare perduti."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Chi naviga da tastiera deve poter interagire con ogni elemento del form.",
+        "wcag": [
+          "2.1.1 Tastiera - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Ordine di focus",
+        "wcag": [
+          "2.4.3 Ordine del focus - A",
+          "1.3.2 Sequenza significativa - A"
+        ],
+        "note": "Gli elementi devono ricevere focus in un ordine che ne mantenga il senso e il significato."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Non intrappolare il focus nel form.",
+        "wcag": [
+          "2.1.2 Nessun impedimento all'uso della tastiera - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Indicatore di focus.",
+        "wcag": [
+          "2.4.7 Focus visibile - AA",
+          "2.4.13 Aspetto del focus - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "termine e invio",
+        "cosa": "Recap prima dell'invio.",
+        "wcag": [
+          "3.3.6 Prevenzione degli errori (tutti) - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "termine e invio",
+        "cosa": "Conferma avvenuto invio.",
+        "wcag": [
+          "Best Practice",
+          "4.1.3 Messaggi di stato - AA"
+        ],
+        "note": "Fornisci una conferma chiara del completamento dell'intero processo\nanche a chi naviga con tecnologie assistive."
+      }
+    ]
+  },
+  {
+    "id": "card",
+    "name": "Card",
+    "type": "molecola",
+    "warning": "⚠️ elemento non nativo, da usare con cautela!",
+    "always": [
+      "Bottoni",
+      "Link",
+      "Icone e icon buttons",
+      "Intestazioni",
+      "Testi e errori",
+      "Immagini"
+    ],
+    "sometimes": [
+      "Toggle e switch"
+    ],
+    "items": [
+      {
+        "section": "struttura",
+        "cosa": "Link",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Se si desidera avere tutta la card attiva è preferibile avere un solo link sulla card."
+      },
+      {
+        "section": "struttura",
+        "cosa": "Zoom",
+        "wcag": [
+          "1.4.10 Ricalcolo del flusso - AA"
+        ],
+        "note": "Assicurarsi che il contenuto della card sia leggibile senza sovrapposizione anche con zoom elevati."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Chi naviga da tastiera deve poter interagire con ogni elemento della card.",
+        "wcag": [
+          "2.1.1 Tastiera - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Ordine di focus",
+        "wcag": [
+          "2.4.3 Ordine del focus - A",
+          "1.3.2 Sequenza significativa - A"
+        ],
+        "note": "Gli elementi sulla card devono ricevere focus in un ordine che ne mantenga il senso e il significato (es. progetta l'ordine di lettura affinché gli elementi distintivi come titolo, prezzo, descrizione precedano le azioni secondarie)."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Non intrappolare il focus nella card.",
+        "wcag": [
+          "2.1.2 Nessun impedimento all'uso della tastiera - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Indicatore di focus",
+        "wcag": [
+          "2.4.7 Focus visibile - AA",
+          "2.4.13 Aspetto del focus - AAA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "caroselli",
+    "name": "Caroselli",
+    "type": "molecola",
+    "warning": "⚠️ elemento non nativo, da usare con cautela!",
+    "always": [
+      "Bottoni",
+      "Link",
+      "Intestazioni",
+      "Immagini"
+    ],
+    "sometimes": [
+      "Icone e icon buttons",
+      "Testi e errori",
+      "Loader e progress bar"
+    ],
+    "items": [
+      {
+        "section": "interazione",
+        "cosa": "Animazione",
+        "wcag": [
+          "2.2.2 Pausa, stop, nascondi - A"
+        ],
+        "note": "Chi naviga deve poter controllare il movimento e non deve esserci autoplay. Vanno anche rispettate le impostazioni di sistema riguardo al movimento (prefers-reduced-motion)."
+      },
+      {
+        "section": "interazione",
+        "cosa": "I bottoni “precedente” e “successivo” devono essere ben visibili.",
+        "wcag": [
+          "2.5.8 Dimensione dell'obiettivo (minimo) - AA",
+          "1.4.3 Contrasto (minimo) - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "interazione",
+        "cosa": "Deve essere evidente lo stato corrente",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "interazione",
+        "cosa": "Evitare i loop infiniti",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "È buona norma disabilitare il bottone \"precedente\" nel primo pannello e il bottone \"successivo\" nell'ultimo, per chiarire all'utente dove iniziano e finiscono i contenuti"
+      },
+      {
+        "section": "interazione",
+        "cosa": "Permettere lo skip del carosello",
+        "wcag": [
+          "2.4.1 Salto di blocchi - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Chi naviga da tastiera deve poter interagire con ogni elemento del carosello",
+        "wcag": [
+          "2.1.1 Tastiera - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Non intrappolare il focus nella carosello",
+        "wcag": [
+          "2.1.2 Nessun impedimento all'uso della tastiera - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Indicatore di focus",
+        "wcag": [
+          "2.4.7 Focus visibile - AA",
+          "2.4.13 Aspetto del focus - AAA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "dataviz",
+    "name": "Dataviz",
+    "type": "molecola",
+    "warning": "",
+    "always": [
+      "Icone e icon buttons",
+      "Intestazioni",
+      "Testi e errori",
+      "Immagini"
+    ],
+    "sometimes": [
+      "Bottoni",
+      "Link",
+      "Loader e progress bar",
+      "Chips e tags",
+      "Toggle e switch",
+      "Tabelle"
+    ],
+    "items": [
+      {
+        "section": "alternative testuali",
+        "cosa": "Descrizione lunga",
+        "wcag": [
+          "1.1.1 Contenuti non testuali - A"
+        ],
+        "note": "Potrebbe essere necessario aggiungere al testo alternativo una descrizione lunga (visibile o non)."
+      },
+      {
+        "section": "alternative testuali",
+        "cosa": "Dati in tabella alternativa.",
+        "wcag": [
+          "1.1.1 Contenuti non testuali - A"
+        ],
+        "note": "Rendere disponibili i dati anche in formato tabellare."
+      },
+      {
+        "section": "interazione",
+        "cosa": "Utilizzare pattern o simboli in accostamento al colore.",
+        "wcag": [
+          "1.4.1 Uso del colore - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "interazione",
+        "cosa": "Non nascondere dati critici sotto le animazioni.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "interazione",
+        "cosa": "Zoom",
+        "wcag": [
+          "1.4.10 Ricalcolo del flusso - AA"
+        ],
+        "note": "Assicurarsi che tutti gli elementi siano disponibili anche quando è applicato uno zoom di pagina."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Le etichette attive devono essere navigabili da tastiera.",
+        "wcag": [
+          "2.1.1 Tastiera - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Indicatore di focus.",
+        "wcag": [
+          "2.4.7 Focus visibile - AA",
+          "2.4.13 Aspetto del focus - AAA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "pop-up-e-modali",
+    "name": "Pop-up e modali",
+    "type": "molecola",
+    "warning": "",
+    "always": [
+      "Bottoni",
+      "Link",
+      "Intestazioni",
+      "Testi e errori"
+    ],
+    "sometimes": [
+      "Campi di input",
+      "Icone e icon buttons",
+      "Immagini",
+      "Loader e progress bar",
+      "Chips e tags",
+      "Toggle e switch",
+      "Tabelle"
+    ],
+    "items": [
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Navigazione e ordine di focus.",
+        "wcag": [
+          "2.1.1 Tastiera - A",
+          "2.4.3 Ordine del focus - A"
+        ],
+        "note": "Il focus deve essere spostato all’interno del popover quando questo viene aperto.\nQuando il popover viene chiuso, il focus deve tornare all’elemento che lo ha attivato."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Non intrappolare il focus.",
+        "wcag": [
+          "2.1.2 Nessun impedimento all'uso della tastiera - A"
+        ],
+        "note": "Deve essere sempre presente un bottone di chiusura visibile e deve essere possibile chiudere tramite il tasto ESC."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Indicatore di focus",
+        "wcag": [
+          "2.4.7 Focus visibile - AA",
+          "2.4.13 Aspetto del focus - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "navigazione con screenreader",
+        "cosa": "Annuncio",
+        "wcag": [
+          "4.1.3 Messaggi di stato - AA"
+        ],
+        "note": "La comparsa di un pop-up deve essere notificata agli screen reader."
+      },
+      {
+        "section": "tempo",
+        "cosa": "Se prevista una chiusura automatica.",
+        "wcag": [
+          "2.2.1 Regolazione tempi di esecuzione - A",
+          "4.1.3 Messaggi di stato - AA"
+        ],
+        "note": "Se il popover si chiude automaticamente dopo un certo tempo, fornire un avviso e la possibilità di estendere tale tempo."
+      }
+    ]
+  },
+  {
+    "id": "breadcrumbs",
+    "name": "Breadcrumbs",
+    "type": "molecola",
+    "warning": "",
+    "always": [
+      "Link"
+    ],
+    "sometimes": [
+      "Icone e icon buttons"
+    ],
+    "items": [
+      {
+        "section": "aspetti generali",
+        "cosa": "Le etichette devono essere descrittive.",
+        "wcag": [
+          "2.4.6 Intestazioni ed etichette - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "aspetti generali",
+        "cosa": "Ordine delle breadcrumbs.",
+        "wcag": [
+          "1.3.1 Informazioni e correlazioni - A"
+        ],
+        "note": "L'ordine deve essere prevedibile e gerarchico."
+      },
+      {
+        "section": "aspetti generali",
+        "cosa": "Posizione",
+        "wcag": [
+          "2.4.8 Posizione - AAA"
+        ],
+        "note": "Deve essere chiaro per chi naviga dove si trova e da dove è arrivato."
+      },
+      {
+        "section": "aspetti generali",
+        "cosa": "Zoom",
+        "wcag": [
+          "1.4.10 Ricalcolo del flusso - AA"
+        ],
+        "note": "Assicurarsi che tutte le breadcrumbs siano disponibili anche quando è applicato uno zoom di pagina."
+      },
+      {
+        "section": "lettura con screenreader",
+        "cosa": "I separatori non devono essere letti dallo screenreader.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Chi naviga da tastiera deve poter interagire con ogni \"briciola\".",
+        "wcag": [
+          "2.1.1 Tastiera - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Ordine di focus",
+        "wcag": [
+          "2.4.3 Ordine del focus - A",
+          "1.3.2 Sequenza significativa - A"
+        ],
+        "note": "Le briciole devono ricevere focus in ordine gerarchico."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Indicatore di focus.",
+        "wcag": [
+          "2.4.7 Focus visibile - AA",
+          "2.4.13 Aspetto del focus - AAA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "menu-navigazione",
+    "name": "Menu (navigazione)",
+    "type": "molecola",
+    "warning": "",
+    "always": [
+      "Bottoni",
+      "Link",
+      "Icone e icon buttons",
+      "Testi e errori"
+    ],
+    "sometimes": [
+      "Campi di input",
+      "Intestazioni",
+      "Immagini"
+    ],
+    "items": [
+      {
+        "section": "struttura",
+        "cosa": "Ordine delle voci.",
+        "wcag": [
+          "3.2.3 Navigazione coerente - AA"
+        ],
+        "note": "Le voci e gli elementi di navigazione devono essere nello stesso ordine sulle diverse pagine."
+      },
+      {
+        "section": "struttura",
+        "cosa": "Funzionalità.",
+        "wcag": [
+          "3.2.4 Identificazione coerente - AA"
+        ],
+        "note": "Gli elementi con una funzionalità specifica devono poter essere identificati come tali nelle varie pagine (aspetto ed etichetta)."
+      },
+      {
+        "section": "struttura",
+        "cosa": "Indicare la posizione attiva.",
+        "wcag": [
+          "2.4.8 Posizione - AAA",
+          "1.4.1 Uso del colore - A"
+        ],
+        "note": "Non solo con il colore!"
+      },
+      {
+        "section": "struttura",
+        "cosa": "Evitare il gergo tecnico/di settore per le voci di menu.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Chi naviga da tastiera deve poter interagire con ogni elemento del menu.",
+        "wcag": [
+          "2.1.1 Tastiera - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Ordine di focus.",
+        "wcag": [
+          "2.4.3 Ordine del focus - A",
+          "1.3.2 Sequenza significativa - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Non intrappolare il focus.",
+        "wcag": [
+          "2.1.2 Nessun impedimento all'uso della tastiera - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Indicatore di focus.",
+        "wcag": [
+          "2.4.7 Focus visibile - AA",
+          "2.4.13 Aspetto del focus - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "ATTENZIONI EXTRA",
+        "cosa": "Menu a tendina.",
+        "wcag": [
+          "1.4.13 Contenuto con Hover o Focus - AA"
+        ],
+        "note": "Un menu a tendina deve potersi chiudere senza spostarsi, essere navigato senza che sparisca, rimanere visibile fino a quando hover o focus non si sono spostati."
+      },
+      {
+        "section": "ATTENZIONI EXTRA",
+        "cosa": "Sticky menu.",
+        "wcag": [
+          "1.4.10 Ricalcolo del flusso - AA"
+        ],
+        "note": "Attenzione ai menu sticky (e agli elementi sticky in generale) che non oscurino il contenuto sottostante."
+      },
+      {
+        "section": "ATTENZIONI EXTRA",
+        "cosa": "Skip link.",
+        "wcag": [
+          "2.4.1 Salto di blocchi - A"
+        ],
+        "note": "Permettere di saltare il menu e arrivare al contenuto principale."
+      }
+    ]
+  },
+  {
+    "id": "notifiche",
+    "name": "Notifiche",
+    "type": "molecola",
+    "warning": "⚠️ elemento non nativo, da usare con cautela!",
+    "always": [
+      "Bottoni",
+      "Link",
+      "Intestazioni",
+      "Testi e errori"
+    ],
+    "sometimes": [
+      "Icone e icon buttons",
+      "Immagini",
+      "Chips e tags"
+    ],
+    "items": [
+      {
+        "section": "interazione",
+        "cosa": "Non devono scoparire da sole.",
+        "wcag": [
+          "2.2.1 Regolazione tempi di esecuzione - A"
+        ],
+        "note": "Ogni utente ha bisogno di tempi differenti per leggere, permettere a chiunque di interagire con la notifica senza che scompaia da sola."
+      },
+      {
+        "section": "interazione",
+        "cosa": "Deve comparire vicino a ciò che l'ha generata.",
+        "wcag": [
+          "1.3.1 Informazioni e correlazioni - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "interazione",
+        "cosa": "Le notifiche interrompono il flusso principale e possono quindi essere fonte di distrazione: permettere la personalizzazione dell'esperienza.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Se possibile, far scegliere all'utente finestre temporali specifiche per ricevere notifiche o canali alternativi (es. mail invece di pop-up)."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Navigazione e ordine di focus.",
+        "wcag": [
+          "2.1.1 Tastiera - A",
+          "2.4.3 Ordine del focus - A"
+        ],
+        "note": "Anche chi naviga con tastiera o screenreader deve poter accedere alla notifica.\nQuando la notifica viene chiusa, il focus deve tornare all’elemento che lo ha attivato."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Non intrappolare il focus.",
+        "wcag": [
+          "2.1.2 Nessun impedimento all'uso della tastiera - A"
+        ],
+        "note": "Deve essere sempre presente un bottone di chiusura visibile e deve essere possibile chiudere tramite il tasto ESC."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Indicatore di focus.",
+        "wcag": [
+          "2.4.7 Focus visibile - AA",
+          "2.4.13 Aspetto del focus - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "navigazione con screenreader",
+        "cosa": "La notifica deve essere annunciata a chi naviga da screenreader.",
+        "wcag": [
+          "4.1.3 Messaggi di stato - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "VARIANTI",
+        "cosa": "Toast notification.",
+        "wcag": [
+          "1.4.13 Contenuto con Hover o Focus - AA",
+          "2.2.1 Regolazione tempi di esecuzione - A",
+          "1.3.1 Informazioni e correlazioni - A"
+        ],
+        "note": "Non deve scomparire da sola\nse il timeout è inevitabile bisogna garantire che sia lungo a sufficienza.\nDeve comparire vicino a ciò che l'ha generata."
+      }
+    ]
+  },
+  {
+    "id": "accordion",
+    "name": "Accordion",
+    "type": "molecola",
+    "warning": "",
+    "always": [
+      "Bottoni",
+      "Icone e icon buttons",
+      "Intestazioni",
+      "Testi e errori"
+    ],
+    "sometimes": [
+      "Link",
+      "Loader e progress bar"
+    ],
+    "items": [
+      {
+        "section": "navigazione con screen reader",
+        "cosa": "Deve essere annunciato lo stato dell'accordion.",
+        "wcag": [
+          "4.1.3 Messaggi di stato - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "navigazione con zoom",
+        "cosa": "Posizione dell'icona di apertura/chiusura.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Attenzione a non posizionare i comandi lontani dall'etichetta (chi naviga con zoom applicato potrebbe non vederli o faticare a ricollegarli allo specifico campo)."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Chi naviga da tastiera deve poter interagire con ogni elemento.",
+        "wcag": [
+          "2.1.1 Tastiera - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Ordine di focus.",
+        "wcag": [
+          "2.4.3 Ordine del focus - A",
+          "1.3.2 Sequenza significativa - A"
+        ],
+        "note": "Gli elementi devono ricevere focus in un ordine che ne mantenga il senso e il significato."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Indicatore di focus",
+        "wcag": [
+          "2.4.7 Focus visibile - AA",
+          "2.4.13 Aspetto del focus - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Gli elementi nascosti non devono essere focalizzabili.",
+        "wcag": [
+          "2.4.11 Focus non nascosto (minimo) - AA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "ricerca",
+    "name": "Ricerca",
+    "type": "molecola",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "buca di ricerca",
+        "cosa": "Posizione",
+        "wcag": [
+          "3.2.4 Identificazione coerente - AA"
+        ],
+        "note": "La buca deve essere nello stesso posto nelle varie pagine."
+      },
+      {
+        "section": "buca di ricerca",
+        "cosa": "Etichetta.",
+        "wcag": [
+          "3.2.4 Identificazione coerente - AA"
+        ],
+        "note": "La label scelta per la CTA dovrebbe essere sempre la stessa"
+      },
+      {
+        "section": "buca di ricerca",
+        "cosa": "Proporre l'autocompletamento.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "buca di ricerca",
+        "cosa": "Tolleranza ai refusi.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "risultati",
+        "cosa": "Presentare i risultati in maniera chiara e comprensibile.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Indicare ad esempio il numero totale di risultati trovati o i filtri applicati."
+      },
+      {
+        "section": "risultati",
+        "cosa": "I risultati devono essere annunciati anche a chi naviga da screen reader.",
+        "wcag": [
+          "4.1.3 Messaggi di stato - AA"
+        ],
+        "note": "Con la struttura semantica, se sono in una nuova pagina, annunciando il cambiamento se non nella stessa pagina."
+      },
+      {
+        "section": "risultati",
+        "cosa": "Stato vuoto.",
+        "wcag": [
+          "3.3.1 Identificazione di errori - A",
+          "3.3.3 Suggerimenti per gli errori - AA"
+        ],
+        "note": "Se la ricerca non produce risultati mostrare uno stato vuoto che spieghi e guidi."
+      },
+      {
+        "section": "risultati",
+        "cosa": "Paginazione.",
+        "wcag": [
+          "1.3.4 Orientamento - AA"
+        ],
+        "note": "Assicurarsi che la navigazione tra le pagine sia accessibile."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Chi naviga da tastiera deve poter interagire con ogni elemento (sia buca di ricerca che risultati).",
+        "wcag": [
+          "2.1.1 Tastiera - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Ordine di focus.",
+        "wcag": [
+          "2.4.3 Ordine del focus - A",
+          "1.3.2 Sequenza significativa - A"
+        ],
+        "note": "Gli elementi (anche risultati di ricerca) devono ricevere focus in un ordine che ne mantenga il senso e il significato."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Indicatore di focus.",
+        "wcag": [
+          "2.4.7 Focus visibile - AA",
+          "2.4.13 Aspetto del focus - AAA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "tabs",
+    "name": "Tabs",
+    "type": "molecola",
+    "warning": "",
+    "always": [
+      "Bottoni",
+      "Link"
+    ],
+    "sometimes": [
+      "Icone e icon buttons",
+      "Intestazioni",
+      "Testi e errori"
+    ],
+    "items": [
+      {
+        "section": "struttura",
+        "cosa": "Indicare la posizione attiva.",
+        "wcag": [
+          "2.4.8 Posizione - AAA",
+          "1.4.1 Uso del colore - A"
+        ],
+        "note": "Non solo con il colore!"
+      },
+      {
+        "section": "struttura",
+        "cosa": "Orientamento.",
+        "wcag": [
+          "1.3.4 Orientamento - AA"
+        ],
+        "note": "Le tab devono essere tutte disponibili e accessibili sia in portrait che landscape."
+      },
+      {
+        "section": "interazione con screen reader",
+        "cosa": "Cambiare tab non deve causare cambiamenti contestuali imprevisti.",
+        "wcag": [
+          "3.2.2 All'input - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "interazione con screen reader",
+        "cosa": "Deve essere chiaro quale scheda è \"selezionata\" o \"espansa\".",
+        "wcag": [
+          "4.1.2 Nome, ruolo, valore - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "interazione con screen reader",
+        "cosa": "Se ci sono messaggi dinamici, devono essere comunicati.",
+        "wcag": [
+          "4.1.3 Messaggi di stato - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Chi naviga da tastiera deve poter interagire con ogni elemento.",
+        "wcag": [
+          "2.1.1 Tastiera - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Ordine di focus.",
+        "wcag": [
+          "2.4.3 Ordine del focus - A",
+          "1.3.2 Sequenza significativa - A"
+        ],
+        "note": "Gli elementi devono ricevere focus in un ordine che ne mantenga il senso e il significato."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Indicatore di focus.",
+        "wcag": [
+          "2.4.7 Focus visibile - AA",
+          "2.4.13 Aspetto del focus - AAA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "picker-data-e-ora",
+    "name": "Picker (data e ora)",
+    "type": "molecola",
+    "warning": "",
+    "always": [
+      "Bottoni",
+      "Link",
+      "Campi di input",
+      "Intestazioni"
+    ],
+    "sometimes": [
+      "Icone e icon buttons",
+      "Testi e errori",
+      "Loader e progress bar",
+      "Chips e tags",
+      "Tabelle"
+    ],
+    "items": [
+      {
+        "section": "interazione",
+        "cosa": "Fornire la possibilità di inserire manualmente le informazioni.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "altre caratteristiche",
+        "cosa": "Indicare il formato e fornire esempi.",
+        "wcag": [
+          "3.3.2 Etichette o istruzioni - A"
+        ],
+        "note": "Rendere chiaro il formato richiesto (anche alle tecnologie assistive)."
+      },
+      {
+        "section": "altre caratteristiche",
+        "cosa": "Fornire reminder.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Mandare un reminder della data/ora scelte può essere un supporto utile per persone con alcune disabilità cognitive (memoria, discalculia)."
+      },
+      {
+        "section": "altre caratteristiche",
+        "cosa": "Formato.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Utilizzare formati più riconosciuti e leggibili dalla tecnologia assistiva."
+      }
+    ]
+  },
+  {
+    "id": "tooltip-e-pop-over",
+    "name": "Tooltip e pop over",
+    "type": "molecola",
+    "warning": "",
+    "always": [
+      "Bottoni",
+      "Link",
+      "Intestazioni",
+      "Testi e errori"
+    ],
+    "sometimes": [
+      "Icone e icon buttons",
+      "Loader e progress bar"
+    ],
+    "items": [
+      {
+        "section": "struttura",
+        "cosa": "Chi naviga ha il controllo.",
+        "wcag": [
+          "1.4.13 Contenuto con Hover o Focus - AA"
+        ],
+        "note": "Persistente: non scompare immediatamente quando ci si sposta sopra.\nChiudibile: possa essere chiuso facilmente senza dover perdere il focus.\nPuntabile: se compare al passaggio del mouse, l'utente deve poterci andare sopra col puntatore senza farla sparire."
+      },
+      {
+        "section": "struttura",
+        "cosa": "Tempo.",
+        "wcag": [
+          "2.2.1 Regolazione tempi di esecuzione - A"
+        ],
+        "note": "Deve rimanere visibile finché chi naviga lo desidera (no timeout o chiusura automatica)."
+      },
+      {
+        "section": "struttura",
+        "cosa": "Relazione con altri contenuti.",
+        "wcag": [
+          "3.2.1 Al focus - A"
+        ],
+        "note": "Assicurarsi che, una volta aperta, non copra altro contenuto."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Navigazione e ordine di focus.",
+        "wcag": [
+          "2.1.1 Tastiera - A"
+        ],
+        "note": "Anche chi naviga con tastiera o screenreader deve poter accedere al tooltip."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Non intrappolare il focus.",
+        "wcag": [
+          "2.1.2 Nessun impedimento all'uso della tastiera - A"
+        ],
+        "note": "Deve essere sempre presente un bottone di chiusura visibile e deve essere possibile chiudere tramite il tasto ESC."
+      },
+      {
+        "section": "focus e navigazione da tastiera",
+        "cosa": "Indicatore di focus.",
+        "wcag": [
+          "2.4.7 Focus visibile - AA",
+          "2.4.13 Aspetto del focus - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "navigazione con screenreader",
+        "cosa": "La presenza della tooltip deve essere annunciata a chi naviga da screenreader.",
+        "wcag": [
+          "4.1.3 Messaggi di stato - AA",
+          "4.1.2 Nome, ruolo, valore - A"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "pager",
+    "name": "Pager",
+    "type": "molecola",
+    "warning": "",
+    "always": [
+      "Link"
+    ],
+    "sometimes": [
+      "Icone e icon buttons",
+      "Loader e progress bar"
+    ],
+    "items": [
+      {
+        "section": "interazione",
+        "cosa": "Etichetta.",
+        "wcag": [
+          "2.4.6 Intestazioni ed etichette - AA"
+        ],
+        "note": "Ogni link del pager (es. “Pagina precedente”, “Pagina successiva”, “Pagina 3”) deve avere un'etichetta chiara e comprensibile."
+      },
+      {
+        "section": "interazione",
+        "cosa": "Posizione corrente.",
+        "wcag": [
+          "1.3.1 Informazioni e correlazioni - A",
+          "1.4.1 Uso del colore - A"
+        ],
+        "note": "La pagina corrente deve essere chiaramente identificata.\nNon solo con il colore."
+      },
+      {
+        "section": "interazione",
+        "cosa": "Comportamento coerente.",
+        "wcag": [
+          "3.2.3 Navigazione coerente - AA",
+          "3.2.4 Identificazione coerente - AA"
+        ],
+        "note": "Ad esempio, cliccare su “Successiva” deve sempre portare alla pagina successiva."
+      },
+      {
+        "section": "interazione",
+        "cosa": "Disabilitazione dei controlli irrilevanti.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Se l'utente si trova sulla prima pagina, il link \"Pagina precedente\" deve essere rimosso o disabilitato; analogamente per il link \"Pagina successiva\" quando si raggiunge l'ultimo pannello."
+      }
+    ]
+  },
+  {
+    "id": "stepper",
+    "name": "Stepper",
+    "type": "molecola",
+    "warning": "",
+    "always": [
+      "Link",
+      "Intestazioni",
+      "Testi e errori"
+    ],
+    "sometimes": [
+      "Icone e icon buttons",
+      "Loader e progress bar"
+    ],
+    "items": [
+      {
+        "section": "interazione",
+        "cosa": "Etichetta.",
+        "wcag": [
+          "2.4.6 Intestazioni ed etichette - AA"
+        ],
+        "note": "Ogni passo dello stepper deve avere un’etichetta descrittiva e significativa."
+      },
+      {
+        "section": "interazione",
+        "cosa": "Indicare la posizione attiva.",
+        "wcag": [
+          "1.3.1 Informazioni e correlazioni - A",
+          "4.1.2 Nome, ruolo, valore - A",
+          "1.4.1 Uso del colore - A"
+        ],
+        "note": "Lo stato attivo deve essere chiaramente identificabile sia visivamente che semanticamente.\nNon solo con il colore!"
+      },
+      {
+        "section": "interazione",
+        "cosa": "Ordine delle voci.",
+        "wcag": [
+          "3.2.3 Navigazione coerente - AA"
+        ],
+        "note": "Le voci devono essere nello stesso ordine sulle diverse pagine."
+      },
+      {
+        "section": "interazione",
+        "cosa": "Funzionalità.",
+        "wcag": [
+          "3.2.4 Identificazione coerente - AA"
+        ],
+        "note": "Il comportamento dello stepper deve essere coerente e prevedibile durante l’interazione."
+      },
+      {
+        "section": "interazione",
+        "cosa": "Inserimento dati.",
+        "wcag": [
+          "3.3.7 Inserimento ridondante - A"
+        ],
+        "note": "Assicurati che tornando allo step precedente o ricaricando la pagina, i dati già inseriti non vadano perduti."
+      },
+      {
+        "section": "interazione",
+        "cosa": "Termine del percorso.",
+        "wcag": [
+          "Best Practice",
+          "4.1.3 Messaggi di stato - AA"
+        ],
+        "note": "Fornire una conferma chiara del completamento dell'intero processo, anche a chi naviga con tecnologie assistive."
+      }
+    ]
+  }
+]
+  </script>
+
+  <script type="application/json" id="wcag-slugs">
+{
+  "1.1.1": "non-text-content",
+  "1.3.1": "info-and-relationships",
+  "1.3.2": "meaningful-sequence",
+  "1.3.3": "sensory-characteristics",
+  "1.3.4": "orientation",
+  "1.3.6": "identify-purpose",
+  "1.4.1": "use-of-color",
+  "1.4.3": "contrast-minimum",
+  "1.4.4": "resize-text",
+  "1.4.6": "contrast-enhanced",
+  "1.4.8": "visual-presentation",
+  "1.4.10": "reflow",
+  "1.4.11": "non-text-contrast",
+  "1.4.12": "text-spacing",
+  "1.4.13": "content-on-hover-or-focus",
+  "2.1.1": "keyboard",
+  "2.1.2": "no-keyboard-trap",
+  "2.2.1": "timing-adjustable",
+  "2.2.2": "pause-stop-hide",
+  "2.2.6": "timeouts",
+  "2.3.1": "three-flashes-or-below-threshold",
+  "2.4.1": "bypass-blocks",
+  "2.4.3": "focus-order",
+  "2.4.4": "link-purpose-in-context",
+  "2.4.6": "headings-and-labels",
+  "2.4.7": "focus-visible",
+  "2.4.8": "location",
+  "2.4.9": "link-purpose-link-only",
+  "2.4.10": "section-headings",
+  "2.4.11": "focus-not-obscured-minimum",
+  "2.4.13": "focus-appearance",
+  "2.5.3": "label-in-name",
+  "2.5.5": "target-size-enhanced",
+  "2.5.8": "target-size-minimum",
+  "3.1.3": "unusual-words",
+  "3.1.4": "abbreviations",
+  "3.1.5": "reading-level",
+  "3.2.1": "on-focus",
+  "3.2.2": "on-input",
+  "3.2.3": "consistent-navigation",
+  "3.2.4": "consistent-identification",
+  "3.2.5": "change-on-request",
+  "3.3.1": "error-identification",
+  "3.3.2": "labels-or-instructions",
+  "3.3.3": "error-suggestion",
+  "3.3.6": "error-prevention-all",
+  "3.3.7": "redundant-entry",
+  "4.1.2": "name-role-value",
+  "4.1.3": "status-messages"
+}
+  </script>
+
+  <script type="application/json" id="comp-svgs">
+{"bottoni": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"34\" width=\"118\" height=\"44\" rx=\"8\" fill=\"var(--primary)\"/>\n    <rect x=\"16\" y=\"30\" width=\"126\" height=\"52\" rx=\"11\" stroke=\"var(--focus-ring)\" stroke-width=\"2.5\" stroke-dasharray=\"4 3\"/>\n    <rect x=\"44\" y=\"52\" width=\"70\" height=\"8\" rx=\"4\" fill=\"var(--primary-contrast)\"/>\n    <rect x=\"152\" y=\"34\" width=\"48\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"176\" cy=\"56\" r=\"8\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <path d=\"M176 52v8M172 56h8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n  <\/svg>", "link": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"30\" width=\"180\" height=\"8\" rx=\"4\" fill=\"var(--border-subtle)\"/>\n    <rect x=\"20\" y=\"50\" width=\"64\" height=\"8\" rx=\"4\" fill=\"var(--border-subtle)\"/>\n    <rect x=\"92\" y=\"50\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"92\" y1=\"62\" x2=\"176\" y2=\"62\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <path d=\"M182 50h6v6M188 50l-6 6\" stroke=\"var(--primary)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"20\" y=\"74\" width=\"140\" height=\"8\" rx=\"4\" fill=\"var(--border-subtle)\"/>\n  <\/svg>", "campi-di-input": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"20\" width=\"72\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <circle cx=\"102\" cy=\"24\" r=\"3\" fill=\"#b91c1c\"/>\n    <rect x=\"24\" y=\"36\" width=\"172\" height=\"40\" rx=\"6\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <line x1=\"36\" y1=\"46\" x2=\"36\" y2=\"66\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <rect x=\"44\" y=\"52\" width=\"86\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"24\" y=\"84\" width=\"124\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "icone-e-icon-buttons": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"34\" width=\"110\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"48\" cy=\"56\" r=\"9\" stroke=\"var(--primary)\" stroke-width=\"2.2\"/>\n    <path d=\"M55 63l5 5\" stroke=\"var(--primary)\" stroke-width=\"2.2\" stroke-linecap=\"round\"/>\n    <rect x=\"68\" y=\"52\" width=\"50\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"150\" y=\"34\" width=\"44\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M165 49l14 14M179 49l-14 14\" stroke=\"var(--text)\" stroke-width=\"2.2\" stroke-linecap=\"round\"/>\n  <\/svg>", "intestazioni": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"20\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--primary)\"/>\n    <text x=\"33\" y=\"32\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--primary-contrast)\">H1<\/text>\n    <rect x=\"54\" y=\"23\" width=\"136\" height=\"10\" rx=\"5\" fill=\"var(--text)\"/>\n    <rect x=\"28\" y=\"48\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <text x=\"41\" y=\"60\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--text)\">H2<\/text>\n    <rect x=\"62\" y=\"52\" width=\"110\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"36\" y=\"76\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <text x=\"49\" y=\"88\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--text-muted)\">H3<\/text>\n    <rect x=\"70\" y=\"80\" width=\"88\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "testi-e-errori": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"20\" width=\"176\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"22\" y=\"34\" width=\"154\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n    <rect x=\"22\" y=\"48\" width=\"166\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n    <rect x=\"22\" y=\"68\" width=\"176\" height=\"32\" rx=\"6\" fill=\"#fee2e2\" stroke=\"#b91c1c\" stroke-width=\"2\"/>\n    <circle cx=\"38\" cy=\"84\" r=\"7\" fill=\"#b91c1c\"/>\n    <path d=\"M38 80v5M38 88h.01\" stroke=\"#ffffff\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"52\" y=\"80\" width=\"128\" height=\"8\" rx=\"4\" fill=\"#7f1d1d\"/>\n  <\/svg>", "immagini": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"18\" width=\"172\" height=\"64\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"64\" cy=\"40\" r=\"9\" fill=\"var(--primary)\"/>\n    <path d=\"M36 74l36-28 26 20 28-24 48 32H36z\" fill=\"var(--border)\"/>\n    <rect x=\"24\" y=\"88\" width=\"42\" height=\"16\" rx=\"4\" fill=\"var(--primary)\"/>\n    <text x=\"45\" y=\"99\" text-anchor=\"middle\" font-size=\"9\" font-weight=\"700\" fill=\"var(--primary-contrast)\">ALT<\/text>\n    <rect x=\"74\" y=\"92\" width=\"122\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "loader-e-progress-bar": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"34\" width=\"172\" height=\"16\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"26\" y=\"36\" width=\"112\" height=\"12\" rx=\"6\" fill=\"var(--primary)\"/>\n    <rect x=\"24\" y=\"62\" width=\"96\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"164\" y=\"62\" width=\"32\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <rect x=\"24\" y=\"80\" width=\"60\" height=\"20\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <text x=\"54\" y=\"93\" text-anchor=\"middle\" font-size=\"9\" font-weight=\"700\" fill=\"var(--text)\">Pausa<\/text>\n  <\/svg>", "chips-e-tags": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"28\" width=\"84\" height=\"28\" rx=\"14\" fill=\"var(--primary)\"/>\n    <path d=\"M32 42l4 4 7-7\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"48\" y=\"38\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--primary-contrast)\"/>\n    <rect x=\"114\" y=\"28\" width=\"86\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"128\" y=\"38\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M179 38l8 8M187 38l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"20\" y=\"68\" width=\"96\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"36\" cy=\"82\" r=\"4\" fill=\"var(--primary)\"/>\n    <rect x=\"46\" y=\"78\" width=\"54\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n  <\/svg>", "toggle-e-switch": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"26\" width=\"54\" height=\"28\" rx=\"14\" fill=\"var(--primary)\"/>\n    <circle cx=\"64\" cy=\"40\" r=\"10\" fill=\"var(--primary-contrast)\"/>\n    <path d=\"M35 40l3 3 6-6\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"90\" y=\"36\" width=\"96\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"24\" y=\"68\" width=\"54\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"38\" cy=\"82\" r=\"10\" fill=\"var(--text-muted)\"/>\n    <rect x=\"90\" y=\"78\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "tabelle": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"18\" width=\"180\" height=\"84\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M20 42h180\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"21\" y=\"19\" width=\"178\" height=\"23\" rx=\"4\" fill=\"var(--surface-alt)\"/>\n    <line x1=\"20\" y1=\"42\" x2=\"200\" y2=\"42\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <line x1=\"20\" y1=\"62\" x2=\"200\" y2=\"62\" stroke=\"var(--border-subtle)\" stroke-width=\"1.5\"/>\n    <line x1=\"20\" y1=\"82\" x2=\"200\" y2=\"82\" stroke=\"var(--border-subtle)\" stroke-width=\"1.5\"/>\n    <line x1=\"84\" y1=\"18\" x2=\"84\" y2=\"102\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <line x1=\"144\" y1=\"18\" x2=\"144\" y2=\"102\" stroke=\"var(--border-subtle)\" stroke-width=\"1.5\"/>\n    <rect x=\"30\" y=\"27\" width=\"42\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"94\" y=\"27\" width=\"38\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"154\" y=\"27\" width=\"34\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"49\" width=\"36\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"69\" width=\"40\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"89\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n  <\/svg>", "form": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"14\" width=\"176\" height=\"92\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"34\" y=\"24\" width=\"60\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"34\" width=\"152\" height=\"18\" rx=\"4\" fill=\"var(--bg)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"34\" y=\"58\" width=\"52\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"68\" width=\"152\" height=\"18\" rx=\"4\" fill=\"var(--bg)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"126\" y=\"91\" width=\"60\" height=\"10\" rx=\"5\" fill=\"var(--primary)\"/>\n  <\/svg>", "card": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"34\" y=\"12\" width=\"152\" height=\"96\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"35\" y=\"13\" width=\"150\" height=\"38\" rx=\"6\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"46\" y=\"60\" width=\"94\" height=\"9\" rx=\"4.5\" fill=\"var(--text)\"/>\n    <rect x=\"46\" y=\"75\" width=\"124\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"46\" y=\"88\" width=\"64\" height=\"12\" rx=\"4\" fill=\"var(--primary)\"/>\n  <\/svg>", "caroselli": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"48\" y=\"20\" width=\"124\" height=\"64\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"28\" cy=\"52\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M31 47l-6 5 6 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"192\" cy=\"52\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M189 47l6 5-6 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"96\" cy=\"98\" r=\"5\" fill=\"var(--primary)\"/>\n    <circle cx=\"110\" cy=\"98\" r=\"4\" fill=\"var(--border)\"/>\n    <circle cx=\"124\" cy=\"98\" r=\"4\" fill=\"var(--border)\"/>\n  <\/svg>", "dataviz": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <line x1=\"30\" y1=\"94\" x2=\"194\" y2=\"94\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <line x1=\"30\" y1=\"20\" x2=\"30\" y2=\"94\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"46\" y=\"46\" width=\"28\" height=\"48\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"92\" y=\"28\" width=\"28\" height=\"66\" rx=\"3\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <path d=\"M94 42l24-12M94 58l24-12M94 74l24-12M94 90l24-12\" stroke=\"var(--text)\" stroke-width=\"1.5\"/>\n    <rect x=\"138\" y=\"58\" width=\"28\" height=\"36\" rx=\"3\" fill=\"var(--accent-special)\"/>\n  <\/svg>", "pop-up-e-modali": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"14\" y=\"12\" width=\"192\" height=\"96\" rx=\"8\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"38\" y=\"22\" width=\"144\" height=\"76\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2.2\"/>\n    <rect x=\"50\" y=\"34\" width=\"84\" height=\"9\" rx=\"4.5\" fill=\"var(--text)\"/>\n    <rect x=\"152\" y=\"30\" width=\"18\" height=\"18\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <path d=\"M157 35l8 8M165 35l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"50\" y=\"52\" width=\"116\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"50\" y=\"64\" width=\"96\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"118\" y=\"76\" width=\"52\" height=\"14\" rx=\"4\" fill=\"var(--primary)\"/>\n  <\/svg>", "breadcrumbs": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"52\" width=\"38\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"20\" y1=\"63\" x2=\"58\" y2=\"63\" stroke=\"var(--primary)\" stroke-width=\"2\"/>\n    <path d=\"M66 51l5 5-5 5\" stroke=\"var(--text-muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"80\" y=\"52\" width=\"48\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"80\" y1=\"63\" x2=\"128\" y2=\"63\" stroke=\"var(--primary)\" stroke-width=\"2\"/>\n    <path d=\"M136 51l5 5-5 5\" stroke=\"var(--text-muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"150\" y=\"52\" width=\"50\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n  <\/svg>", "menu-navigazione": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"18\" y=\"24\" width=\"184\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"30\" y=\"36\" width=\"36\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"30\" y1=\"49\" x2=\"66\" y2=\"49\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <rect x=\"80\" y=\"36\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M126 38l4 4 4-4\" stroke=\"var(--text)\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n    <rect x=\"148\" y=\"36\" width=\"40\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"76\" y=\"60\" width=\"76\" height=\"42\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"86\" y=\"70\" width=\"52\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"86\" y=\"84\" width=\"44\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "notifiche": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"34\" width=\"176\" height=\"52\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"22\" y=\"34\" width=\"8\" height=\"52\" rx=\"3\" fill=\"var(--primary)\"/>\n    <circle cx=\"46\" cy=\"60\" r=\"9\" fill=\"var(--primary)\"/>\n    <path d=\"M46 56v5M46 64h.01\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"64\" y=\"48\" width=\"86\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"64\" y=\"63\" width=\"102\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <path d=\"M178 46l8 8M186 46l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n  <\/svg>", "accordion": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"16\" width=\"172\" height=\"52\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"36\" y=\"26\" width=\"96\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M174 32l5-5 5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <line x1=\"24\" y1=\"42\" x2=\"196\" y2=\"42\" stroke=\"var(--border-subtle)\" stroke-width=\"1.5\"/>\n    <rect x=\"36\" y=\"51\" width=\"138\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"24\" y=\"76\" width=\"172\" height=\"28\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"36\" y=\"86\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M174 88l5 5 5-5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n  <\/svg>", "ricerca": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"22\" width=\"130\" height=\"36\" rx=\"6\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"34\" y=\"36\" width=\"76\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"158\" y=\"22\" width=\"40\" height=\"36\" rx=\"6\" fill=\"var(--primary)\"/>\n    <circle cx=\"176\" cy=\"38\" r=\"6\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\"/>\n    <path d=\"M181 43l4 4\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"22\" y=\"64\" width=\"130\" height=\"38\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"34\" y=\"74\" width=\"88\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"87\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "tabs": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"22\" width=\"56\" height=\"24\" rx=\"5\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"32\" y=\"30\" width=\"36\" height=\"7\" rx=\"3.5\" fill=\"var(--primary)\"/>\n    <line x1=\"24\" y1=\"44\" x2=\"76\" y2=\"44\" stroke=\"var(--primary)\" stroke-width=\"3.5\"/>\n    <rect x=\"82\" y=\"24\" width=\"54\" height=\"22\" rx=\"5\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"92\" y=\"32\" width=\"34\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"140\" y=\"24\" width=\"54\" height=\"22\" rx=\"5\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"150\" y=\"32\" width=\"34\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"22\" y=\"46\" width=\"176\" height=\"54\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"36\" y=\"62\" width=\"134\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"36\" y=\"76\" width=\"108\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "picker-data-e-ora": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"38\" y=\"14\" width=\"144\" height=\"24\" rx=\"5\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"1.8\"/>\n    <rect x=\"48\" y=\"23\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"38\" y=\"42\" width=\"144\" height=\"66\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"52\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"76\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"100\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"124\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"148\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"52\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"76\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"100\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n  <\/svg>", "tooltip-e-pop-over": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"42\" y=\"18\" width=\"136\" height=\"44\" rx=\"6\" fill=\"var(--text)\"/>\n    <rect x=\"54\" y=\"30\" width=\"92\" height=\"7\" rx=\"3.5\" fill=\"var(--bg)\"/>\n    <rect x=\"54\" y=\"43\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--border-subtle)\"/>\n    <path d=\"M104 62l6 8 6-8\" fill=\"var(--text)\"/>\n    <circle cx=\"110\" cy=\"86\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <text x=\"110\" y=\"90\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"700\" fill=\"var(--primary)\">i<\/text>\n  <\/svg>", "pager": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <path d=\"M38 55l-5 5 5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"58\" y=\"44\" width=\"30\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <text x=\"73\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--text)\">1<\/text>\n    <rect x=\"94\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--primary)\"/>\n    <text x=\"110\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--primary-contrast)\">2<\/text>\n    <rect x=\"132\" y=\"44\" width=\"30\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <text x=\"147\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--text)\">3<\/text>\n    <rect x=\"168\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <path d=\"M182 55l5 5-5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n  <\/svg>", "stepper": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <line x1=\"44\" y1=\"48\" x2=\"176\" y2=\"48\" stroke=\"var(--border)\" stroke-width=\"2.5\"/>\n    <line x1=\"44\" y1=\"48\" x2=\"110\" y2=\"48\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <circle cx=\"44\" cy=\"48\" r=\"14\" fill=\"var(--primary)\"/>\n    <path d=\"M39 48l3 3 7-7\" stroke=\"var(--primary-contrast)\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"110\" cy=\"48\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <text x=\"110\" y=\"52\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"700\" fill=\"var(--primary)\">2<\/text>\n    <circle cx=\"176\" cy=\"48\" r=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <text x=\"176\" y=\"52\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"700\" fill=\"var(--text-muted)\">3<\/text>\n    <rect x=\"28\" y=\"70\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"92\" y=\"70\" width=\"36\" height=\"6\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"160\" y=\"70\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>"}
+  </script>
+
+  <script>
+    (function() {
+      const DATA = JSON.parse(document.getElementById("comp-data").textContent);
+      const WCAG_SLUGS = JSON.parse(document.getElementById("wcag-slugs").textContent);
+      const COMP_SVGS = JSON.parse(document.getElementById("comp-svgs").textContent);
+      const WCAG_BASE_URL = "https://www.w3.org/Translations/WCAG22-it/#";
+      let selectedComp = "ALL";
+      let lastTriggerEl = null;
+      let currentModalAtomId = null;
+
+      // Icone SVG semantiche (decorative, accompagnate dal testo) per distinguere Attenzioni extra (Bonus), Varianti, Stati ed Errori
+      const SECTION_ICONS = {
+        extra: '<svg class="sec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.8L20 10.7l-5.1 3.7 1.9 6.1L12 16.8l-4.8 3.7 1.9-6.1L4 10.7l6.1-1.9L12 3z"/></svg>',
+        variant: '<svg class="sec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',
+        state: '<svg class="sec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>',
+        error: '<svg class="sec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+      };
+
+      function normalizeSectionMeta(rawSec) {
+        let s = String(rawSec || "Generale").trim();
+        s = s.replace(/ATTENZIONI EXTRA e VARIANTI/gi, "Attenzioni extra e varianti")
+             .replace(/ATTENZIONI EXTRA/gi, "Attenzioni extra")
+             .replace(/VARIANTI/gi, "Varianti")
+             .replace(/STATI/gi, "Stati")
+             .replace(/ERRORI/gi, "Errori");
+        s = s.charAt(0).toUpperCase() + s.slice(1);
+
+        // Separa genitore e figlio se presente " · " (es. "Attenzioni extra e varianti · bottoni solo con icona")
+        const parts = s.split(" · ");
+        const parentTitle = parts[0].trim();
+        const childTitle = parts.length > 1 ? (parts[1].charAt(0).toUpperCase() + parts[1].slice(1)) : "";
+
+        const lower = parentTitle.toLowerCase();
+        let category = "base"; // 'base' | 'extra' | 'variant' | 'state' | 'error'
+        let kindLabel = "Considerazioni base";
+        let iconSvg = "";
+
+        if (lower.startsWith("attenzioni extra")) {
+          category = "extra";
+          kindLabel = lower.includes("varianti") ? "Bonus · Attenzioni extra e varianti" : "Bonus · Attenzioni extra";
+          iconSvg = SECTION_ICONS.extra;
+        } else if (lower.startsWith("varianti")) {
+          category = "variant";
+          kindLabel = "Variante";
+          iconSvg = SECTION_ICONS.variant;
+        } else if (lower.startsWith("stati")) {
+          category = "state";
+          kindLabel = "Gestione stati";
+          iconSvg = SECTION_ICONS.state;
+        } else if (lower.startsWith("errori")) {
+          category = "error";
+          kindLabel = "Gestione errori";
+          iconSvg = SECTION_ICONS.error;
+        }
+
+        return {
+          title: childTitle ? (parentTitle + " · " + childTitle) : parentTitle,
+          parentTitle: parentTitle,
+          childTitle: childTitle,
+          category: category,
+          isSpecial: category !== "base",
+          kindLabel: kindLabel,
+          iconSvg: iconSvg
+        };
+      }
+
+      function classifyBadge(text) {
+        const t = String(text || "").trim();
+        if (t.toLowerCase().includes("best practice")) {
+          return { label: "Best Practice", cls: "badge-bp", level: "BP", href: null };
+        }
+        let level = "A";
+        if (t.endsWith("- AAA")) level = "AAA";
+        else if (t.endsWith("- AA")) level = "AA";
+        else if (t.endsWith("- A")) level = "A";
+
+        let principle = "WCAG 2.2";
+        let cls = "badge-utilizzabile";
+        if (t.startsWith("1.")) { principle = "Percepibile"; cls = "badge-percepibile"; }
+        else if (t.startsWith("2.")) { principle = "Utilizzabile"; cls = "badge-utilizzabile"; }
+        else if (t.startsWith("3.")) { principle = "Comprensibile"; cls = "badge-comprensibile"; }
+        else if (t.startsWith("4.")) { principle = "Robusto"; cls = "badge-robusto"; }
+
+        const codeMatch = t.match(/^(\d+\.\d+\.\d+)/);
+        let href = null;
+        if (codeMatch && WCAG_SLUGS[codeMatch[1]]) {
+          href = WCAG_BASE_URL + WCAG_SLUGS[codeMatch[1]];
+        }
+
+        return { label: principle + " · " + t, cls: cls, level: level, href: href };
+      }
+
+      function matchesScope(item, scope) {
+        if (scope === "ALL") return true;
+        const hay = (item.section + " " + item.cosa + " " + item.note).toLowerCase();
+        if (scope === "colore") return /colore|contrasto|dark mode|sfondo/.test(hay);
+        if (scope === "dimensioni") return /dimension|48px|44px|obiettivo|zoom|ridimension/.test(hay);
+        if (scope === "focus") return /focus|tastiera|tab|esc|intrappol/.test(hay);
+        if (scope === "label") return /label|etichett|testo|linguaggio|alt|scopo|intestazion/.test(hay);
+        if (scope === "stati") return /stat|messagg|annunci|errore|disabilitat|loading|timeout/.test(hay);
+        return true;
+      }
+
+      function buildConceptGroups(items, idPrefix) {
+        const fragment = document.createDocumentFragment();
+        const sectionGroups = [];
+        const sectionMap = new Map();
+
+        items.forEach(function(item) {
+          const meta = normalizeSectionMeta(item.section);
+          if (!sectionMap.has(meta.title)) {
+            const grp = { meta: meta, items: [], anchorId: "" };
+            sectionMap.set(meta.title, grp);
+            sectionGroups.push(grp);
+          }
+          sectionMap.get(meta.title).items.push(item);
+        });
+
+        sectionGroups.forEach(function(grp, grpIdx) {
+          const secId = idPrefix + "-sec-" + grpIdx;
+          grp.anchorId = secId;
+
+          const conceptDiv = document.createElement("div");
+          let extraCls = "";
+          if (grp.meta.category === "extra") extraCls = " extra-group";
+          else if (grp.meta.isSpecial) extraCls = " variant-group";
+          conceptDiv.className = "concept-group" + extraCls;
+          conceptDiv.id = secId;
+
+          const hSec = document.createElement("h3");
+          hSec.className = "concept-heading";
+
+          const leftSpan = document.createElement("span");
+          leftSpan.className = "heading-main-part";
+          if (grp.meta.iconSvg) {
+            leftSpan.innerHTML = grp.meta.iconSvg;
+          }
+          const textNode = document.createElement("span");
+          textNode.textContent = grp.meta.title;
+          leftSpan.appendChild(textNode);
+          hSec.appendChild(leftSpan);
+
+          if (grp.meta.isSpecial) {
+            const tagSpan = document.createElement("span");
+            tagSpan.className = "group-kind-tag";
+            tagSpan.textContent = grp.meta.kindLabel;
+            hSec.appendChild(tagSpan);
+          }
+
+          conceptDiv.appendChild(hSec);
+
+          const grid = document.createElement("div");
+          grid.className = "cards-grid";
+
+          grp.items.forEach(function(item) {
+            const card = document.createElement("article");
+            card.className = "rule-card";
+
+            const topDiv = document.createElement("div");
+            const hCard = document.createElement("h4");
+            hCard.className = "card-title";
+            hCard.textContent = item.cosa;
+            topDiv.appendChild(hCard);
+
+            if (item.note) {
+              const noteP = document.createElement("p");
+              noteP.className = "card-note";
+              noteP.textContent = item.note;
+              topDiv.appendChild(noteP);
+            }
+            card.appendChild(topDiv);
+
+            const ul = document.createElement("ul");
+            ul.className = "badges-list";
+            ul.setAttribute("aria-label", "Criteri WCAG 2.2 e riferimenti");
+            item.wcag.forEach(function(w) {
+              const b = classifyBadge(w);
+              const li = document.createElement("li");
+              if (b.href) {
+                const a = document.createElement("a");
+                a.className = "wcag-badge " + b.cls;
+                a.href = b.href;
+                a.target = "_blank";
+                a.rel = "noopener noreferrer";
+                a.textContent = b.label + " ↗";
+                a.setAttribute("aria-label", b.label + " (apre la specifica WCAG 2.2 in italiano in una nuova scheda)");
+                li.appendChild(a);
+              } else {
+                const span = document.createElement("span");
+                span.className = "wcag-badge " + b.cls;
+                span.textContent = b.label;
+                li.appendChild(span);
+              }
+              ul.appendChild(li);
+            });
+            card.appendChild(ul);
+            grid.appendChild(card);
+          });
+
+          conceptDiv.appendChild(grid);
+          fragment.appendChild(conceptDiv);
+        });
+
+        return { fragment: fragment, sectionGroups: sectionGroups };
+      }
+
+      // Costruisce un indice gerarchico ad albero (al posto delle chip piatte)
+      function buildHierarchicalToc(compName, sectionGroups) {
+        const nav = document.createElement("nav");
+        nav.className = "toc-box";
+        nav.setAttribute("aria-label", "Indice delle sezioni di " + compName);
+
+        const titleP = document.createElement("p");
+        titleP.className = "toc-title";
+        titleP.textContent = "Indice dei contenuti della scheda";
+        nav.appendChild(titleP);
+
+        // Raggruppa per parentTitle mantenendo l'ordine di apparizione
+        function buildTreeList(groupsList) {
+          const ulRoot = document.createElement("ul");
+          ulRoot.className = "toc-tree";
+          const parentNodes = new Map();
+
+          groupsList.forEach(function(grp) {
+            const pTitle = grp.meta.parentTitle;
+            if (!parentNodes.has(pTitle)) {
+              const li = document.createElement("li");
+              parentNodes.set(pTitle, { li: li, hasParentLink: false, subUl: null, iconSvg: grp.meta.iconSvg });
+              ulRoot.appendChild(li);
+            }
+            const node = parentNodes.get(pTitle);
+            if (!grp.meta.childTitle) {
+              const a = document.createElement("a");
+              a.className = "toc-link";
+              a.href = "#" + grp.anchorId;
+              if (grp.meta.iconSvg) a.innerHTML = grp.meta.iconSvg;
+              const sp = document.createElement("span");
+              sp.textContent = grp.meta.parentTitle;
+              a.appendChild(sp);
+              node.li.insertBefore(a, node.li.firstChild);
+              node.hasParentLink = true;
+            } else {
+              if (!node.hasParentLink && !node.li.querySelector(".toc-parent-text")) {
+                const spanParent = document.createElement("span");
+                spanParent.className = "toc-parent-text";
+                spanParent.style.fontWeight = "700";
+                spanParent.textContent = pTitle;
+                node.li.appendChild(spanParent);
+              }
+              if (!node.subUl) {
+                node.subUl = document.createElement("ul");
+                node.subUl.className = "toc-sublist";
+                node.li.appendChild(node.subUl);
+              }
+              const subLi = document.createElement("li");
+              const subA = document.createElement("a");
+              subA.className = "toc-link";
+              subA.href = "#" + grp.anchorId;
+              subA.textContent = grp.meta.childTitle;
+              subLi.appendChild(subA);
+              node.subUl.appendChild(subLi);
+            }
+          });
+
+          return ulRoot;
+        }
+
+        const baseGroups = sectionGroups.filter(function(g) { return !g.meta.isSpecial; });
+        const specialGroups = sectionGroups.filter(function(g) { return g.meta.isSpecial; });
+
+        const cols = document.createElement("div");
+        cols.className = "toc-columns";
+
+        if (baseGroups.length) {
+          const colBase = document.createElement("div");
+          const lblBase = document.createElement("p");
+          lblBase.className = "toc-group-label";
+          lblBase.textContent = "Considerazioni fondamentali";
+          colBase.appendChild(lblBase);
+          colBase.appendChild(buildTreeList(baseGroups));
+          cols.appendChild(colBase);
+        }
+
+        if (specialGroups.length) {
+          const colSpec = document.createElement("div");
+          const lblSpec = document.createElement("p");
+          lblSpec.className = "toc-group-label";
+          lblSpec.innerHTML = SECTION_ICONS.extra + "<span>Approfondimenti: attenzioni extra, varianti e stati</span>";
+          colSpec.appendChild(lblSpec);
+          colSpec.appendChild(buildTreeList(specialGroups));
+          cols.appendChild(colSpec);
+        }
+
+        nav.appendChild(cols);
+        return nav;
+      }
+
+      // Gestione modale accessibile (<dialog>) per consultare gli atomi senza lasciare la pagina
+      const dialogEl = document.getElementById("atom-modal");
+      const dialogTitle = document.getElementById("dialog-title");
+      const dialogBody = document.getElementById("dialog-body");
+      const dialogClose = document.getElementById("dialog-close");
+      const dialogGoFull = document.getElementById("dialog-go-full");
+
+      function openAtomModal(atomComp, triggerBtn) {
+        lastTriggerEl = triggerBtn;
+        currentModalAtomId = atomComp.id;
+        dialogTitle.textContent = atomComp.name + " (elemento base)";
+        dialogBody.innerHTML = "";
+
+        if (COMP_SVGS[atomComp.id]) {
+          const illWrap = document.createElement("div");
+          illWrap.className = "modal-illustration-wrap";
+          illWrap.innerHTML = COMP_SVGS[atomComp.id];
+          dialogBody.appendChild(illWrap);
+        }
+
+        const built = buildConceptGroups(atomComp.items, "modal-" + atomComp.id);
+        dialogBody.appendChild(built.fragment);
+
+        dialogEl.showModal();
+        dialogClose.focus();
+      }
+
+      dialogClose.addEventListener("click", function() {
+        dialogEl.close();
+      });
+
+      dialogGoFull.addEventListener("click", function() {
+        const targetId = currentModalAtomId;
+        dialogEl.close();
+        if (targetId) {
+          selectedComp = targetId;
+          updateUI();
+          document.getElementById("main-content").focus();
+        }
+      });
+
+      dialogEl.addEventListener("close", function() {
+        if (lastTriggerEl && typeof lastTriggerEl.focus === "function") {
+          lastTriggerEl.focus();
+        }
+      });
+
+      function renderSidebar() {
+        const listAtomi = document.getElementById("list-atomi");
+        const listMolecole = document.getElementById("list-molecole");
+        listAtomi.innerHTML = "";
+        listMolecole.innerHTML = "";
+
+        DATA.forEach(function(comp) {
+          const li = document.createElement("li");
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "comp-btn";
+          btn.dataset.comp = comp.id;
+          btn.setAttribute("aria-current", selectedComp === comp.id ? "true" : "false");
+          btn.textContent = comp.name;
+
+          btn.addEventListener("click", function() {
+            selectedComp = comp.id;
+            updateUI();
+            document.getElementById("main-content").focus();
+          });
+          li.appendChild(btn);
+          (comp.type === "atomo" ? listAtomi : listMolecole).appendChild(li);
+        });
+
+        const allBtn = document.querySelector('[data-comp="ALL"]');
+        allBtn.setAttribute("aria-current", selectedComp === "ALL" ? "true" : "false");
+        allBtn.onclick = function() {
+          selectedComp = "ALL";
+          updateUI();
+        };
+      }
+
+      function updateUI() {
+        renderSidebar();
+        const query = document.getElementById("search-input").value.trim().toLowerCase();
+        const scope = document.getElementById("scope-select").value;
+        const activeLevels = Array.from(document.querySelectorAll('input[name="level"]:checked')).map(function(el) { return el.value; });
+
+        const contentArea = document.getElementById("content-area");
+        contentArea.innerHTML = "";
+
+        const visibleComps = selectedComp === "ALL" ? DATA : DATA.filter(function(c) { return c.id === selectedComp; });
+        let shownRulesCount = 0;
+        let shownCompsCount = 0;
+
+        visibleComps.forEach(function(comp) {
+          const filteredItems = comp.items.filter(function(item) {
+            const badges = item.wcag.map(classifyBadge);
+            const levelMatch = badges.length === 0 ? activeLevels.includes("BP") : badges.some(function(b) { return activeLevels.includes(b.level); });
+            if (!levelMatch) return false;
+            if (!matchesScope(item, scope)) return false;
+            if (query) {
+              const fullText = (comp.name + " " + item.section + " " + item.cosa + " " + item.note + " " + item.wcag.join(" ")).toLowerCase();
+              if (!fullText.includes(query)) return false;
+            }
+            return true;
+          });
+
+          if (filteredItems.length === 0) return;
+          shownRulesCount += filteredItems.length;
+          shownCompsCount += 1;
+
+          const compSection = document.createElement("section");
+          compSection.className = "component-block";
+          compSection.setAttribute("aria-labelledby", "heading-" + comp.id);
+
+          const headerDiv = document.createElement("div");
+          headerDiv.className = "comp-header";
+
+          const topRow = document.createElement("div");
+          topRow.className = "comp-header-top";
+
+          const titleWrap = document.createElement("div");
+          titleWrap.className = "comp-title-wrap";
+
+          const h2 = document.createElement("h2");
+          h2.id = "heading-" + comp.id;
+          h2.textContent = comp.name + " ";
+          const small = document.createElement("span");
+          small.className = "comp-type-tag";
+          small.textContent = "(" + comp.type + ")";
+          h2.appendChild(small);
+          titleWrap.appendChild(h2);
+
+          if (comp.warning) {
+            const warnP = document.createElement("p");
+            warnP.className = "warning-banner";
+            warnP.setAttribute("role", "note");
+            warnP.textContent = comp.warning;
+            titleWrap.appendChild(warnP);
+          }
+
+          topRow.appendChild(titleWrap);
+
+          if (COMP_SVGS[comp.id]) {
+            const illBox = document.createElement("div");
+            illBox.className = "comp-illustration";
+            illBox.innerHTML = COMP_SVGS[comp.id];
+            topRow.appendChild(illBox);
+          }
+
+          headerDiv.appendChild(topRow);
+
+          const built = buildConceptGroups(filteredItems, "comp-" + comp.id);
+
+          // Indice gerarchico ad albero (mostrato negli elementi base o quando è selezionato un singolo componente)
+          if (built.sectionGroups.length > 1 && (comp.type === "atomo" || selectedComp !== "ALL")) {
+            headerDiv.appendChild(buildHierarchicalToc(comp.name, built.sectionGroups));
+          }
+
+          if (comp.always.length || comp.sometimes.length) {
+            const relBox = document.createElement("div");
+            relBox.className = "relations-box";
+
+            const relH3 = document.createElement("h3");
+            relH3.textContent = "Elementi base (atomi) da considerare";
+            relBox.appendChild(relH3);
+
+            const hintP = document.createElement("p");
+            hintP.className = "relations-hint";
+            hintP.textContent = "Seleziona un elemento base per consultarne le regole in sovrimpressione senza perdere il segno.";
+            relBox.appendChild(hintP);
+
+            function buildRelRow(titleText, list) {
+              if (!list.length) return;
+              const row = document.createElement("div");
+              row.className = "rel-row";
+              const strong = document.createElement("strong");
+              strong.textContent = titleText + ": ";
+              row.appendChild(strong);
+
+              list.forEach(function(atomName) {
+                const found = DATA.find(function(d) { return d.name.toLowerCase() === atomName.toLowerCase(); });
+                if (found) {
+                  const btn = document.createElement("button");
+                  btn.type = "button";
+                  btn.className = "rel-chip";
+                  btn.textContent = atomName;
+                  btn.setAttribute("aria-haspopup", "dialog");
+                  btn.addEventListener("click", function() {
+                    openAtomModal(found, btn);
+                  });
+                  row.appendChild(btn);
+                } else {
+                  const span = document.createElement("span");
+                  span.className = "rel-chip";
+                  span.textContent = atomName;
+                  row.appendChild(span);
+                }
+              });
+              relBox.appendChild(row);
+            }
+
+            buildRelRow("Sempre", comp.always);
+            buildRelRow("In alcuni casi", comp.sometimes);
+            headerDiv.appendChild(relBox);
+          }
+
+          compSection.appendChild(headerDiv);
+          compSection.appendChild(built.fragment);
+          contentArea.appendChild(compSection);
+        });
+
+        const statusEl = document.getElementById("results-status");
+        statusEl.textContent = shownRulesCount === 0
+          ? "Nessuna regola corrisponde ai filtri selezionati."
+          : "Visualizzate " + shownRulesCount + " regole su " + shownCompsCount + " component" + (shownCompsCount === 1 ? "e" : "i") + ".";
+      }
+
+      document.getElementById("search-input").addEventListener("input", updateUI);
+      document.getElementById("scope-select").addEventListener("change", updateUI);
+      document.querySelectorAll('input[name="level"]').forEach(function(cb) { cb.addEventListener("change", updateUI); });
+      document.getElementById("reset-filters").addEventListener("click", function() {
+        selectedComp = "ALL";
+        document.getElementById("search-input").value = "";
+        document.getElementById("scope-select").value = "ALL";
+        document.querySelectorAll('input[name="level"]').forEach(function(cb) { cb.checked = true; });
+        updateUI();
+      });
+
+      updateUI();
+    })();
+  </script>
+</body>
+</html>
