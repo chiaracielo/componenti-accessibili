@@ -1,0 +1,3794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accessible Design Components – Accessibility Days 2026</title>
+  <link rel="alternate" hreflang="it" href="index.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,600;0,700;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8f8fb;
+      --surface: #ffffff;
+      --surface-alt: #f2f0f7;
+      --text: #12101a;
+      --text-muted: #332f42;
+      --border: #5f5973;
+      --border-subtle: #cdc8dc;
+      /* Viola primario richiesto: #408 (#440088) - contrasto 13.5:1 su bianco */
+      --primary: #440088;
+      --primary-hover: #320066;
+      --primary-contrast: #ffffff;
+      /* Attenzioni extra: sfondino molto chiaro con grigio con una punta di viola (no giallo, no viola intenso) */
+      --extra-bg: #f6f5f9;
+      --extra-header-bg: #ebe8f2;
+      --extra-border: #6b667a;
+      --extra-text: #221f2e;
+      /* Varianti / Stati / Errori: grigio-ardesia neutro-violaceo distinto */
+      --variant-bg: #f4f4f8;
+      --variant-header-bg: #e7e6f0;
+      --variant-border: #524d66;
+      --variant-text: #1b1826;
+
+      --focus-ring: #12101a;
+      --focus-bg: #fde047;
+      --radius: 8px;
+      --shadow: 0 1px 3px rgba(18, 16, 26, 0.08);
+      --font-main: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #110e1b;
+        --surface: #1b172b;
+        --surface-alt: #28223d;
+        --text: #f8f7fc;
+        --text-muted: #d6d2e4;
+        --border: #9890b0;
+        --border-subtle: #433c5c;
+        --primary: #d8b4fe;
+        --primary-hover: #e9d5ff;
+        --primary-contrast: #160929;
+
+        --extra-bg: #191624;
+        --extra-header-bg: #252136;
+        --extra-border: #9a94ad;
+        --extra-text: #edeaf5;
+
+        --variant-bg: #171522;
+        --variant-header-bg: #232033;
+        --variant-border: #8a849e;
+        --variant-text: #e8e5f2;
+
+        --focus-ring: #fde047;
+        --focus-bg: #1b172b;
+      }
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-main);
+      font-weight: 400;
+      font-size: 1rem; /* 16px minimo garantito */
+      line-height: 1.55;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
+    button, input, select {
+      font-family: inherit;
+      font-size: 1rem;
+    }
+
+    /* Testo solo per screen reader */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Focus visibile ad alto contrasto (WCAG 2.4.7, 2.4.13, 1.4.11) */
+    :focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    /* Skip Links (WCAG 2.4.1) */
+    .skip-links {
+      position: absolute;
+      top: -140px;
+      left: 0.75rem;
+      z-index: 1000;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .skip-links a:focus {
+      position: fixed;
+      top: 0.75rem;
+      left: 0.75rem;
+      background: var(--focus-bg);
+      color: #12101a;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.7rem 1.1rem;
+      border: 2px solid #12101a;
+      border-radius: var(--radius);
+      text-decoration: none;
+    }
+
+    .skip-toc-link {
+      display: inline-block;
+      margin-top: 0.65rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* Icona esterna standard (apre in nuova scheda) */
+    .ext-icon {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      vertical-align: -0.12em;
+      margin-left: 0.25em;
+      flex-shrink: 0;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 2px solid var(--border-subtle);
+      padding: 1.35rem 1.5rem;
+    }
+    .header-inner {
+      max-width: 1380px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem 1.5rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(1.85rem, 3vw, 2.35rem);
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--text);
+    }
+    .subtitle {
+      margin: 0.35rem 0 0;
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+    .subtitle a {
+      color: var(--primary);
+      font-weight: 700;
+      text-underline-offset: 3px;
+    }
+    .lang-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      min-height: 44px;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      border: 2px solid var(--primary);
+      background: var(--surface-alt);
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+    }
+    .lang-switch:hover {
+      background: var(--primary);
+      color: var(--primary-contrast);
+    }
+
+    /* Layout principale responsive (WCAG 1.4.10 Reflow) */
+    .layout {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem 3.5rem;
+      display: grid;
+      grid-template-columns: minmax(255px, 295px) minmax(0, 1fr);
+      gap: 2rem;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Sidebar Navigazione Componenti con veri link <a> */
+    nav.sidebar {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 1.1rem;
+      box-shadow: var(--shadow);
+    }
+    .nav-group-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 1.25rem 0 0.5rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 2px solid var(--border-subtle);
+    }
+    .comp-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .comp-link {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 0.55rem 0.75rem;
+      font-size: 1rem;
+      font-weight: 400;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+    }
+    .comp-link:hover {
+      background: var(--surface-alt);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .comp-link[aria-current="page"] {
+      background: var(--primary);
+      color: var(--primary-contrast);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    /* Sezione Ricerca e Filtri */
+    .filters-panel {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.35rem;
+      box-shadow: var(--shadow);
+    }
+    .filters-heading {
+      margin: 0 0 1rem;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.1rem;
+      align-items: end;
+    }
+    .field-group label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+      font-size: 1rem;
+    }
+    input[type="search"] {
+      width: 100%;
+      min-height: 46px;
+      padding: 0.55rem 0.85rem;
+      font-size: 1rem;
+      color: var(--text);
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 6px;
+    }
+
+    /* Select custom con freccia spostata più a sinistra */
+    .select-wrap {
+      position: relative;
+      display: block;
+    }
+    .select-wrap select {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 100%;
+      min-height: 46px;
+      padding: 0.55rem 3.1rem 0.55rem 0.85rem;
+      font-size: 1rem;
+      color: var(--text);
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .select-arrow {
+      position: absolute;
+      right: 1.15rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+      color: var(--text);
+    }
+
+    fieldset {
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      margin: 1.1rem 0 0;
+    }
+    legend {
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0 0.4rem;
+    }
+    .checkbox-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.35rem;
+    }
+    .checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 44px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .checkbox-label input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary);
+    }
+    .filter-actions {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .reset-btn {
+      min-height: 44px;
+      padding: 0.5rem 1.05rem;
+      background: var(--surface-alt);
+      color: var(--text);
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .reset-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Separazione visiva netta tra filtri e area componenti */
+    .section-divider {
+      border: 0;
+      height: 2px;
+      background: var(--border-subtle);
+      margin: 2rem 0 1.5rem;
+    }
+    .components-section-heading {
+      margin: 0 0 1.5rem;
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Blocco Componente */
+    .component-block {
+      margin-top: 2.75rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border-subtle);
+      scroll-margin-top: 1rem;
+    }
+    .component-block:first-child {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+    }
+    .comp-header {
+      margin-bottom: 1.5rem;
+    }
+    .comp-header-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 1.15rem 1.35rem;
+      box-shadow: var(--shadow);
+    }
+    .comp-title-wrap {
+      flex: 1 1 280px;
+    }
+    .comp-header h3.comp-title {
+      margin: 0;
+      font-size: 1.65rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--text);
+    }
+    .comp-type-tag {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text-muted);
+      display: inline-block;
+      margin-left: 0.35rem;
+    }
+    .comp-illustration {
+      flex: 0 0 auto;
+      background: var(--bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 0.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .comp-illustration svg {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    .warning-banner {
+      margin-top: 0.75rem;
+      padding: 0.8rem 1rem;
+      border-left: 5px solid #9a3412;
+      background: #ffedd5;
+      color: #431407;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    /* Indice gerarchico della scheda */
+    .toc-box {
+      margin-top: 1.1rem;
+      padding: 1.15rem 1.35rem;
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-left: 5px solid var(--primary);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .toc-columns {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1.25rem 2rem;
+    }
+    .toc-group-heading {
+      font-size: 1.12rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 0.65rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 2px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .toc-tree, .toc-sublist {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .toc-tree > li {
+      margin-bottom: 0.45rem;
+    }
+    .toc-parent-heading {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+      margin-top: 0.25rem;
+    }
+    .toc-sublist {
+      margin-top: 0.25rem;
+      margin-left: 0.65rem;
+      padding-left: 0.85rem;
+      border-left: 2px solid var(--border-subtle);
+    }
+    .toc-sublist > li {
+      margin-bottom: 0.25rem;
+    }
+    .toc-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      min-height: 36px;
+      padding: 0.15rem 0.25rem;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .toc-link:hover {
+      color: var(--text);
+    }
+    .toc-sublist .toc-link {
+      font-weight: 400;
+      font-size: 1rem;
+    }
+
+    /* Box relazioni Atomi nei componenti complessi */
+    .relations-box {
+      margin-top: 1.1rem;
+      padding: 1rem 1.2rem;
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+    }
+    .relations-box h4 {
+      margin: 0 0 0.3rem;
+      font-size: 1.12rem;
+      font-weight: 700;
+    }
+    .relations-hint {
+      margin: 0 0 0.65rem;
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+    .rel-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      font-size: 1rem;
+    }
+    .rel-chip {
+      min-height: 44px;
+      padding: 0.35rem 0.85rem;
+      background: var(--surface-alt);
+      color: var(--primary);
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .rel-chip:hover {
+      background: var(--primary);
+      color: var(--primary-contrast);
+      border-color: var(--primary);
+    }
+
+    /* Sotto-sezioni concettuali: gerarchia visiva netta */
+    .concept-group {
+      margin-top: 1.85rem;
+      scroll-margin-top: 1rem;
+    }
+    .concept-heading {
+      margin: 0 0 1rem;
+      font-size: 1.32rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--text);
+      padding: 0.55rem 0.95rem;
+      background: var(--surface-alt);
+      border-left: 5px solid var(--primary);
+      border-radius: 0 6px 6px 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+    }
+    .heading-main-part {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+    .sec-icon {
+      flex: 0 0 auto;
+      width: 22px;
+      height: 22px;
+    }
+
+    /* Stile per Attenzioni extra: sfondino molto chiaro grigio-violaceo (no giallo, no viola intenso) */
+    .concept-group.extra-group {
+      padding: 1.2rem;
+      background: var(--extra-bg);
+      border: 2px solid var(--extra-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .concept-group.extra-group .concept-heading {
+      background: var(--extra-header-bg);
+      color: var(--extra-text);
+      border-left: 6px solid var(--extra-border);
+    }
+
+    /* Stile per Varianti / Stati / Errori */
+    .concept-group.variant-group {
+      padding: 1.2rem;
+      background: var(--variant-bg);
+      border: 2px solid var(--variant-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .concept-group.variant-group .concept-heading {
+      background: var(--variant-header-bg);
+      color: var(--variant-text);
+      border-left: 6px solid var(--variant-border);
+    }
+
+    .group-kind-tag {
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--text);
+      border: 1.5px solid currentColor;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* Card Regole: titolo ben più grande del corpo (>= 18.5px vs 16px) */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr));
+      gap: 1.1rem;
+    }
+    article.rule-card {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 1.15rem 1.25rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.95rem;
+    }
+    .card-title {
+      margin: 0;
+      font-size: 1.18rem; /* ~19px, chiaramente più grande dei 16px del testo */
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text);
+    }
+    .card-note {
+      margin: 0.6rem 0 0;
+      font-size: 1rem; /* 16px */
+      font-weight: 400;
+      line-height: 1.55;
+      color: var(--text-muted);
+      white-space: pre-line;
+    }
+
+    /* Badge WCAG linkati puntualmente alle WCAG 2.2 IT + Best Practice in rosa/ciclamino accessibile */
+    .badges-list {
+      list-style: none;
+      margin: 0;
+      padding: 0.75rem 0 0;
+      border-top: 1px dashed var(--border-subtle);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .wcag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.38rem 0.75rem;
+      border-radius: 6px;
+      font-size: 1rem; /* 16px */
+      font-weight: 700;
+      border: 1.5px solid transparent;
+      text-decoration: none;
+    }
+    a.wcag-badge {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    a.wcag-badge:hover {
+      filter: brightness(0.95);
+    }
+    .badge-percepibile { background: #fee2e2; color: #7f1d1d; border-color: #dc2626; }
+    .badge-utilizzabile { background: #e0e7ff; color: #1e1b4b; border-color: #4f46e5; }
+    .badge-comprensibile { background: #dcfce7; color: #14532d; border-color: #16a34a; }
+    .badge-robusto { background: #f1f5f9; color: #0f172a; border-color: #475569; }
+    /* Best Practice: rosa / ciclamino accessibile (contrasto 10.4:1) */
+    .badge-bp { background: #fce7f3; color: #831843; border-color: #db2777; }
+
+    /* Modale nativa (<dialog>) */
+    dialog.atom-dialog {
+      width: min(92vw, 980px);
+      max-height: 86vh;
+      padding: 0;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      color: var(--text);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+    }
+    dialog.atom-dialog::backdrop {
+      background: rgba(18, 16, 26, 0.68);
+    }
+    .dialog-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--surface);
+      border-bottom: 2px solid var(--border-subtle);
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .dialog-header h2 {
+      margin: 0;
+      font-size: 1.45rem;
+      font-weight: 700;
+    }
+    .dialog-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .dialog-btn {
+      min-height: 44px;
+      padding: 0.5rem 0.95rem;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      border: 2px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text);
+    }
+    .dialog-btn.primary {
+      background: var(--primary);
+      color: var(--primary-contrast);
+      border-color: var(--primary);
+    }
+    .dialog-body {
+      padding: 1.25rem;
+    }
+    .modal-illustration-wrap {
+      margin-bottom: 1.25rem;
+      padding: 0.75rem;
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    footer {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      border-top: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+    footer a {
+      color: var(--primary);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="skip-links">
+    <a href="#primo-componente" id="skip-to-first">Skip to first component</a>
+    <a href="#heading-filtri">Skip to search and filters</a>
+    <a href="#nav-componenti">Skip to components menu</a>
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <div>
+        <h1>Accessible Design Components</h1>
+        <p class="subtitle">
+          Workshop for Accessibility Days 2026 ·
+          <a href="https://www.linkedin.com/in/chiaracielo-longobardi-a140737/" target="_blank" rel="noopener noreferrer">ChiaraCielo Longobardi<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="sr-only"> (opens LinkedIn profile in a new tab)</span></a> ·
+          Normative reference: <a href="https://www.w3.org/TR/WCAG22/" target="_blank" rel="noopener noreferrer"><abbr title="Web Content Accessibility Guidelines">WCAG</abbr> 2.2 (<abbr title="World Wide Web Consortium">W3C</abbr> Recommendation)<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="sr-only"> (opens WCAG 2.2 criteria in a new tab)</span></a>
+        </p>
+      </div>
+      <a href="index.html" class="lang-switch" lang="it" hreflang="it">Versione italiana</a>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav id="nav-componenti" class="sidebar" aria-label="Components menu">
+      <a href="#all" class="comp-link" data-comp="ALL" aria-current="page">All components</a>
+
+      <h2 class="nav-group-title">Base components (Atoms)</h2>
+      <ul class="comp-list" id="list-atomi"></ul>
+
+      <h2 class="nav-group-title">Complex components (Molecules)</h2>
+      <ul class="comp-list" id="list-molecole"></ul>
+    </nav>
+
+    <main id="main-content">
+      <section class="filters-panel" aria-labelledby="heading-filtri">
+        <h2 id="heading-filtri" class="filters-heading">Search and filters</h2>
+        <div class="filters-grid">
+          <div class="field-group">
+            <label for="search-input">Search guidelines or WCAG criteria</label>
+            <input type="search" id="search-input" placeholder="E.g., focus, 1.4.3, screen reader, contrast...">
+          </div>
+
+          <div class="field-group">
+            <label for="scope-select">Aspect to check</label>
+            <div class="select-wrap">
+              <select id="scope-select">
+                <option value="ALL">All aspects</option>
+                <option value="colore">Color and contrast</option>
+                <option value="dimensioni">Size and target area</option>
+                <option value="focus">Focus and keyboard</option>
+                <option value="label">Labels, text, and language</option>
+                <option value="stati">States and status messages</option>
+              </select>
+              <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <fieldset>
+          <legend>WCAG Conformance Level / Best Practice</legend>
+          <div class="checkbox-row">
+            <label class="checkbox-label"><input type="checkbox" name="level" value="A" checked> Level A</label>
+            <label class="checkbox-label"><input type="checkbox" name="level" value="AA" checked> Level <span aria-hidden="true">AA</span><span class="sr-only">Double A</span></label>
+            <label class="checkbox-label"><input type="checkbox" name="level" value="AAA" checked> Level <span aria-hidden="true">AAA</span><span class="sr-only">Triple A</span></label>
+            <label class="checkbox-label"><input type="checkbox" name="level" value="BP" checked> Best Practice</label>
+          </div>
+        </fieldset>
+
+        <div class="filter-actions">
+          <p class="sr-only" role="status" aria-live="polite" id="results-status"></p>
+          <button type="button" class="reset-btn" id="reset-filters">Reset filters</button>
+        </div>
+      </section>
+
+      <hr class="section-divider">
+
+      <section aria-labelledby="heading-elenco-componenti">
+        <h2 id="heading-elenco-componenti" class="components-section-heading">Components list</h2>
+        <div id="content-area"></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="atom-modal" class="atom-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-header">
+      <h2 id="dialog-title">Base component details</h2>
+      <div class="dialog-actions">
+        <button type="button" class="dialog-btn primary" id="dialog-go-full">Open full page view</button>
+        <button type="button" class="dialog-btn" id="dialog-close" aria-label="Close modal dialog">Close (ESC)</button>
+      </div>
+    </div>
+    <div class="dialog-body" id="dialog-body"></div>
+  </dialog>
+
+  <footer>
+    <p>This work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="sr-only"> (opens in a new tab)</span></a>.</p>
+  </footer>
+
+  <script type="application/json" id="comp-data">
+[
+  {
+    "id": "bottoni",
+    "name": "Buttons",
+    "type": "atom",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "Color",
+        "cosa": "Contrast of labels and icons against the button background.",
+        "wcag": [
+          "1.4.3 Contrast (Minimum) - AA",
+          "1.4.6 Contrast (Enhanced) - AAA",
+          "1.4.11 Non-text Contrast - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Color",
+        "cosa": "Button contrast against the background.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "WCAG does not strictly mandate button-to-background contrast, but if a button loses affordance, users may struggle to recognize it as interactive."
+      },
+      {
+        "section": "Color",
+        "cosa": "Clear label on dark backgrounds (dark mode).",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Optimize font size or font weight for dark mode legibility."
+      },
+      {
+        "section": "Size",
+        "cosa": "Button target size.",
+        "wcag": [
+          "2.5.8 Target Size (Minimum) - AA",
+          "2.5.5 Target Size (Enhanced) - AAA"
+        ],
+        "note": "Mobile guidelines: 48px × 48px (Android), 44px × 44px (Apple/iOS)."
+      },
+      {
+        "section": "Labels",
+        "cosa": "A button must also be a semantic button in code.",
+        "wcag": [
+          "4.1.2 Name, Role, Value - A"
+        ],
+        "note": "Do not repurpose non-semantic elements (e.g., <div>) as buttons. Using native <button> preserves standard behavior and keyboard accessibility."
+      },
+      {
+        "section": "Labels",
+        "cosa": "The purpose of the button must be clear (avoid: \"click here\", \"learn more\").",
+        "wcag": [
+          "1.3.6 Identify Purpose - AA"
+        ],
+        "note": "It must be clear not only that it is a button, but also what its action or destination is."
+      },
+      {
+        "section": "Extra considerations and variants",
+        "cosa": "Avoid relying solely on spatial cues to indicate where a button is located.",
+        "wcag": [
+          "1.3.3 Sensory Characteristics - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Extra considerations and variants",
+        "cosa": "Button text must be resizable.",
+        "wcag": [
+          "1.4.4 Resize Text - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Extra considerations and variants",
+        "cosa": "Feedback or micro-interactions must be contextual to the button.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Extra considerations and variants · Icon-only buttons",
+        "cosa": "Be careful with icon-only buttons. What the icon refers to must be clear.",
+        "wcag": [
+          "1.1.1 Non-text Content - A"
+        ],
+        "note": "The button must specify its destination or purpose."
+      },
+      {
+        "section": "Extra considerations and variants · Button groups",
+        "cosa": "In button groups, Tab moves between buttons (in a defined order) and Enter or Space activates them.",
+        "wcag": [
+          "2.4.3 Focus Order - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Extra considerations and variants · Floating buttons",
+        "cosa": "Floating action buttons must receive focus first.",
+        "wcag": [
+          "2.4.3 Focus Order - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "States",
+        "cosa": "Remember to design all button states.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Default\nHover (:hover)\nFocus (:focus / :focus-visible)\nActive / Pressed (:active)\nSelected\nDisabled\nLoading"
+      },
+      {
+        "section": "States",
+        "cosa": "State changes must be announced to assistive technology users.",
+        "wcag": [
+          "3.2.5 Change on Request - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "States · Focus",
+        "cosa": "The focus state must never be removed and must remain visible.",
+        "wcag": [
+          "2.4.7 Focus Visible - AA"
+        ],
+        "note": "The focus indicator must be visible."
+      },
+      {
+        "section": "States · Focus",
+        "cosa": "The focus state must be HIGHLY visible.",
+        "wcag": [
+          "2.4.13 Focus Appearance - AAA"
+        ],
+        "note": "The focus indicator must:\n1) have an adequate area (at least equivalent to a 2px perimeter around the component);\n2) have at least a 3:1 contrast change between unfocused and focused states."
+      },
+      {
+        "section": "States · Focus",
+        "cosa": "The focus state must be HIGHLY visible.",
+        "wcag": [
+          "1.4.11 Non-text Contrast - AA"
+        ],
+        "note": "The focus indicator must have sufficient contrast against the background (at least 3:1)."
+      },
+      {
+        "section": "States · Disabled",
+        "cosa": "Be cautious with disabled buttons: they have low contrast, are not keyboard-focusable, and provide no feedback to screen readers. Use sparingly.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "link",
+    "name": "Links",
+    "type": "atom",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "Color",
+        "cosa": "Color must not be the only visual means of identifying a link.",
+        "wcag": [
+          "1.4.1 Use of Color - A"
+        ],
+        "note": "Color alone cannot be used to identify a link. Keeping underlines is good practice (improving discoverability), or pairing icons/text effects. Having links and body text share the same color is not strictly a WCAG failure if underlined, though it harms usability."
+      },
+      {
+        "section": "Color",
+        "cosa": "Link contrast against surrounding text.",
+        "wcag": [
+          "1.4.1 Use of Color - A"
+        ],
+        "note": "If you remove a link underline, ensure at least a 3:1 contrast ratio against surrounding text plus an additional visual cue on hover/focus."
+      },
+      {
+        "section": "Color",
+        "cosa": "Contrast against the background.",
+        "wcag": [
+          "1.4.3 Contrast (Minimum) - AA",
+          "1.4.6 Contrast (Enhanced) - AAA"
+        ],
+        "note": "The same contrast ratio required for body text applies."
+      },
+      {
+        "section": "Size",
+        "cosa": "Link target size.",
+        "wcag": [
+          "2.5.8 Target Size (Minimum) - AA",
+          "2.5.5 Target Size (Enhanced) - AAA"
+        ],
+        "note": "Inline text links are exempt and may match text line-height.\nMobile target guidelines: 48px × 48px (Android), 44px × 44px (Apple/iOS)."
+      },
+      {
+        "section": "Labels",
+        "cosa": "The purpose of the link must be clear (avoid: \"click here\", \"learn more\"). Links with the same accessible name must always lead to the same destination.",
+        "wcag": [
+          "2.4.4 Link Purpose (In Context) - A",
+          "2.4.9 Link Purpose (Link Only) - AAA"
+        ],
+        "note": "At Level A, link purpose can be determined from its immediate context (e.g., the same sentence or paragraph), ideally preceding the link."
+      },
+      {
+        "section": "Extra considerations and variants",
+        "cosa": "Links opening in a new tab.",
+        "wcag": [
+          "3.2.5 Change on Request - AAA"
+        ],
+        "note": "Links should open in the same tab by default to preserve context and clarity for assistive technology users and people with cognitive disabilities."
+      },
+      {
+        "section": "Extra considerations and variants · Image links",
+        "cosa": "If an image is a link, its alt-text must not be an aesthetic description, but must state the function and destination of the link.",
+        "wcag": [
+          "2.4.4 Link Purpose (In Context) - A",
+          "1.1.1 Non-text Content - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "States",
+        "cosa": "Remember to design all link states.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Default\nHover (:hover)\nFocus (:focus / :focus-visible)\nActive (:active)\nSelected\nVisited"
+      },
+      {
+        "section": "States",
+        "cosa": "State changes must be announced to assistive technology users.",
+        "wcag": [
+          "3.2.5 Change on Request - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "States · Focus",
+        "cosa": "The focus state must never be removed and must remain visible.",
+        "wcag": [
+          "2.4.7 Focus Visible - AA"
+        ],
+        "note": "The focus indicator must be visible."
+      },
+      {
+        "section": "States · Focus",
+        "cosa": "The focus state must be HIGHLY visible.",
+        "wcag": [
+          "2.4.13 Focus Appearance - AAA"
+        ],
+        "note": "The focus indicator must:\n1) have an adequate area (at least equivalent to a 2px perimeter around the component);\n2) have at least a 3:1 contrast change between unfocused and focused states."
+      },
+      {
+        "section": "States · Focus",
+        "cosa": "The focus state must be HIGHLY visible.",
+        "wcag": [
+          "1.4.11 Non-text Contrast - AA"
+        ],
+        "note": "The focus indicator must have sufficient contrast against the background (at least 3:1)."
+      }
+    ]
+  },
+  {
+    "id": "campi-di-input",
+    "name": "Input fields",
+    "type": "atom",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "Color",
+        "cosa": "Field (or field border) contrast.",
+        "wcag": [
+          "1.4.11 Non-text Contrast - AA"
+        ],
+        "note": "The input field (or its border) must have at least a 3:1 contrast ratio against the background."
+      },
+      {
+        "section": "Size",
+        "cosa": "Input field target size.",
+        "wcag": [
+          "2.5.8 Target Size (Minimum) - AA",
+          "2.5.5 Target Size (Enhanced) - AAA"
+        ],
+        "note": "Mobile guidelines: 48px × 48px (Android), 44px × 44px (Apple/iOS)."
+      },
+      {
+        "section": "Labels",
+        "cosa": "The label must always be visible.",
+        "wcag": [
+          "3.3.2 Labels or Instructions - A"
+        ],
+        "note": "Do not use placeholder text as a replacement for a visible label."
+      },
+      {
+        "section": "Labels",
+        "cosa": "The label must be programmatically associated with the input field.",
+        "wcag": [
+          "1.3.1 Info and Relationships - A"
+        ],
+        "note": "Associate labels explicitly in code using HTML for and id attributes."
+      },
+      {
+        "section": "Labels",
+        "cosa": "Visible label and accessible name must match.",
+        "wcag": [
+          "2.5.3 Label in Name - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Variants · Radio buttons, checkboxes, dropdowns",
+        "cosa": "State changes must also be notified to screen readers.",
+        "wcag": [
+          "4.1.3 Status Messages - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Variants · Toggles",
+        "cosa": "Limit their use.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Toggles can be complex to operate and understand (especially for people with cognitive disabilities)."
+      },
+      {
+        "section": "Extra considerations",
+        "cosa": "Enable autocomplete.",
+        "wcag": [
+          "3.3.7 Redundant Entry - A"
+        ],
+        "note": "Support autocomplete in general, and especially for information already entered earlier in the flow (covered by WCAG)."
+      },
+      {
+        "section": "Extra considerations",
+        "cosa": "Indicate the expected format and provide examples.",
+        "wcag": [
+          "3.3.2 Labels or Instructions - A"
+        ],
+        "note": "Make the expected input format clear (including to assistive technologies)."
+      },
+      {
+        "section": "Extra considerations",
+        "cosa": "Indicate which fields are required and which are optional.",
+        "wcag": [
+          "3.3.2 Labels or Instructions - A"
+        ],
+        "note": "This information must be clear both visually and to assistive technology users."
+      },
+      {
+        "section": "Extra considerations",
+        "cosa": "Pay attention to the order in which elements receive focus.",
+        "wcag": [
+          "2.4.3 Focus Order - A"
+        ],
+        "note": "Fields may be placed side-by-side, but stacking them vertically in a single column is preferable."
+      },
+      {
+        "section": "States · Focus",
+        "cosa": "The focus state must never be removed and must remain visible.",
+        "wcag": [
+          "2.4.7 Focus Visible - AA"
+        ],
+        "note": "The focus indicator must be visible."
+      },
+      {
+        "section": "States · Focus",
+        "cosa": "The focus state must be HIGHLY visible.",
+        "wcag": [
+          "2.4.13 Focus Appearance - AAA"
+        ],
+        "note": "The focus indicator must:\n1) have an adequate area (at least equivalent to a 2px perimeter around the component);\n2) have at least a 3:1 contrast change between unfocused and focused states."
+      },
+      {
+        "section": "States · Focus",
+        "cosa": "The focus state must be HIGHLY visible.",
+        "wcag": [
+          "1.4.11 Non-text Contrast - AA"
+        ],
+        "note": "The focus indicator must have sufficient contrast against the background (at least 3:1)."
+      },
+      {
+        "section": "States · Disabled",
+        "cosa": "Be cautious with disabled fields: they have low contrast, are not keyboard-focusable, and provide no feedback to screen readers. Use sparingly.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "icone-e-icon-buttons",
+    "name": "Icons and icon buttons",
+    "type": "atom",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "Visual aspects",
+        "cosa": "Sufficient color contrast against the background.",
+        "wcag": [
+          "1.4.3 Contrast (Minimum) - AA",
+          "1.4.6 Contrast (Enhanced) - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Visual aspects",
+        "cosa": "Stroke weight proportional to icon size.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Communication aspects",
+        "cosa": "Pair icons with a visible label.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Icon meanings are not universal. Pairing icons with a text label reduces cognitive load and improves memorability."
+      },
+      {
+        "section": "Communication aspects",
+        "cosa": "Consistency",
+        "wcag": [
+          "3.2.4 Consistent Identification - AA"
+        ],
+        "note": "One icon should represent one function, and a given function should always be represented by the same icon."
+      },
+      {
+        "section": "Communication aspects",
+        "cosa": "Accessible label",
+        "wcag": [
+          "1.1.1 Non-text Content - A"
+        ],
+        "note": "Icons must be understandable by assistive technologies. Add alternative text when needed, while avoiding redundant announcements if paired with a visible label."
+      },
+      {
+        "section": "Extra considerations and variants",
+        "cosa": "If interactive → adequate target size.",
+        "wcag": [
+          "2.5.5 Target Size (Enhanced) - AAA",
+          "2.5.8 Target Size (Minimum) - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Extra considerations and variants",
+        "cosa": "Avoid continuous movement and distracting micro-interactions.",
+        "wcag": [
+          "Best Practice",
+          "2.3.1 Three Flashes or Below Threshold - A"
+        ],
+        "note": "Moving icons can distract people with attention disorders and trigger nausea or dizziness in people with vestibular disorders.\nMultiple flashes can trigger seizures."
+      }
+    ]
+  },
+  {
+    "id": "intestazioni",
+    "name": "Headings",
+    "type": "atom",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "General aspects",
+        "cosa": "Use headings to organize and distinguish sections.",
+        "wcag": [
+          "2.4.10 Section Headings - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "General aspects",
+        "cosa": "Headings must follow a logical order that conveys the hierarchy of information.",
+        "wcag": [
+          "1.3.1 Info and Relationships - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "General aspects",
+        "cosa": "Heading wording must be clear.",
+        "wcag": [
+          "2.4.6 Headings and Labels - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "General aspects",
+        "cosa": "Do not skip heading levels.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Not a strict WCAG failure, but skipping heading levels can make document hierarchy harder to understand."
+      },
+      {
+        "section": "General aspects",
+        "cosa": "Do not use more than one H1 per page.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Not a strict WCAG failure, but multiple H1s can make it harder to identify the primary topic of the page."
+      },
+      {
+        "section": "Visual aspects",
+        "cosa": "Sufficient color contrast against the background.",
+        "wcag": [
+          "1.4.3 Contrast (Minimum) - AA",
+          "1.4.6 Contrast (Enhanced) - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Visual aspects",
+        "cosa": "Clear, legible font.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Visual aspects",
+        "cosa": "Visual distinctions to identify headings.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Font size, font weight, color, and spacing."
+      },
+      {
+        "section": "In code",
+        "cosa": "Every visual title must be coded as a semantic heading.",
+        "wcag": [
+          "4.1.2 Name, Role, Value - A"
+        ],
+        "note": "Using semantic heading tags (<h1>–<h6>)."
+      }
+    ]
+  },
+  {
+    "id": "testi-e-errori",
+    "name": "Text and errors",
+    "type": "atom",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "Visual aspects",
+        "cosa": "Sufficient color contrast against the background.",
+        "wcag": [
+          "1.4.3 Contrast (Minimum) - AA",
+          "1.4.6 Contrast (Enhanced) - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Visual aspects",
+        "cosa": "Do not convey information using color alone.",
+        "wcag": [
+          "1.4.1 Use of Color - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Visual aspects",
+        "cosa": "Clear, legible font.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Visual aspects",
+        "cosa": "Font size.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Avoid overly small font sizes (ideally choose at least 16px for body text)."
+      },
+      {
+        "section": "Visual aspects",
+        "cosa": "Customizable text spacing.",
+        "wcag": [
+          "1.4.12 Text Spacing - AA"
+        ],
+        "note": "Users must be able to override line height, paragraph spacing, letter spacing, and word spacing."
+      },
+      {
+        "section": "Visual aspects",
+        "cosa": "Line height, paragraph spacing, and line length.",
+        "wcag": [
+          "1.4.8 Visual Presentation - AAA"
+        ],
+        "note": "Line height should be at least 1.5× the font size, left-aligned (not justified), max 80 characters wide, and customizable by the user."
+      },
+      {
+        "section": "Functional aspects",
+        "cosa": "Text must be resizable up to 200%.",
+        "wcag": [
+          "1.4.4 Resize Text - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Language",
+        "cosa": "Use clear and plain language.",
+        "wcag": [
+          "3.1.5 Reading Level - AAA",
+          "3.1.3 Unusual Words - AAA",
+          "3.1.4 Abbreviations - AAA",
+          "1.3.3 Sensory Characteristics - A"
+        ],
+        "note": "Use plain language, active voice, and avoid double negatives.\nAvoid technical jargon and metaphors.\nAvoid unexplained abbreviations.\nAvoid instructions relying solely on sensory characteristics."
+      },
+      {
+        "section": "Errors",
+        "cosa": "Do not convey information using color alone.",
+        "wcag": [
+          "1.4.1 Use of Color - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Errors",
+        "cosa": "Use clear and plain language.",
+        "wcag": [
+          "3.1.5 Reading Level - AAA",
+          "3.1.3 Unusual Words - AAA",
+          "3.1.4 Abbreviations - AAA",
+          "1.3.3 Sensory Characteristics - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Errors",
+        "cosa": "It must be possible to identify what caused the error.",
+        "wcag": [
+          "3.3.1 Error Identification - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Errors",
+        "cosa": "The error message must appear close to the field that caused it.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Errors",
+        "cosa": "How to fix an error must be clear.",
+        "wcag": [
+          "3.3.3 Error Suggestion - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Errors",
+        "cosa": "Errors must also be announced to assistive technologies.",
+        "wcag": [
+          "4.1.3 Status Messages - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Errors · 404 page",
+        "cosa": "Use clear and plain language.",
+        "wcag": [
+          "3.1.5 Reading Level - AAA",
+          "3.1.3 Unusual Words - AAA",
+          "3.1.4 Abbreviations - AAA",
+          "1.3.3 Sensory Characteristics - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Errors · 404 page",
+        "cosa": "A clear way out must be provided.",
+        "wcag": [
+          "3.3.3 Error Suggestion - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Errors · Empty states",
+        "cosa": "Use clear and plain language.",
+        "wcag": [
+          "3.1.5 Reading Level - AAA",
+          "3.1.3 Unusual Words - AAA",
+          "3.1.4 Abbreviations - AAA",
+          "1.3.3 Sensory Characteristics - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Errors · Empty states",
+        "cosa": "How to proceed must be clear.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "immagini",
+    "name": "Images",
+    "type": "atom",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "Alternative text",
+        "cosa": "Every non-decorative image must have a text alternative.",
+        "wcag": [
+          "1.1.1 Non-text Content - A"
+        ],
+        "note": "For most images, this means the alt attribute. Consider context; describe subject, action, and setting; avoid starting with \"photo of\" or \"image of\"."
+      },
+      {
+        "section": "Alternative text",
+        "cosa": "Decorative images must be marked as decorative.",
+        "wcag": [
+          "1.1.1 Non-text Content - A"
+        ],
+        "note": "Include an empty alt attribute (alt=\"\") if the image is decorative (e.g., purely ornamental elements, redundant visual repetition of adjacent text, or generic stock images)."
+      },
+      {
+        "section": "Variants · Images of text",
+        "cosa": "If images contain text, it must be legible and guarantee sufficient contrast.",
+        "wcag": [
+          "1.4.3 Contrast (Minimum) - AA"
+        ],
+        "note": "Avoid using images of text whenever possible; if unavoidable, ensure sufficient color contrast."
+      },
+      {
+        "section": "Variants · Text over images",
+        "cosa": "Text placed over images must be legible.",
+        "wcag": [
+          "1.4.3 Contrast (Minimum) - AA"
+        ],
+        "note": "Strategies include using an overlay across the whole image or just behind the text. Sufficient contrast must be ensured at the lowest-contrast point of the image."
+      },
+      {
+        "section": "Variants · Logos",
+        "cosa": "If an image is a logo, its alternative text must indicate its function.",
+        "wcag": [
+          "1.1.1 Non-text Content - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Variants · Image links",
+        "cosa": "If an image is a link, its alternative text must indicate its function or destination.",
+        "wcag": [
+          "1.1.1 Non-text Content - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Variants · Hero images",
+        "cosa": "Avoid parallax scrolling or provide a mechanism to stop the animation.",
+        "wcag": [
+          "2.2.2 Pause, Stop, Hide - A"
+        ],
+        "note": "Parallax effects can trigger dizziness and nausea in people with vestibular disorders."
+      }
+    ]
+  },
+  {
+    "id": "loader-e-progress-bar",
+    "name": "Loaders and progress bars",
+    "type": "atom",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "Color",
+        "cosa": "Contrast",
+        "wcag": [
+          "1.4.11 Non-text Contrast - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Motion",
+        "cosa": "Ensure there are no critical flashes.",
+        "wcag": [
+          "2.3.1 Three Flashes or Below Threshold - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Motion",
+        "cosa": "Allow users to pause or stop animations (if they last longer than 5 seconds).",
+        "wcag": [
+          "2.2.2 Pause, Stop, Hide - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Text",
+        "cosa": "Pair with explanatory text content.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Updates",
+        "cosa": "Progress updates must also be clear to assistive technologies.",
+        "wcag": [
+          "4.1.3 Status Messages - AA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "chips-e-tags",
+    "name": "Chips and tags",
+    "type": "atom",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "Color",
+        "cosa": "Contrast of labels and icons against the chip/tag background.",
+        "wcag": [
+          "1.4.3 Contrast (Minimum) - AA",
+          "1.4.6 Contrast (Enhanced) - AAA",
+          "1.4.11 Non-text Contrast - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Color",
+        "cosa": "Chip contrast against the background.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "WCAG does not strictly mandate chip-to-background contrast, but losing affordance makes it harder to recognize as interactive."
+      },
+      {
+        "section": "Color",
+        "cosa": "Not color alone.",
+        "wcag": [
+          "1.4.1 Use of Color - A"
+        ],
+        "note": "Do not rely on color alone to identify tag/chip categories."
+      },
+      {
+        "section": "Size",
+        "cosa": "Size",
+        "wcag": [
+          "2.5.8 Target Size (Minimum) - AA",
+          "2.5.5 Target Size (Enhanced) - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Labels",
+        "cosa": "The label text must be clear and understandable.",
+        "wcag": [
+          "2.4.6 Headings and Labels - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "States",
+        "cosa": "If interactive, remember to design all states.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Default\nHover\nFocus\nActive\nSelected\nDisabled"
+      },
+      {
+        "section": "States",
+        "cosa": "State changes must be announced to assistive technology users.",
+        "wcag": [
+          "3.2.5 Change on Request - AAA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "toggle-e-switch",
+    "name": "Toggles and switches",
+    "type": "atom",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "Color",
+        "cosa": "Contrast of labels and icons against the background.",
+        "wcag": [
+          "1.4.3 Contrast (Minimum) - AA",
+          "1.4.6 Contrast (Enhanced) - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Color",
+        "cosa": "Toggle contrast against the background.",
+        "wcag": [
+          "1.4.11 Non-text Contrast - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Color",
+        "cosa": "Not color alone",
+        "wcag": [
+          "1.4.1 Use of Color - A"
+        ],
+        "note": "Do not rely on color alone to indicate state changes."
+      },
+      {
+        "section": "Size",
+        "cosa": "Size",
+        "wcag": [
+          "2.5.8 Target Size (Minimum) - AA",
+          "2.5.5 Target Size (Enhanced) - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Labels",
+        "cosa": "Include a clear, always-visible label positioned intuitively.",
+        "wcag": [
+          "2.4.6 Headings and Labels - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "States",
+        "cosa": "Remember to design all interactive states.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "On / Active\nOff / Inactive\nFocus (:focus / :focus-visible)"
+      },
+      {
+        "section": "States",
+        "cosa": "State changes must be announced to assistive technology users.",
+        "wcag": [
+          "3.2.5 Change on Request - AAA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "tabelle",
+    "name": "Tables",
+    "type": "atom",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "Color",
+        "cosa": "Contrast",
+        "wcag": [
+          "1.4.11 Non-text Contrast - AA",
+          "1.4.3 Contrast (Minimum) - AA",
+          "1.4.6 Contrast (Enhanced) - AAA"
+        ],
+        "note": "Ensure borders are sufficiently visible.\nVerify that text is legible against every background."
+      },
+      {
+        "section": "Color",
+        "cosa": "Color",
+        "wcag": [
+          "1.4.1 Use of Color - A"
+        ],
+        "note": "Do not rely on color alone to differentiate data."
+      },
+      {
+        "section": "Design",
+        "cosa": "Avoid merged or split cells and nested tables.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "If necessary, split complex data into multiple simpler tables."
+      },
+      {
+        "section": "Design",
+        "cosa": "Use headers for rows and columns.",
+        "wcag": [
+          "1.3.1 Info and Relationships - A",
+          "4.1.2 Name, Role, Value - A"
+        ],
+        "note": "Headers must be clear to assistive technologies. Use semantic <th> tags in code (rather than only <td> and <tr>)."
+      },
+      {
+        "section": "Design",
+        "cosa": "If the table is complex, add a descriptive caption.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "The caption must also be programmatically associated in code (<caption>)."
+      },
+      {
+        "section": "Responsive behavior",
+        "cosa": "Ensure the table can be zoomed properly.",
+        "wcag": [
+          "Best Practice",
+          "1.4.10 Reflow - AA"
+        ],
+        "note": "Tables are exempt from 1.4.10 Reflow, but if horizontal scrolling severely degrades usability, reconsider whether a table is the best format."
+      },
+      {
+        "section": "Variants · Comparison tables",
+        "cosa": "Providing comparison tables for prices and features reduces cognitive load and supports memory.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "form",
+    "name": "Forms",
+    "type": "molecule",
+    "warning": "",
+    "always": [
+      "Buttons",
+      "Links",
+      "Input fields",
+      "Headings",
+      "Text and errors"
+    ],
+    "sometimes": [
+      "Icons and icon buttons",
+      "Images",
+      "Loaders and progress bars",
+      "Toggles and switches"
+    ],
+    "items": [
+      {
+        "section": "Structure",
+        "cosa": "Provide initial instructions to clarify the purpose of the form.",
+        "wcag": [
+          "3.3.2 Labels or Instructions - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Structure",
+        "cosa": "Break content into small, manageable blocks (steps).",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Partially related to:\n2.4.10 - Section Headings: Organize content into clearly identified sections.\n3.3.2 - Labels or Instructions: Provide clear instructions for each step."
+      },
+      {
+        "section": "Interaction and states",
+        "cosa": "Avoid timeouts.",
+        "wcag": [
+          "2.2.6 Timeouts - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Interaction and states",
+        "cosa": "State changes.",
+        "wcag": [
+          "4.1.3 Status Messages - AA"
+        ],
+        "note": "Notify screen reader users of context changes (e.g., on form submission)."
+      },
+      {
+        "section": "Interaction and states",
+        "cosa": "Do not ask users to re-enter the same information multiple times.",
+        "wcag": [
+          "3.3.7 Redundant Entry - A"
+        ],
+        "note": "When transitioning between states (e.g., guest to logged-in user), previously entered data must not be lost."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Keyboard users must be able to interact with every element in the form.",
+        "wcag": [
+          "2.1.1 Keyboard - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus order",
+        "wcag": [
+          "2.4.3 Focus Order - A",
+          "1.3.2 Meaningful Sequence - A"
+        ],
+        "note": "Elements must receive focus in an order that preserves meaning and operability."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Do not trap keyboard focus inside the form.",
+        "wcag": [
+          "2.1.2 No Keyboard Trap - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus indicator.",
+        "wcag": [
+          "2.4.7 Focus Visible - AA",
+          "2.4.13 Focus Appearance - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Completion and submission",
+        "cosa": "Review summary before final submission.",
+        "wcag": [
+          "3.3.6 Error Prevention (All) - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Completion and submission",
+        "cosa": "Submission confirmation.",
+        "wcag": [
+          "Best Practice",
+          "4.1.3 Status Messages - AA"
+        ],
+        "note": "Provide clear confirmation that the entire process is complete,\nincluding for assistive technology users."
+      }
+    ]
+  },
+  {
+    "id": "card",
+    "name": "Cards",
+    "type": "molecule",
+    "warning": "⚠️ Non-native element — use with caution!",
+    "always": [
+      "Buttons",
+      "Links",
+      "Icons and icon buttons",
+      "Headings",
+      "Text and errors",
+      "Images"
+    ],
+    "sometimes": [
+      "Toggles and switches"
+    ],
+    "items": [
+      {
+        "section": "Structure",
+        "cosa": "Links",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "If the entire card is meant to be clickable, use a single primary link inside the card (styled via CSS pseudo-element) rather than wrapping everything in an anchor."
+      },
+      {
+        "section": "Structure",
+        "cosa": "Zoom",
+        "wcag": [
+          "1.4.10 Reflow - AA"
+        ],
+        "note": "Ensure card content remains legible without overlapping even at high zoom levels."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Keyboard users must be able to interact with every element in the card.",
+        "wcag": [
+          "2.1.1 Keyboard - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus order",
+        "wcag": [
+          "2.4.3 Focus Order - A",
+          "1.3.2 Meaningful Sequence - A"
+        ],
+        "note": "Elements inside a card must receive focus in a meaningful reading order (e.g., design reading order so primary details like title, price, and description precede secondary actions)."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Do not trap keyboard focus inside the card.",
+        "wcag": [
+          "2.1.2 No Keyboard Trap - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus indicator",
+        "wcag": [
+          "2.4.7 Focus Visible - AA",
+          "2.4.13 Focus Appearance - AAA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "caroselli",
+    "name": "Carousels",
+    "type": "molecule",
+    "warning": "⚠️ Non-native element — use with caution!",
+    "always": [
+      "Buttons",
+      "Links",
+      "Headings",
+      "Images"
+    ],
+    "sometimes": [
+      "Icons and icon buttons",
+      "Text and errors",
+      "Loaders and progress bars"
+    ],
+    "items": [
+      {
+        "section": "Interaction",
+        "cosa": "Animation",
+        "wcag": [
+          "2.2.2 Pause, Stop, Hide - A"
+        ],
+        "note": "Users must be able to control motion and autoplay must be disabled. System motion preferences (prefers-reduced-motion) must also be respected."
+      },
+      {
+        "section": "Interaction",
+        "cosa": "“Previous” and “Next” buttons must be clearly visible.",
+        "wcag": [
+          "2.5.8 Target Size (Minimum) - AA",
+          "1.4.3 Contrast (Minimum) - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Interaction",
+        "cosa": "The current state must be clearly visible.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Interaction",
+        "cosa": "Avoid infinite loops.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "It is good practice to disable the \"Previous\" button on the first slide and \"Next\" on the last slide to clarify where content begins and ends."
+      },
+      {
+        "section": "Interaction",
+        "cosa": "Allow skipping the carousel.",
+        "wcag": [
+          "2.4.1 Bypass Blocks - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Keyboard users must be able to interact with every element in the carousel.",
+        "wcag": [
+          "2.1.1 Keyboard - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Do not trap keyboard focus inside the carousel.",
+        "wcag": [
+          "2.1.2 No Keyboard Trap - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus indicator",
+        "wcag": [
+          "2.4.7 Focus Visible - AA",
+          "2.4.13 Focus Appearance - AAA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "dataviz",
+    "name": "Data visualizations",
+    "type": "molecule",
+    "warning": "",
+    "always": [
+      "Icons and icon buttons",
+      "Headings",
+      "Text and errors",
+      "Images"
+    ],
+    "sometimes": [
+      "Buttons",
+      "Links",
+      "Loaders and progress bars",
+      "Chips and tags",
+      "Toggles and switches",
+      "Tables"
+    ],
+    "items": [
+      {
+        "section": "Text alternatives",
+        "cosa": "Long description",
+        "wcag": [
+          "1.1.1 Non-text Content - A"
+        ],
+        "note": "It may be necessary to supplement the alt text with a long description (visible or programmatically linked)."
+      },
+      {
+        "section": "Text alternatives",
+        "cosa": "Data provided in an alternative table.",
+        "wcag": [
+          "1.1.1 Non-text Content - A"
+        ],
+        "note": "Make the underlying data available in an accessible table format."
+      },
+      {
+        "section": "Interaction",
+        "cosa": "Use patterns or symbols alongside color.",
+        "wcag": [
+          "1.4.1 Use of Color - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Interaction",
+        "cosa": "Do not hide critical data behind animations.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Interaction",
+        "cosa": "Zoom",
+        "wcag": [
+          "1.4.10 Reflow - AA"
+        ],
+        "note": "Ensure all elements remain available when page zoom is applied."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Interactive chart labels must be keyboard-navigable.",
+        "wcag": [
+          "2.1.1 Keyboard - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus indicator.",
+        "wcag": [
+          "2.4.7 Focus Visible - AA",
+          "2.4.13 Focus Appearance - AAA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "pop-up-e-modali",
+    "name": "Pop-ups and modals",
+    "type": "molecule",
+    "warning": "",
+    "always": [
+      "Buttons",
+      "Links",
+      "Headings",
+      "Text and errors"
+    ],
+    "sometimes": [
+      "Input fields",
+      "Icons and icon buttons",
+      "Images",
+      "Loaders and progress bars",
+      "Chips and tags",
+      "Toggles and switches",
+      "Tables"
+    ],
+    "items": [
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Navigation and focus order.",
+        "wcag": [
+          "2.1.1 Keyboard - A",
+          "2.4.3 Focus Order - A"
+        ],
+        "note": "Focus must move inside the modal/popover when it opens.\nWhen closed, focus must return to the element that triggered it."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Do not trap keyboard focus.",
+        "wcag": [
+          "2.1.2 No Keyboard Trap - A"
+        ],
+        "note": "A visible close button must always be provided, and closing via the ESC key must be supported."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus indicator",
+        "wcag": [
+          "2.4.7 Focus Visible - AA",
+          "2.4.13 Focus Appearance - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Screen reader navigation",
+        "cosa": "Announcement",
+        "wcag": [
+          "4.1.3 Status Messages - AA"
+        ],
+        "note": "The appearance of a pop-up must be announced to screen readers."
+      },
+      {
+        "section": "Timing",
+        "cosa": "If automatic dismissal is used.",
+        "wcag": [
+          "2.2.1 Timing Adjustable - A",
+          "4.1.3 Status Messages - AA"
+        ],
+        "note": "If the popover closes automatically after a set duration, provide a warning and an option to extend the time limit."
+      }
+    ]
+  },
+  {
+    "id": "breadcrumbs",
+    "name": "Breadcrumbs",
+    "type": "molecule",
+    "warning": "",
+    "always": [
+      "Links"
+    ],
+    "sometimes": [
+      "Icons and icon buttons"
+    ],
+    "items": [
+      {
+        "section": "General aspects",
+        "cosa": "Labels must be descriptive.",
+        "wcag": [
+          "2.4.6 Headings and Labels - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "General aspects",
+        "cosa": "Breadcrumb order.",
+        "wcag": [
+          "1.3.1 Info and Relationships - A"
+        ],
+        "note": "The order must be predictable and hierarchical."
+      },
+      {
+        "section": "General aspects",
+        "cosa": "Location",
+        "wcag": [
+          "2.4.8 Location - AAA"
+        ],
+        "note": "Users must clearly understand where they are and where they came from."
+      },
+      {
+        "section": "General aspects",
+        "cosa": "Zoom",
+        "wcag": [
+          "1.4.10 Reflow - AA"
+        ],
+        "note": "Ensure all breadcrumbs remain available when page zoom is applied."
+      },
+      {
+        "section": "Screen reader output",
+        "cosa": "Separators must be hidden from screen readers.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Keyboard users must be able to interact with every breadcrumb item.",
+        "wcag": [
+          "2.1.1 Keyboard - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus order",
+        "wcag": [
+          "2.4.3 Focus Order - A",
+          "1.3.2 Meaningful Sequence - A"
+        ],
+        "note": "Breadcrumb items must receive focus in hierarchical order."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus indicator.",
+        "wcag": [
+          "2.4.7 Focus Visible - AA",
+          "2.4.13 Focus Appearance - AAA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "menu-navigazione",
+    "name": "Navigation menus",
+    "type": "molecule",
+    "warning": "",
+    "always": [
+      "Buttons",
+      "Links",
+      "Icons and icon buttons",
+      "Text and errors"
+    ],
+    "sometimes": [
+      "Input fields",
+      "Headings",
+      "Images"
+    ],
+    "items": [
+      {
+        "section": "Structure",
+        "cosa": "Order of items.",
+        "wcag": [
+          "3.2.3 Consistent Navigation - AA"
+        ],
+        "note": "Navigation items must appear in the same order across pages."
+      },
+      {
+        "section": "Structure",
+        "cosa": "Functionality.",
+        "wcag": [
+          "3.2.4 Consistent Identification - AA"
+        ],
+        "note": "Components with the same functionality must be identified consistently across pages (appearance and label)."
+      },
+      {
+        "section": "Structure",
+        "cosa": "Indicate the active position.",
+        "wcag": [
+          "2.4.8 Location - AAA",
+          "1.4.1 Use of Color - A"
+        ],
+        "note": "Not by color alone!"
+      },
+      {
+        "section": "Structure",
+        "cosa": "Avoid technical or industry jargon in menu items.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Keyboard users must be able to interact with every element in the menu.",
+        "wcag": [
+          "2.1.1 Keyboard - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus order.",
+        "wcag": [
+          "2.4.3 Focus Order - A",
+          "1.3.2 Meaningful Sequence - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Do not trap keyboard focus.",
+        "wcag": [
+          "2.1.2 No Keyboard Trap - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus indicator.",
+        "wcag": [
+          "2.4.7 Focus Visible - AA",
+          "2.4.13 Focus Appearance - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Extra considerations",
+        "cosa": "Dropdown menus.",
+        "wcag": [
+          "1.4.13 Content on Hover or Focus - AA"
+        ],
+        "note": "A dropdown menu must be dismissible without moving pointer/focus, navigable without disappearing, and remain open until hover or focus leaves it."
+      },
+      {
+        "section": "Extra considerations",
+        "cosa": "Sticky menus.",
+        "wcag": [
+          "1.4.10 Reflow - AA"
+        ],
+        "note": "Ensure sticky menus (and sticky elements in general) do not obscure underlying content."
+      },
+      {
+        "section": "Extra considerations",
+        "cosa": "Skip link.",
+        "wcag": [
+          "2.4.1 Bypass Blocks - A"
+        ],
+        "note": "Provide a skip link to bypass the navigation menu and jump to main content."
+      }
+    ]
+  },
+  {
+    "id": "notifiche",
+    "name": "Notifications",
+    "type": "molecule",
+    "warning": "⚠️ Non-native element — use with caution!",
+    "always": [
+      "Buttons",
+      "Links",
+      "Headings",
+      "Text and errors"
+    ],
+    "sometimes": [
+      "Icons and icon buttons",
+      "Images",
+      "Chips and tags"
+    ],
+    "items": [
+      {
+        "section": "Interaction",
+        "cosa": "Must not disappear automatically.",
+        "wcag": [
+          "2.2.1 Timing Adjustable - A"
+        ],
+        "note": "Different users need different reading speeds; allow everyone to interact with the notification without it disappearing on its own."
+      },
+      {
+        "section": "Interaction",
+        "cosa": "Must appear close to the element that triggered it.",
+        "wcag": [
+          "1.3.1 Info and Relationships - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Interaction",
+        "cosa": "Notifications interrupt the main flow and can be distracting: allow users to customize their notification experience.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Where possible, let users choose specific time windows for notifications or alternative channels (e.g., email instead of pop-ups)."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Navigation and focus order.",
+        "wcag": [
+          "2.1.1 Keyboard - A",
+          "2.4.3 Focus Order - A"
+        ],
+        "note": "Keyboard and screen reader users must also be able to reach the notification.\nWhen the notification is closed, focus must return to the element that triggered it."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Do not trap keyboard focus.",
+        "wcag": [
+          "2.1.2 No Keyboard Trap - A"
+        ],
+        "note": "A visible close button must always be provided, and closing via the ESC key must be supported."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus indicator.",
+        "wcag": [
+          "2.4.7 Focus Visible - AA",
+          "2.4.13 Focus Appearance - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Screen reader navigation",
+        "cosa": "Notifications must be announced to screen reader users.",
+        "wcag": [
+          "4.1.3 Status Messages - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Variants",
+        "cosa": "Toast notifications.",
+        "wcag": [
+          "1.4.13 Content on Hover or Focus - AA",
+          "2.2.1 Timing Adjustable - A",
+          "1.3.1 Info and Relationships - A"
+        ],
+        "note": "Must not disappear automatically.\nIf a timeout is unavoidable, ensure it is long enough.\nMust appear near the element that triggered it."
+      }
+    ]
+  },
+  {
+    "id": "accordion",
+    "name": "Accordions",
+    "type": "molecule",
+    "warning": "",
+    "always": [
+      "Buttons",
+      "Icons and icon buttons",
+      "Headings",
+      "Text and errors"
+    ],
+    "sometimes": [
+      "Links",
+      "Loaders and progress bars"
+    ],
+    "items": [
+      {
+        "section": "Screen reader navigation",
+        "cosa": "The expanded or collapsed state of the accordion must be announced.",
+        "wcag": [
+          "4.1.3 Status Messages - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Zoom navigation",
+        "cosa": "Position of the expand/collapse icon.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Avoid placing controls far from their label (users with screen magnification might miss them or struggle to associate them with the right item)."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Keyboard users must be able to interact with every element.",
+        "wcag": [
+          "2.1.1 Keyboard - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus order.",
+        "wcag": [
+          "2.4.3 Focus Order - A",
+          "1.3.2 Meaningful Sequence - A"
+        ],
+        "note": "Elements must receive focus in an order that preserves meaning and operability."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus indicator",
+        "wcag": [
+          "2.4.7 Focus Visible - AA",
+          "2.4.13 Focus Appearance - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Hidden elements must not be focusable.",
+        "wcag": [
+          "2.4.11 Focus Not Obscured (Minimum) - AA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "ricerca",
+    "name": "Search",
+    "type": "molecule",
+    "warning": "",
+    "always": [],
+    "sometimes": [],
+    "items": [
+      {
+        "section": "Search input",
+        "cosa": "Location",
+        "wcag": [
+          "3.2.4 Consistent Identification - AA"
+        ],
+        "note": "The search input must appear in the same location across pages."
+      },
+      {
+        "section": "Search input",
+        "cosa": "Label.",
+        "wcag": [
+          "3.2.4 Consistent Identification - AA"
+        ],
+        "note": "The CTA label should remain consistent across pages."
+      },
+      {
+        "section": "Search input",
+        "cosa": "Provide autocomplete suggestions.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Search input",
+        "cosa": "Typo tolerance.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Results",
+        "cosa": "Present search results clearly and understandably.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "For example, display the total number of results found or active filters."
+      },
+      {
+        "section": "Results",
+        "cosa": "Search results must also be announced to screen reader users.",
+        "wcag": [
+          "4.1.3 Status Messages - AA"
+        ],
+        "note": "Through semantic structure if loaded on a new page, or by announcing the update if loaded dynamically on the same page."
+      },
+      {
+        "section": "Results",
+        "cosa": "Empty state.",
+        "wcag": [
+          "3.3.1 Error Identification - A",
+          "3.3.3 Error Suggestion - AA"
+        ],
+        "note": "If a search returns no results, display a helpful empty state that explains why and guides next steps."
+      },
+      {
+        "section": "Results",
+        "cosa": "Pagination.",
+        "wcag": [
+          "1.3.4 Orientation - AA"
+        ],
+        "note": "Ensure navigation between pages is accessible."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Keyboard users must be able to interact with every element (both search input and results).",
+        "wcag": [
+          "2.1.1 Keyboard - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus order.",
+        "wcag": [
+          "2.4.3 Focus Order - A",
+          "1.3.2 Meaningful Sequence - A"
+        ],
+        "note": "Elements (including search results) must receive focus in an order that preserves meaning and operability."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus indicator.",
+        "wcag": [
+          "2.4.7 Focus Visible - AA",
+          "2.4.13 Focus Appearance - AAA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "tabs",
+    "name": "Tabs",
+    "type": "molecule",
+    "warning": "",
+    "always": [
+      "Buttons",
+      "Links"
+    ],
+    "sometimes": [
+      "Icons and icon buttons",
+      "Headings",
+      "Text and errors"
+    ],
+    "items": [
+      {
+        "section": "Structure",
+        "cosa": "Indicate the active position.",
+        "wcag": [
+          "2.4.8 Location - AAA",
+          "1.4.1 Use of Color - A"
+        ],
+        "note": "Not by color alone!"
+      },
+      {
+        "section": "Structure",
+        "cosa": "Orientation.",
+        "wcag": [
+          "1.3.4 Orientation - AA"
+        ],
+        "note": "All tabs must remain available and accessible in both portrait and landscape orientations."
+      },
+      {
+        "section": "Screen reader interaction",
+        "cosa": "Switching tabs must not cause unexpected changes of context.",
+        "wcag": [
+          "3.2.2 On Input - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Screen reader interaction",
+        "cosa": "It must be clear which tab is \"selected\" or \"expanded\".",
+        "wcag": [
+          "4.1.2 Name, Role, Value - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Screen reader interaction",
+        "cosa": "Dynamic messages must be communicated to assistive technologies.",
+        "wcag": [
+          "4.1.3 Status Messages - AA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Keyboard users must be able to interact with every element.",
+        "wcag": [
+          "2.1.1 Keyboard - A"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus order.",
+        "wcag": [
+          "2.4.3 Focus Order - A",
+          "1.3.2 Meaningful Sequence - A"
+        ],
+        "note": "Elements must receive focus in an order that preserves meaning and operability."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus indicator.",
+        "wcag": [
+          "2.4.7 Focus Visible - AA",
+          "2.4.13 Focus Appearance - AAA"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "picker-data-e-ora",
+    "name": "Date and time pickers",
+    "type": "molecule",
+    "warning": "",
+    "always": [
+      "Buttons",
+      "Links",
+      "Input fields",
+      "Headings"
+    ],
+    "sometimes": [
+      "Icons and icon buttons",
+      "Text and errors",
+      "Loaders and progress bars",
+      "Chips and tags",
+      "Tables"
+    ],
+    "items": [
+      {
+        "section": "Interaction",
+        "cosa": "Provide the option to enter information manually.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Other characteristics",
+        "cosa": "Indicate the expected format and provide examples.",
+        "wcag": [
+          "3.3.2 Labels or Instructions - A"
+        ],
+        "note": "Make the required format clear (including to assistive technologies)."
+      },
+      {
+        "section": "Other characteristics",
+        "cosa": "Provide reminders.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Sending a reminder of the chosen date/time supports users with cognitive disabilities (such as memory impairments or dyscalculia)."
+      },
+      {
+        "section": "Other characteristics",
+        "cosa": "Format.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "Use standard formats that are easily recognized and read by assistive technologies."
+      }
+    ]
+  },
+  {
+    "id": "tooltip-e-pop-over",
+    "name": "Tooltips and popovers",
+    "type": "molecule",
+    "warning": "",
+    "always": [
+      "Buttons",
+      "Links",
+      "Headings",
+      "Text and errors"
+    ],
+    "sometimes": [
+      "Icons and icon buttons",
+      "Loaders and progress bars"
+    ],
+    "items": [
+      {
+        "section": "Structure",
+        "cosa": "Users remain in control.",
+        "wcag": [
+          "1.4.13 Content on Hover or Focus - AA"
+        ],
+        "note": "Persistent: does not vanish immediately on pointer move.\nDismissible: can be dismissed easily without moving focus.\nHoverable: if triggered on hover, users can move the pointer over the content without it disappearing."
+      },
+      {
+        "section": "Structure",
+        "cosa": "Timing.",
+        "wcag": [
+          "2.2.1 Timing Adjustable - A"
+        ],
+        "note": "Must remain visible for as long as the user wants (no timeout or auto-dismissal)."
+      },
+      {
+        "section": "Structure",
+        "cosa": "Relationship with other content.",
+        "wcag": [
+          "3.2.1 On Focus - A"
+        ],
+        "note": "Ensure that once opened, it does not obscure other essential content."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Navigation and focus order.",
+        "wcag": [
+          "2.1.1 Keyboard - A"
+        ],
+        "note": "Keyboard and screen reader users must also be able to access the tooltip."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Do not trap keyboard focus.",
+        "wcag": [
+          "2.1.2 No Keyboard Trap - A"
+        ],
+        "note": "A visible close button must always be provided, and closing via the ESC key must be supported."
+      },
+      {
+        "section": "Focus and keyboard navigation",
+        "cosa": "Focus indicator.",
+        "wcag": [
+          "2.4.7 Focus Visible - AA",
+          "2.4.13 Focus Appearance - AAA"
+        ],
+        "note": ""
+      },
+      {
+        "section": "Screen reader navigation",
+        "cosa": "The presence of a tooltip must be announced to screen reader users.",
+        "wcag": [
+          "4.1.3 Status Messages - AA",
+          "4.1.2 Name, Role, Value - A"
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "pager",
+    "name": "Pagination (Pager)",
+    "type": "molecule",
+    "warning": "",
+    "always": [
+      "Links"
+    ],
+    "sometimes": [
+      "Icons and icon buttons",
+      "Loaders and progress bars"
+    ],
+    "items": [
+      {
+        "section": "Interaction",
+        "cosa": "Label.",
+        "wcag": [
+          "2.4.6 Headings and Labels - AA"
+        ],
+        "note": "Each pagination link (e.g., “Previous page”, “Next page”, “Page 3”) must have a clear, descriptive label."
+      },
+      {
+        "section": "Interaction",
+        "cosa": "Current page position.",
+        "wcag": [
+          "1.3.1 Info and Relationships - A",
+          "1.4.1 Use of Color - A"
+        ],
+        "note": "The current page must be clearly identified.\nNot by color alone."
+      },
+      {
+        "section": "Interaction",
+        "cosa": "Consistent behavior.",
+        "wcag": [
+          "3.2.3 Consistent Navigation - AA",
+          "3.2.4 Consistent Identification - AA"
+        ],
+        "note": "For example, clicking “Next” must always navigate to the next page."
+      },
+      {
+        "section": "Interaction",
+        "cosa": "Disabling non-applicable controls.",
+        "wcag": [
+          "Best Practice"
+        ],
+        "note": "When on the first page, disable or remove the \"Previous page\" link; similarly, disable or remove \"Next page\" on the last page."
+      }
+    ]
+  },
+  {
+    "id": "stepper",
+    "name": "Steppers",
+    "type": "molecule",
+    "warning": "",
+    "always": [
+      "Links",
+      "Headings",
+      "Text and errors"
+    ],
+    "sometimes": [
+      "Icons and icon buttons",
+      "Loaders and progress bars"
+    ],
+    "items": [
+      {
+        "section": "Interaction",
+        "cosa": "Label.",
+        "wcag": [
+          "2.4.6 Headings and Labels - AA"
+        ],
+        "note": "Each step in the stepper must have a descriptive and meaningful label."
+      },
+      {
+        "section": "Interaction",
+        "cosa": "Indicate the active position.",
+        "wcag": [
+          "1.3.1 Info and Relationships - A",
+          "4.1.2 Name, Role, Value - A",
+          "1.4.1 Use of Color - A"
+        ],
+        "note": "The active step must be clearly identifiable both visually and semantically.\nNot by color alone!"
+      },
+      {
+        "section": "Interaction",
+        "cosa": "Order of items.",
+        "wcag": [
+          "3.2.3 Consistent Navigation - AA"
+        ],
+        "note": "Items must appear in the same order across pages."
+      },
+      {
+        "section": "Interaction",
+        "cosa": "Functionality.",
+        "wcag": [
+          "3.2.4 Consistent Identification - AA"
+        ],
+        "note": "The stepper behavior must remain consistent and predictable during interaction."
+      },
+      {
+        "section": "Interaction",
+        "cosa": "Data persistence across steps.",
+        "wcag": [
+          "3.3.7 Redundant Entry - A"
+        ],
+        "note": "Ensure that returning to a previous step or reloading the page does not erase previously entered data."
+      },
+      {
+        "section": "Interaction",
+        "cosa": "End of flow.",
+        "wcag": [
+          "Best Practice",
+          "4.1.3 Status Messages - AA"
+        ],
+        "note": "Provide clear confirmation that the entire process is complete, including for assistive technology users."
+      }
+    ]
+  }
+]
+  </script>
+
+  <script type="application/json" id="wcag-slugs">
+{
+  "1.1.1": "non-text-content",
+  "1.3.1": "info-and-relationships",
+  "1.3.2": "meaningful-sequence",
+  "1.3.3": "sensory-characteristics",
+  "1.3.4": "orientation",
+  "1.3.6": "identify-purpose",
+  "1.4.1": "use-of-color",
+  "1.4.3": "contrast-minimum",
+  "1.4.4": "resize-text",
+  "1.4.6": "contrast-enhanced",
+  "1.4.8": "visual-presentation",
+  "1.4.10": "reflow",
+  "1.4.11": "non-text-contrast",
+  "1.4.12": "text-spacing",
+  "1.4.13": "content-on-hover-or-focus",
+  "2.1.1": "keyboard",
+  "2.1.2": "no-keyboard-trap",
+  "2.2.1": "timing-adjustable",
+  "2.2.2": "pause-stop-hide",
+  "2.2.6": "timeouts",
+  "2.3.1": "three-flashes-or-below-threshold",
+  "2.4.1": "bypass-blocks",
+  "2.4.3": "focus-order",
+  "2.4.4": "link-purpose-in-context",
+  "2.4.6": "headings-and-labels",
+  "2.4.7": "focus-visible",
+  "2.4.8": "location",
+  "2.4.9": "link-purpose-link-only",
+  "2.4.10": "section-headings",
+  "2.4.11": "focus-not-obscured-minimum",
+  "2.4.13": "focus-appearance",
+  "2.5.3": "label-in-name",
+  "2.5.5": "target-size-enhanced",
+  "2.5.8": "target-size-minimum",
+  "3.1.3": "unusual-words",
+  "3.1.4": "abbreviations",
+  "3.1.5": "reading-level",
+  "3.2.1": "on-focus",
+  "3.2.2": "on-input",
+  "3.2.3": "consistent-navigation",
+  "3.2.4": "consistent-identification",
+  "3.2.5": "change-on-request",
+  "3.3.1": "error-identification",
+  "3.3.2": "labels-or-instructions",
+  "3.3.3": "error-suggestion",
+  "3.3.6": "error-prevention-all",
+  "3.3.7": "redundant-entry",
+  "4.1.2": "name-role-value",
+  "4.1.3": "status-messages"
+}
+  </script>
+
+  <script type="application/json" id="comp-svgs">
+{"bottoni": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"34\" width=\"118\" height=\"44\" rx=\"8\" fill=\"var(--primary)\"/>\n    <rect x=\"16\" y=\"30\" width=\"126\" height=\"52\" rx=\"11\" stroke=\"var(--focus-ring)\" stroke-width=\"2.5\" stroke-dasharray=\"4 3\"/>\n    <rect x=\"44\" y=\"52\" width=\"70\" height=\"8\" rx=\"4\" fill=\"var(--primary-contrast)\"/>\n    <rect x=\"152\" y=\"34\" width=\"48\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"176\" cy=\"56\" r=\"8\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <path d=\"M176 52v8M172 56h8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n  <\/svg>", "link": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"30\" width=\"180\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"20\" y=\"50\" width=\"64\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"92\" y=\"50\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"92\" y1=\"62\" x2=\"176\" y2=\"62\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <path d=\"M182 50h6v6M188 50l-6 6\" stroke=\"var(--primary)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"20\" y=\"74\" width=\"140\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "campi-di-input": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"20\" width=\"72\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <circle cx=\"102\" cy=\"24\" r=\"3\" fill=\"#b91c1c\"/>\n    <rect x=\"24\" y=\"36\" width=\"172\" height=\"40\" rx=\"6\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <line x1=\"36\" y1=\"46\" x2=\"36\" y2=\"66\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <rect x=\"44\" y=\"52\" width=\"86\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"24\" y=\"84\" width=\"124\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "icone-e-icon-buttons": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"34\" width=\"110\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"48\" cy=\"56\" r=\"9\" stroke=\"var(--primary)\" stroke-width=\"2.2\"/>\n    <path d=\"M55 63l5 5\" stroke=\"var(--primary)\" stroke-width=\"2.2\" stroke-linecap=\"round\"/>\n    <rect x=\"68\" y=\"52\" width=\"50\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"150\" y=\"34\" width=\"44\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M165 49l14 14M179 49l-14 14\" stroke=\"var(--text)\" stroke-width=\"2.2\" stroke-linecap=\"round\"/>\n  <\/svg>", "intestazioni": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"20\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--primary)\"/>\n    <text x=\"33\" y=\"32\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--primary-contrast)\">H1<\/text>\n    <rect x=\"54\" y=\"23\" width=\"136\" height=\"10\" rx=\"5\" fill=\"var(--text)\"/>\n    <rect x=\"28\" y=\"48\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <text x=\"41\" y=\"60\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--text)\">H2<\/text>\n    <rect x=\"62\" y=\"52\" width=\"110\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"36\" y=\"76\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <text x=\"49\" y=\"88\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--text-muted)\">H3<\/text>\n    <rect x=\"70\" y=\"80\" width=\"88\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "testi-e-errori": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"20\" width=\"176\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"22\" y=\"34\" width=\"154\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n    <rect x=\"22\" y=\"48\" width=\"166\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n    <rect x=\"22\" y=\"68\" width=\"176\" height=\"32\" rx=\"6\" fill=\"#fee2e2\" stroke=\"#b91c1c\" stroke-width=\"2\"/>\n    <circle cx=\"38\" cy=\"84\" r=\"7\" fill=\"#b91c1c\"/>\n    <path d=\"M38 80v5M38 88h.01\" stroke=\"#ffffff\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"52\" y=\"80\" width=\"128\" height=\"8\" rx=\"4\" fill=\"#7f1d1d\"/>\n  <\/svg>", "immagini": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"18\" width=\"172\" height=\"64\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"64\" cy=\"40\" r=\"9\" fill=\"var(--primary)\"/>\n    <path d=\"M36 74l36-28 26 20 28-24 48 32H36z\" fill=\"var(--border)\"/>\n    <rect x=\"24\" y=\"88\" width=\"42\" height=\"16\" rx=\"4\" fill=\"var(--primary)\"/>\n    <text x=\"45\" y=\"99\" text-anchor=\"middle\" font-size=\"9\" font-weight=\"700\" fill=\"var(--primary-contrast)\">ALT<\/text>\n    <rect x=\"74\" y=\"92\" width=\"122\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "loader-e-progress-bar": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <circle cx=\"110\" cy=\"34\" r=\"14\" stroke=\"var(--border)\" stroke-width=\"3.5\"/>\n    <path d=\"M110 20a14 14 0 0 1 14 14\" stroke=\"var(--primary)\" stroke-width=\"4\" stroke-linecap=\"round\"/>\n    <rect x=\"24\" y=\"64\" width=\"172\" height=\"16\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"26\" y=\"66\" width=\"114\" height=\"12\" rx=\"6\" fill=\"var(--primary)\"/>\n    <rect x=\"24\" y=\"90\" width=\"96\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"164\" y=\"90\" width=\"32\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n  <\/svg>", "chips-e-tags": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"28\" width=\"84\" height=\"28\" rx=\"14\" fill=\"var(--primary)\"/>\n    <path d=\"M32 42l4 4 7-7\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"48\" y=\"38\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--primary-contrast)\"/>\n    <rect x=\"114\" y=\"28\" width=\"86\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"128\" y=\"38\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M179 38l8 8M187 38l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"20\" y=\"68\" width=\"96\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"36\" cy=\"82\" r=\"4\" fill=\"var(--primary)\"/>\n    <rect x=\"46\" y=\"78\" width=\"54\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n  <\/svg>", "toggle-e-switch": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"26\" width=\"54\" height=\"28\" rx=\"14\" fill=\"var(--primary)\"/>\n    <circle cx=\"64\" cy=\"40\" r=\"10\" fill=\"var(--primary-contrast)\"/>\n    <path d=\"M35 40l3 3 6-6\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"90\" y=\"36\" width=\"96\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"24\" y=\"68\" width=\"54\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"38\" cy=\"82\" r=\"10\" fill=\"var(--text-muted)\"/>\n    <rect x=\"90\" y=\"78\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "tabelle": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"18\" width=\"180\" height=\"84\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M20 42h180\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"21\" y=\"19\" width=\"178\" height=\"23\" rx=\"4\" fill=\"var(--surface-alt)\"/>\n    <line x1=\"20\" y1=\"42\" x2=\"200\" y2=\"42\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <line x1=\"20\" y1=\"62\" x2=\"200\" y2=\"62\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <line x1=\"20\" y1=\"82\" x2=\"200\" y2=\"82\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <line x1=\"84\" y1=\"18\" x2=\"84\" y2=\"102\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <line x1=\"144\" y1=\"18\" x2=\"144\" y2=\"102\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"30\" y=\"27\" width=\"42\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"94\" y=\"27\" width=\"38\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"154\" y=\"27\" width=\"34\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"49\" width=\"36\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"69\" width=\"40\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"89\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n  <\/svg>", "form": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"14\" width=\"176\" height=\"92\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"34\" y=\"24\" width=\"60\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"34\" width=\"152\" height=\"18\" rx=\"4\" fill=\"var(--bg)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"34\" y=\"58\" width=\"52\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"68\" width=\"152\" height=\"18\" rx=\"4\" fill=\"var(--bg)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"126\" y=\"91\" width=\"60\" height=\"10\" rx=\"5\" fill=\"var(--primary)\"/>\n  <\/svg>", "card": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"34\" y=\"12\" width=\"152\" height=\"96\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"35\" y=\"13\" width=\"150\" height=\"38\" rx=\"6\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"46\" y=\"60\" width=\"94\" height=\"9\" rx=\"4.5\" fill=\"var(--text)\"/>\n    <rect x=\"46\" y=\"75\" width=\"124\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"46\" y=\"88\" width=\"64\" height=\"12\" rx=\"4\" fill=\"var(--primary)\"/>\n  <\/svg>", "caroselli": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"48\" y=\"20\" width=\"124\" height=\"64\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"28\" cy=\"52\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M31 47l-6 5 6 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"192\" cy=\"52\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M189 47l6 5-6 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"96\" cy=\"98\" r=\"5\" fill=\"var(--primary)\"/>\n    <circle cx=\"110\" cy=\"98\" r=\"4\" fill=\"var(--border)\"/>\n    <circle cx=\"124\" cy=\"98\" r=\"4\" fill=\"var(--border)\"/>\n  <\/svg>", "dataviz": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <line x1=\"30\" y1=\"94\" x2=\"194\" y2=\"94\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <line x1=\"30\" y1=\"20\" x2=\"30\" y2=\"94\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"46\" y=\"46\" width=\"28\" height=\"48\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"92\" y=\"28\" width=\"28\" height=\"66\" rx=\"3\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <path d=\"M94 42l24-12M94 58l24-12M94 74l24-12M94 90l24-12\" stroke=\"var(--text)\" stroke-width=\"1.5\"/>\n    <rect x=\"138\" y=\"58\" width=\"28\" height=\"36\" rx=\"3\" fill=\"var(--accent-special)\"/>\n  <\/svg>", "pop-up-e-modali": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"14\" y=\"12\" width=\"192\" height=\"96\" rx=\"8\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"38\" y=\"22\" width=\"144\" height=\"76\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2.2\"/>\n    <rect x=\"50\" y=\"34\" width=\"84\" height=\"9\" rx=\"4.5\" fill=\"var(--text)\"/>\n    <rect x=\"152\" y=\"30\" width=\"18\" height=\"18\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <path d=\"M157 35l8 8M165 35l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"50\" y=\"52\" width=\"116\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"50\" y=\"64\" width=\"96\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"118\" y=\"76\" width=\"52\" height=\"14\" rx=\"4\" fill=\"var(--primary)\"/>\n  <\/svg>", "breadcrumbs": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"52\" width=\"38\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"20\" y1=\"63\" x2=\"58\" y2=\"63\" stroke=\"var(--primary)\" stroke-width=\"2\"/>\n    <path d=\"M66 51l5 5-5 5\" stroke=\"var(--text-muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"80\" y=\"52\" width=\"48\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"80\" y1=\"63\" x2=\"128\" y2=\"63\" stroke=\"var(--primary)\" stroke-width=\"2\"/>\n    <path d=\"M136 51l5 5-5 5\" stroke=\"var(--text-muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"150\" y=\"52\" width=\"50\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n  <\/svg>", "menu-navigazione": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"18\" y=\"24\" width=\"184\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"30\" y=\"36\" width=\"36\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"30\" y1=\"49\" x2=\"66\" y2=\"49\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <rect x=\"80\" y=\"36\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M126 38l4 4 4-4\" stroke=\"var(--text)\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n    <rect x=\"148\" y=\"36\" width=\"40\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"76\" y=\"60\" width=\"76\" height=\"42\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"86\" y=\"70\" width=\"52\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"86\" y=\"84\" width=\"44\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "notifiche": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"34\" width=\"176\" height=\"52\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"22\" y=\"34\" width=\"8\" height=\"52\" rx=\"3\" fill=\"var(--primary)\"/>\n    <circle cx=\"46\" cy=\"60\" r=\"9\" fill=\"var(--primary)\"/>\n    <path d=\"M46 56v5M46 64h.01\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"64\" y=\"48\" width=\"86\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"64\" y=\"63\" width=\"102\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <path d=\"M178 46l8 8M186 46l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n  <\/svg>", "accordion": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"16\" width=\"172\" height=\"52\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"36\" y=\"26\" width=\"96\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M174 32l5-5 5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <line x1=\"24\" y1=\"42\" x2=\"196\" y2=\"42\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"36\" y=\"51\" width=\"138\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"24\" y=\"76\" width=\"172\" height=\"28\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"36\" y=\"86\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M174 88l5 5 5-5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n  <\/svg>", "ricerca": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"22\" width=\"130\" height=\"36\" rx=\"6\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"34\" y=\"36\" width=\"76\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"158\" y=\"22\" width=\"40\" height=\"36\" rx=\"6\" fill=\"var(--primary)\"/>\n    <circle cx=\"176\" cy=\"38\" r=\"6\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\"/>\n    <path d=\"M181 43l4 4\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"22\" y=\"64\" width=\"130\" height=\"38\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"34\" y=\"74\" width=\"88\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"87\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "tabs": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"20\" width=\"58\" height=\"26\" rx=\"5\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <rect x=\"30\" y=\"29\" width=\"38\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"22\" y1=\"44\" x2=\"76\" y2=\"44\" stroke=\"var(--primary)\" stroke-width=\"4\"/>\n    <rect x=\"82\" y=\"22\" width=\"56\" height=\"24\" rx=\"5\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"1.8\"/>\n    <rect x=\"92\" y=\"31\" width=\"36\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"142\" y=\"22\" width=\"56\" height=\"24\" rx=\"5\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"1.8\"/>\n    <rect x=\"152\" y=\"31\" width=\"36\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"20\" y=\"46\" width=\"180\" height=\"56\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2.2\"/>\n    <rect x=\"34\" y=\"62\" width=\"136\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"78\" width=\"110\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "picker-data-e-ora": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"38\" y=\"14\" width=\"144\" height=\"24\" rx=\"5\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"1.8\"/>\n    <rect x=\"48\" y=\"23\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"38\" y=\"42\" width=\"144\" height=\"66\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"52\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"76\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"100\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"124\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"148\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"52\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"76\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"100\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n  <\/svg>", "tooltip-e-pop-over": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"42\" y=\"18\" width=\"136\" height=\"44\" rx=\"6\" fill=\"var(--text)\"/>\n    <rect x=\"54\" y=\"30\" width=\"92\" height=\"7\" rx=\"3.5\" fill=\"var(--bg)\"/>\n    <rect x=\"54\" y=\"43\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <path d=\"M104 62l6 8 6-8\" fill=\"var(--text)\"/>\n    <circle cx=\"110\" cy=\"86\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <text x=\"110\" y=\"90\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"700\" fill=\"var(--primary)\">i<\/text>\n  <\/svg>", "pager": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <path d=\"M38 55l-5 5 5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"58\" y=\"44\" width=\"30\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <text x=\"73\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--text)\">1<\/text>\n    <rect x=\"94\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--primary)\"/>\n    <text x=\"110\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--primary-contrast)\">2<\/text>\n    <rect x=\"132\" y=\"44\" width=\"30\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <text x=\"147\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--text)\">3<\/text>\n    <rect x=\"168\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <path d=\"M182 55l5 5-5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n  <\/svg>", "stepper": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <line x1=\"44\" y1=\"48\" x2=\"176\" y2=\"48\" stroke=\"var(--border)\" stroke-width=\"2.5\"/>\n    <line x1=\"44\" y1=\"48\" x2=\"110\" y2=\"48\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <circle cx=\"44\" cy=\"48\" r=\"14\" fill=\"var(--primary)\"/>\n    <path d=\"M39 48l3 3 7-7\" stroke=\"var(--primary-contrast)\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"110\" cy=\"48\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <text x=\"110\" y=\"52\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"700\" fill=\"var(--primary)\">2<\/text>\n    <circle cx=\"176\" cy=\"48\" r=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <text x=\"176\" y=\"52\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"700\" fill=\"var(--text-muted)\">3<\/text>\n    <rect x=\"28\" y=\"70\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"92\" y=\"70\" width=\"36\" height=\"6\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"160\" y=\"70\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>"}
+  </script>
+
+  <script>
+    (function() {
+      const DATA = JSON.parse(document.getElementById("comp-data").textContent);
+      const WCAG_SLUGS = JSON.parse(document.getElementById("wcag-slugs").textContent);
+      const COMP_SVGS = JSON.parse(document.getElementById("comp-svgs").textContent);
+      const WCAG_BASE_URL = "https://www.w3.org/TR/WCAG22/#";
+      let selectedComp = "ALL";
+      let lastTriggerEl = null;
+      let currentModalAtomId = null;
+
+      const EXT_ICON_SVG = '<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+
+      const SECTION_ICONS = {
+        extra: '<svg class="sec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.8L20 10.7l-5.1 3.7 1.9 6.1L12 16.8l-4.8 3.7 1.9-6.1L4 10.7l6.1-1.9L12 3z"/></svg>',
+        variant: '<svg class="sec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',
+        state: '<svg class="sec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>',
+        error: '<svg class="sec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+      };
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function formatBadgeLevelHtml(text) {
+        let safe = escapeHtml(text);
+        safe = safe.replace(/- AAA\b/g, '- <span aria-hidden="true">AAA</span><span class="sr-only">Triple A</span>');
+        safe = safe.replace(/- AA\b/g, '- <span aria-hidden="true">AA</span><span class="sr-only">Double A</span>');
+        return safe;
+      }
+
+      function normalizeSectionMeta(rawSec) {
+        let s = String(rawSec || "General").trim();
+        s = s.charAt(0).toUpperCase() + s.slice(1);
+
+        const parts = s.split(" · ");
+        const parentTitle = parts[0].trim();
+        const childTitle = parts.length > 1 ? (parts[1].charAt(0).toUpperCase() + parts[1].slice(1)) : "";
+
+        const lower = parentTitle.toLowerCase();
+        let category = "base";
+        let kindLabel = "Core considerations";
+        let iconSvg = "";
+
+        if (lower.startsWith("extra considerations")) {
+          category = "extra";
+          kindLabel = lower.includes("variants") ? "Bonus · Extra considerations & variants" : "Bonus · Extra considerations";
+          iconSvg = SECTION_ICONS.extra;
+        } else if (lower.startsWith("variants")) {
+          category = "variant";
+          kindLabel = "Variant";
+          iconSvg = SECTION_ICONS.variant;
+        } else if (lower.startsWith("states")) {
+          category = "state";
+          kindLabel = "State management";
+          iconSvg = SECTION_ICONS.state;
+        } else if (lower.startsWith("errors")) {
+          category = "error";
+          kindLabel = "Error handling";
+          iconSvg = SECTION_ICONS.error;
+        }
+
+        return {
+          title: childTitle ? (parentTitle + " · " + childTitle) : parentTitle,
+          parentTitle: parentTitle,
+          childTitle: childTitle,
+          category: category,
+          isSpecial: category !== "base",
+          kindLabel: kindLabel,
+          iconSvg: iconSvg
+        };
+      }
+
+      function classifyBadge(text) {
+        const t = String(text || "").trim();
+        if (t.toLowerCase().includes("best practice")) {
+          return { htmlLabel: "Best Practice", cls: "badge-bp", level: "BP", href: null };
+        }
+        let level = "A";
+        if (t.endsWith("- AAA")) level = "AAA";
+        else if (t.endsWith("- AA")) level = "AA";
+        else if (t.endsWith("- A")) level = "A";
+
+        let principle = "WCAG 2.2";
+        let cls = "badge-utilizzabile";
+        if (t.startsWith("1.")) { principle = "Perceivable"; cls = "badge-percepibile"; }
+        else if (t.startsWith("2.")) { principle = "Operable"; cls = "badge-utilizzabile"; }
+        else if (t.startsWith("3.")) { principle = "Understandable"; cls = "badge-comprensibile"; }
+        else if (t.startsWith("4.")) { principle = "Robust"; cls = "badge-robusto"; }
+
+        const codeMatch = t.match(/^(\d+\.\d+\.\d+)/);
+        let href = null;
+        if (codeMatch && WCAG_SLUGS[codeMatch[1]]) {
+          href = WCAG_BASE_URL + WCAG_SLUGS[codeMatch[1]];
+        }
+
+        const fullHtml = principle + " · " + formatBadgeLevelHtml(t);
+        return { htmlLabel: fullHtml, cls: cls, level: level, href: href };
+      }
+
+      function matchesScope(item, scope) {
+        if (scope === "ALL") return true;
+        const hay = (item.section + " " + item.cosa + " " + item.note).toLowerCase();
+        if (scope === "colore") return /color|contrast|dark mode|background/.test(hay);
+        if (scope === "dimensioni") return /size|48px|44px|target|zoom|resiz/.test(hay);
+        if (scope === "focus") return /focus|keyboard|tab|esc|trap/.test(hay);
+        if (scope === "label") return /label|text|language|alt|purpose|heading/.test(hay);
+        if (scope === "stati") return /state|message|announc|error|disabled|loading|timeout/.test(hay);
+        return true;
+      }
+
+      function buildConceptGroups(items, idPrefix) {
+        const fragment = document.createDocumentFragment();
+        const sectionGroups = [];
+        const sectionMap = new Map();
+
+        items.forEach(function(item) {
+          const meta = normalizeSectionMeta(item.section);
+          if (!sectionMap.has(meta.title)) {
+            const grp = { meta: meta, items: [], anchorId: "" };
+            sectionMap.set(meta.title, grp);
+            sectionGroups.push(grp);
+          }
+          sectionMap.get(meta.title).items.push(item);
+        });
+
+        sectionGroups.forEach(function(grp, grpIdx) {
+          const secId = idPrefix + "-sec-" + grpIdx;
+          grp.anchorId = secId;
+
+          const conceptDiv = document.createElement("div");
+          let extraCls = "";
+          if (grp.meta.category === "extra") extraCls = " extra-group";
+          else if (grp.meta.isSpecial) extraCls = " variant-group";
+          conceptDiv.className = "concept-group" + extraCls;
+          conceptDiv.id = secId;
+
+          const hSec = document.createElement("h4");
+          hSec.className = "concept-heading";
+
+          const leftSpan = document.createElement("span");
+          leftSpan.className = "heading-main-part";
+          if (grp.meta.iconSvg) {
+            leftSpan.innerHTML = grp.meta.iconSvg;
+          }
+          const textNode = document.createElement("span");
+          textNode.textContent = grp.meta.title;
+          leftSpan.appendChild(textNode);
+          hSec.appendChild(leftSpan);
+
+          if (grp.meta.isSpecial) {
+            const tagSpan = document.createElement("span");
+            tagSpan.className = "group-kind-tag";
+            tagSpan.textContent = grp.meta.kindLabel;
+            hSec.appendChild(tagSpan);
+          }
+
+          conceptDiv.appendChild(hSec);
+
+          const grid = document.createElement("div");
+          grid.className = "cards-grid";
+
+          grp.items.forEach(function(item) {
+            const card = document.createElement("article");
+            card.className = "rule-card";
+
+            const topDiv = document.createElement("div");
+            const hCard = document.createElement("h5");
+            hCard.className = "card-title";
+            hCard.textContent = item.cosa;
+            topDiv.appendChild(hCard);
+
+            if (item.note) {
+              const noteP = document.createElement("p");
+              noteP.className = "card-note";
+              noteP.textContent = item.note;
+              topDiv.appendChild(noteP);
+            }
+            card.appendChild(topDiv);
+
+            const ul = document.createElement("ul");
+            ul.className = "badges-list";
+            ul.setAttribute("aria-label", "WCAG 2.2 criteria and references");
+            item.wcag.forEach(function(w) {
+              const b = classifyBadge(w);
+              const li = document.createElement("li");
+              if (b.href) {
+                const a = document.createElement("a");
+                a.className = "wcag-badge " + b.cls;
+                a.href = b.href;
+                a.target = "_blank";
+                a.rel = "noopener noreferrer";
+                a.innerHTML = b.htmlLabel + EXT_ICON_SVG + '<span class="sr-only"> (opens WCAG 2.2 criterion in a new tab)</span>';
+                li.appendChild(a);
+              } else {
+                const span = document.createElement("span");
+                span.className = "wcag-badge " + b.cls;
+                span.innerHTML = b.htmlLabel;
+                li.appendChild(span);
+              }
+              ul.appendChild(li);
+            });
+            card.appendChild(ul);
+            grid.appendChild(card);
+          });
+
+          conceptDiv.appendChild(grid);
+          fragment.appendChild(conceptDiv);
+        });
+
+        return { fragment: fragment, sectionGroups: sectionGroups };
+      }
+
+      function buildHierarchicalToc(compName, sectionGroups, afterTocId) {
+        const wrap = document.createElement("div");
+
+        const skipToc = document.createElement("a");
+        skipToc.className = "skip-toc-link";
+        skipToc.href = "#" + afterTocId;
+        skipToc.textContent = "Skip table of contents for " + compName;
+        wrap.appendChild(skipToc);
+
+        const nav = document.createElement("nav");
+        nav.className = "toc-box";
+        nav.setAttribute("aria-label", "Table of contents for " + compName);
+
+        const baseGroups = sectionGroups.filter(function(g) { return !g.meta.isSpecial; });
+        const specialGroups = sectionGroups.filter(function(g) { return g.meta.isSpecial; });
+
+        const cols = document.createElement("div");
+        cols.className = "toc-columns";
+
+        if (baseGroups.length) {
+          const colBase = document.createElement("div");
+          const hBase = document.createElement("h4");
+          hBase.className = "toc-group-heading";
+          hBase.textContent = "Core considerations";
+          colBase.appendChild(hBase);
+
+          const ulBase = document.createElement("ul");
+          ulBase.className = "toc-tree";
+          baseGroups.forEach(function(grp) {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.className = "toc-link";
+            a.href = "#" + grp.anchorId;
+            a.textContent = grp.meta.title;
+            li.appendChild(a);
+            ulBase.appendChild(li);
+          });
+          colBase.appendChild(ulBase);
+          cols.appendChild(colBase);
+        }
+
+        if (specialGroups.length) {
+          const colSpec = document.createElement("div");
+          const hSpec = document.createElement("h4");
+          hSpec.className = "toc-group-heading";
+          hSpec.innerHTML = SECTION_ICONS.extra + "<span>Deep dives: extra considerations, variants, and states</span>";
+          colSpec.appendChild(hSpec);
+
+          const ulRoot = document.createElement("ul");
+          ulRoot.className = "toc-tree";
+          const parentMap = new Map();
+
+          specialGroups.forEach(function(grp) {
+            const pTitle = grp.meta.parentTitle;
+            if (!parentMap.has(pTitle)) {
+              const liParent = document.createElement("li");
+              const spanParent = document.createElement("span");
+              spanParent.className = "toc-parent-heading";
+              spanParent.innerHTML = (grp.meta.iconSvg || "") + "<span>" + escapeHtml(pTitle) + "</span>";
+              liParent.appendChild(spanParent);
+
+              const subUl = document.createElement("ul");
+              subUl.className = "toc-sublist";
+              liParent.appendChild(subUl);
+
+              ulRoot.appendChild(liParent);
+              parentMap.set(pTitle, subUl);
+            }
+            const subUl = parentMap.get(pTitle);
+            const subLi = document.createElement("li");
+            const subA = document.createElement("a");
+            subA.className = "toc-link";
+            subA.href = "#" + grp.anchorId;
+            subA.textContent = grp.meta.childTitle ? grp.meta.childTitle : "General";
+            subLi.appendChild(subA);
+            subUl.appendChild(subLi);
+          });
+
+          colSpec.appendChild(ulRoot);
+          cols.appendChild(colSpec);
+        }
+
+        nav.appendChild(cols);
+        wrap.appendChild(nav);
+        return wrap;
+      }
+
+      const dialogEl = document.getElementById("atom-modal");
+      const dialogTitle = document.getElementById("dialog-title");
+      const dialogBody = document.getElementById("dialog-body");
+      const dialogClose = document.getElementById("dialog-close");
+      const dialogGoFull = document.getElementById("dialog-go-full");
+
+      function openAtomModal(atomComp, triggerBtn) {
+        lastTriggerEl = triggerBtn;
+        currentModalAtomId = atomComp.id;
+        dialogTitle.textContent = atomComp.name + " (base component)";
+        dialogBody.innerHTML = "";
+
+        if (COMP_SVGS[atomComp.id]) {
+          const illWrap = document.createElement("div");
+          illWrap.className = "modal-illustration-wrap";
+          illWrap.innerHTML = COMP_SVGS[atomComp.id];
+          dialogBody.appendChild(illWrap);
+        }
+
+        const built = buildConceptGroups(atomComp.items, "modal-" + atomComp.id);
+        dialogBody.appendChild(built.fragment);
+
+        dialogEl.showModal();
+        dialogClose.focus();
+      }
+
+      dialogClose.addEventListener("click", function() {
+        dialogEl.close();
+      });
+
+      dialogGoFull.addEventListener("click", function() {
+        const targetId = currentModalAtomId;
+        dialogEl.close();
+        if (targetId) {
+          selectComponentById(targetId, true);
+        }
+      });
+
+      dialogEl.addEventListener("close", function() {
+        if (lastTriggerEl && typeof lastTriggerEl.focus === "function") {
+          lastTriggerEl.focus();
+        }
+      });
+
+      function selectComponentById(compId, pushHash) {
+        selectedComp = compId;
+        if (pushHash) {
+          const newHash = compId === "ALL" ? "#all" : ("#" + compId);
+          if (window.location.hash !== newHash) {
+            history.pushState(null, "", newHash);
+          }
+        }
+        updateUI();
+        const headingEl = document.getElementById("heading-elenco-componenti");
+        if (headingEl) headingEl.focus({ preventScroll: false });
+      }
+
+      function syncFromHash() {
+        const h = window.location.hash.replace(/^#/, "").trim();
+        if (!h || h === "all") {
+          selectedComp = "ALL";
+        } else {
+          const found = DATA.find(function(c) { return c.id === h; });
+          if (found) {
+            selectedComp = found.id;
+          }
+        }
+      }
+
+      function renderSidebar() {
+        const listAtomi = document.getElementById("list-atomi");
+        const listMolecole = document.getElementById("list-molecole");
+        listAtomi.innerHTML = "";
+        listMolecole.innerHTML = "";
+
+        DATA.forEach(function(comp) {
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = "#" + comp.id;
+          a.className = "comp-link";
+          a.dataset.comp = comp.id;
+          if (selectedComp === comp.id) {
+            a.setAttribute("aria-current", "page");
+          }
+          a.textContent = comp.name;
+
+          a.addEventListener("click", function(e) {
+            e.preventDefault();
+            selectComponentById(comp.id, true);
+          });
+          li.appendChild(a);
+          (comp.type === "atom" ? listAtomi : listMolecole).appendChild(li);
+        });
+
+        const allLink = document.querySelector('[data-comp="ALL"]');
+        if (selectedComp === "ALL") {
+          allLink.setAttribute("aria-current", "page");
+        } else {
+          allLink.removeAttribute("aria-current");
+        }
+        allLink.onclick = function(e) {
+          e.preventDefault();
+          selectComponentById("ALL", true);
+        };
+      }
+
+      function updateUI() {
+        renderSidebar();
+        const query = document.getElementById("search-input").value.trim().toLowerCase();
+        const scope = document.getElementById("scope-select").value;
+        const activeLevels = Array.from(document.querySelectorAll('input[name="level"]:checked')).map(function(el) { return el.value; });
+
+        const contentArea = document.getElementById("content-area");
+        contentArea.innerHTML = "";
+
+        const visibleComps = selectedComp === "ALL" ? DATA : DATA.filter(function(c) { return c.id === selectedComp; });
+        let shownCompsCount = 0;
+
+        visibleComps.forEach(function(comp, compIdx) {
+          const filteredItems = comp.items.filter(function(item) {
+            const badges = item.wcag.map(classifyBadge);
+            const levelMatch = badges.length === 0 ? activeLevels.includes("BP") : badges.some(function(b) { return activeLevels.includes(b.level); });
+            if (!levelMatch) return false;
+            if (!matchesScope(item, scope)) return false;
+            if (query) {
+              const fullText = (comp.name + " " + item.section + " " + item.cosa + " " + item.note + " " + item.wcag.join(" ")).toLowerCase();
+              if (!fullText.includes(query)) return false;
+            }
+            return true;
+          });
+
+          if (filteredItems.length === 0) return;
+          shownCompsCount += 1;
+
+          const compSection = document.createElement("article");
+          compSection.className = "component-block";
+          compSection.id = compIdx === 0 ? "primo-componente" : ("card-comp-" + comp.id);
+          compSection.setAttribute("aria-labelledby", "heading-" + comp.id);
+
+          const headerDiv = document.createElement("div");
+          headerDiv.className = "comp-header";
+
+          const topRow = document.createElement("div");
+          topRow.className = "comp-header-top";
+
+          const titleWrap = document.createElement("div");
+          titleWrap.className = "comp-title-wrap";
+
+          const h3 = document.createElement("h3");
+          h3.className = "comp-title";
+          h3.id = "heading-" + comp.id;
+          h3.innerHTML = escapeHtml(comp.name) + ' <span class="comp-type-tag">(' + comp.type + ')</span>';
+          titleWrap.appendChild(h3);
+
+          if (comp.warning) {
+            const warnP = document.createElement("p");
+            warnP.className = "warning-banner";
+            warnP.setAttribute("role", "note");
+            warnP.textContent = comp.warning;
+            titleWrap.appendChild(warnP);
+          }
+
+          topRow.appendChild(titleWrap);
+
+          if (COMP_SVGS[comp.id]) {
+            const illBox = document.createElement("div");
+            illBox.className = "comp-illustration";
+            illBox.innerHTML = COMP_SVGS[comp.id];
+            topRow.appendChild(illBox);
+          }
+
+          headerDiv.appendChild(topRow);
+
+          const built = buildConceptGroups(filteredItems, "comp-" + comp.id);
+          const firstSectionAnchorId = built.sectionGroups.length ? built.sectionGroups[0].anchorId : ("heading-" + comp.id);
+
+          if (built.sectionGroups.length > 1 && (comp.type === "atom" || selectedComp !== "ALL")) {
+            headerDiv.appendChild(buildHierarchicalToc(comp.name, built.sectionGroups, firstSectionAnchorId));
+          }
+
+          if (comp.always.length || comp.sometimes.length) {
+            const relBox = document.createElement("div");
+            relBox.className = "relations-box";
+
+            const relH4 = document.createElement("h4");
+            relH4.textContent = "Base components (atoms) to consider";
+            relBox.appendChild(relH4);
+
+            const hintP = document.createElement("p");
+            hintP.className = "relations-hint";
+            hintP.textContent = "Select a base component to inspect its rules in an overlay dialog without losing your place.";
+            relBox.appendChild(hintP);
+
+            function buildRelRow(titleText, list) {
+              if (!list.length) return;
+              const row = document.createElement("div");
+              row.className = "rel-row";
+              const strong = document.createElement("strong");
+              strong.textContent = titleText + ": ";
+              row.appendChild(strong);
+
+              list.forEach(function(atomName) {
+                const found = DATA.find(function(d) { return d.name.toLowerCase() === atomName.toLowerCase(); });
+                if (found) {
+                  const btn = document.createElement("button");
+                  btn.type = "button";
+                  btn.className = "rel-chip";
+                  btn.textContent = atomName;
+                  btn.setAttribute("aria-haspopup", "dialog");
+                  btn.addEventListener("click", function() {
+                    openAtomModal(found, btn);
+                  });
+                  row.appendChild(btn);
+                } else {
+                  const span = document.createElement("span");
+                  span.className = "rel-chip";
+                  span.textContent = atomName;
+                  row.appendChild(span);
+                }
+              });
+              relBox.appendChild(row);
+            }
+
+            buildRelRow("Always", comp.always);
+            buildRelRow("In some cases", comp.sometimes);
+            headerDiv.appendChild(relBox);
+          }
+
+          compSection.appendChild(headerDiv);
+          compSection.appendChild(built.fragment);
+          contentArea.appendChild(compSection);
+        });
+
+        if (shownCompsCount === 0) {
+          const emptyP = document.createElement("p");
+          emptyP.textContent = "No guidelines match the selected filters.";
+          contentArea.appendChild(emptyP);
+        }
+
+        const skipFirst = document.getElementById("skip-to-first");
+        if (skipFirst) {
+          skipFirst.href = shownCompsCount > 0 ? "#primo-componente" : "#heading-elenco-componenti";
+        }
+      }
+
+      window.addEventListener("hashchange", function() {
+        syncFromHash();
+        updateUI();
+      });
+
+      document.getElementById("search-input").addEventListener("input", function() {
+        updateUI();
+        document.getElementById("results-status").textContent = "Components list updated for search query.";
+      });
+      document.getElementById("scope-select").addEventListener("change", function() {
+        updateUI();
+        document.getElementById("results-status").textContent = "Components list updated for selected aspect.";
+      });
+      document.querySelectorAll('input[name="level"]').forEach(function(cb) {
+        cb.addEventListener("change", function() {
+          updateUI();
+          document.getElementById("results-status").textContent = "Components list updated for selected conformance levels.";
+        });
+      });
+      document.getElementById("reset-filters").addEventListener("click", function() {
+        document.getElementById("search-input").value = "";
+        document.getElementById("scope-select").value = "ALL";
+        document.querySelectorAll('input[name="level"]').forEach(function(cb) { cb.checked = true; });
+        selectComponentById("ALL", true);
+        document.getElementById("results-status").textContent = "Filters reset.";
+      });
+
+      syncFromHash();
+      updateUI();
+    })();
+  </script>
+</body>
+</html>
