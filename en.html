@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xml:lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Language" content="en">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Accessible Design Components – Accessibility Days 2026</title>
   <link rel="alternate" hreflang="it" href="index.html">
@@ -74,6 +75,7 @@
     html {
       font-size: 16px;
       scroll-behavior: smooth;
+      max-width: 100%;
     }
     @media (prefers-reduced-motion: reduce) {
       html {
@@ -89,11 +91,22 @@
       line-height: 1.55;
       background-color: var(--bg);
       color: var(--text);
+      max-width: 100%;
     }
 
     button, input, select {
       font-family: inherit;
       font-size: 1rem;
+    }
+
+    img, svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    h1, h2, h3, h4, h5, h6, p, a, li, label, legend, button, select, input {
+      overflow-wrap: break-word;
+      word-wrap: break-word;
     }
 
     .sr-only {
@@ -113,10 +126,17 @@
       outline-offset: 2px;
     }
 
+    /* Sottolineatura continua e pulita per tutti i link */
+    a {
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 3px;
+      text-decoration-skip-ink: auto;
+    }
+
     /* Skip Links */
     .skip-links {
       position: absolute;
-      top: -140px;
+      top: -160px;
       left: 0.75rem;
       z-index: 1000;
       display: flex;
@@ -137,23 +157,12 @@
       text-decoration: none;
     }
 
-    .skip-toc-link {
-      display: inline-block;
-      margin-top: 0.75rem;
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--primary);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-
     .ext-icon {
-      display: inline-block;
-      width: 1em;
-      height: 1em;
-      vertical-align: -0.12em;
+      display: inline;
+      width: 0.95em;
+      height: 0.95em;
+      vertical-align: -0.1em;
       margin-left: 0.25em;
-      flex-shrink: 0;
     }
 
     header {
@@ -170,33 +179,10 @@
       align-items: flex-start;
       gap: 1.25rem 2rem;
     }
-    .header-text {
-      flex: 1 1 540px;
-    }
-    h1 {
-      margin: 0 0 0.65rem;
-      font-size: clamp(1.85rem, 3vw, 2.35rem);
-      font-weight: 700;
-      line-height: 1.2;
-      color: var(--text);
-    }
-    .header-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      color: var(--text-muted);
-      font-size: 1rem;
-      line-height: 1.5;
-    }
-    .header-meta p {
-      margin: 0;
-    }
-    .header-meta a {
-      color: var(--primary);
-      font-weight: 700;
-      text-underline-offset: 3px;
-    }
+    /* Il pulsante cambio lingua è primo nel DOM per ricevere focus subito dopo gli skip link,
+       ma visivamente resta a destra su desktop grazie a order: 2 */
     .lang-switch {
+      order: 2;
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
@@ -215,6 +201,33 @@
       background: var(--primary);
       color: var(--primary-contrast);
     }
+    .header-text {
+      order: 1;
+      flex: 1 1 540px;
+      min-width: 0;
+    }
+    h1 {
+      margin: 0 0 0.65rem;
+      font-size: clamp(1.9rem, 3.2vw, 2.4rem);
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--text);
+    }
+    .header-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    .header-meta p {
+      margin: 0;
+    }
+    .header-meta a {
+      color: var(--primary);
+      font-weight: 700;
+    }
 
     /* Layout principale responsive */
     .layout {
@@ -228,7 +241,10 @@
     }
     @media (max-width: 900px) {
       .layout {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .layout > * {
+        min-width: 0;
       }
     }
 
@@ -256,6 +272,9 @@
       flex-direction: column;
       gap: 0.25rem;
     }
+    .comp-list li {
+      list-style: none;
+    }
     .comp-link {
       display: block;
       width: 100%;
@@ -274,7 +293,6 @@
     .comp-link:hover {
       background: var(--surface-alt);
       text-decoration: underline;
-      text-underline-offset: 3px;
     }
     .comp-link[aria-current="page"] {
       background: var(--primary);
@@ -283,19 +301,59 @@
       text-decoration: none;
     }
 
-    /* Sezione Ricerca e Filtri */
+    /* Sezione Ricerca e Filtri richiudibile */
     .filters-panel {
       background: var(--surface);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius);
       padding: 1.25rem 1.35rem;
       box-shadow: var(--shadow);
+      max-width: 86ch;
+    }
+    .filters-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem 1rem;
     }
     .filters-heading {
-      margin: 0 0 1rem;
+      margin: 0;
       font-size: 1.35rem;
       font-weight: 700;
       color: var(--text);
+    }
+    .toggle-filters-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      min-height: 44px;
+      padding: 0.45rem 0.95rem;
+      background: var(--surface-alt);
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .toggle-filters-btn:hover {
+      background: var(--primary);
+      color: var(--primary-contrast);
+    }
+    .toggle-filters-btn svg {
+      width: 18px;
+      height: 18px;
+      transition: transform 0.15s ease;
+    }
+    .toggle-filters-btn[aria-expanded="false"] svg {
+      transform: rotate(-90deg);
+    }
+    .filters-body {
+      margin-top: 1rem;
+    }
+    .filters-body[hidden] {
+      display: none;
     }
     .filters-grid {
       display: grid;
@@ -408,10 +466,13 @@
       background: var(--border-subtle);
       margin: 2rem 0 1.5rem;
     }
+
+    /* Gerarchia H2 > H3 rigorosa */
     .components-section-heading {
       margin: 0 0 2rem;
-      font-size: 1.75rem;
+      font-size: clamp(1.75rem, 2.6vw, 2.05rem);
       font-weight: 700;
+      line-height: 1.25;
       color: var(--text-muted);
     }
     .components-section-heading[hidden] {
@@ -424,6 +485,7 @@
       padding-top: 3rem;
       border-top: 4px solid var(--border);
       scroll-margin-top: 1rem;
+      max-width: 86ch;
     }
     .component-block:first-child {
       margin-top: 0;
@@ -439,17 +501,26 @@
       align-items: flex-end;
       justify-content: space-between;
       gap: 1rem 1.5rem;
-      padding: 0 0 1.1rem;
+      padding: 0 0 1rem;
       border-bottom: 3px solid var(--primary);
     }
     .comp-title-wrap {
-      flex: 1 1 280px;
+      flex: 1 1 260px;
+      min-width: 0;
     }
-    .comp-title {
+    /* Titolo componente: H2 nella vista singola (grande), H3 nella vista completa (più piccolo di H2) */
+    h2.comp-title {
       margin: 0;
-      font-size: clamp(1.75rem, 2.6vw, 2.15rem);
+      font-size: clamp(1.75rem, 2.6vw, 2.05rem);
       font-weight: 700;
-      line-height: 1.2;
+      line-height: 1.25;
+      color: var(--primary);
+    }
+    h3.comp-title {
+      margin: 0;
+      font-size: clamp(1.5rem, 2.1vw, 1.72rem);
+      font-weight: 700;
+      line-height: 1.25;
       color: var(--primary);
     }
     .comp-type-tag {
@@ -465,15 +536,15 @@
       background: var(--surface);
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius);
-      padding: 0.45rem;
+      padding: 0.35rem;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .comp-illustration svg {
       display: block;
-      max-width: 100%;
-      height: auto;
+      width: 156px;
+      height: 86px;
     }
     .warning-banner {
       margin-top: 0.75rem;
@@ -486,15 +557,37 @@
       font-size: 1rem;
     }
 
-    /* Indice gerarchico della scheda */
+    /* Box unico Indice della scheda (include sia indice sezioni sia elementi base nei componenti complessi) */
     .toc-box {
-      margin-top: 1.1rem;
+      margin-top: 1.25rem;
       padding: 1.15rem 1.35rem;
       background: var(--surface);
       border: 1px solid var(--border-subtle);
       border-left: 5px solid var(--primary);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
+    }
+    .toc-top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem 1rem;
+      margin-bottom: 0.9rem;
+      padding-bottom: 0.55rem;
+      border-bottom: 1.5px solid var(--border-subtle);
+    }
+    .toc-main-title {
+      margin: 0;
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .skip-toc-link {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: underline;
     }
     .toc-columns {
       display: grid;
@@ -503,12 +596,12 @@
       align-items: start;
     }
     .toc-group-heading {
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: var(--text);
-      margin: 0 0 0.7rem;
-      padding-bottom: 0.35rem;
-      border-bottom: 2px solid var(--border-subtle);
+      margin: 0 0 0.65rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1.5px solid var(--border-subtle);
       display: flex;
       align-items: center;
       gap: 0.45rem;
@@ -521,12 +614,9 @@
     }
     .toc-parent-subhead {
       margin: 0 0 0.3rem;
-      font-size: 1.04rem;
+      font-size: 1.02rem;
       font-weight: 700;
       color: var(--text);
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
     }
     .toc-tree {
       list-style: disc;
@@ -556,7 +646,6 @@
       font-weight: 600;
       font-size: 1rem;
       text-decoration: underline;
-      text-underline-offset: 3px;
     }
     .toc-link:hover {
       color: var(--text);
@@ -567,18 +656,17 @@
       font-size: 1rem;
     }
 
-    /* Box relazioni Atomi nei componenti complessi */
-    .relations-box {
-      margin-top: 1.1rem;
-      padding: 1rem 1.2rem;
-      background: var(--surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius);
+    /* Separatore interno al box indice per gli atomi nei componenti complessi */
+    .toc-atoms-section {
+      margin-top: 1.15rem;
+      padding-top: 1rem;
+      border-top: 2px dashed var(--border-subtle);
     }
-    .relations-box h3, .relations-box h4 {
+    .toc-atoms-title {
       margin: 0 0 0.3rem;
-      font-size: 1.12rem;
+      font-size: 1.1rem;
       font-weight: 700;
+      color: var(--text);
     }
     .relations-hint {
       margin: 0 0 0.65rem;
@@ -607,7 +695,6 @@
       align-items: center;
       gap: 0.35rem;
       text-decoration: underline;
-      text-underline-offset: 3px;
     }
     .rel-chip:hover {
       background: var(--primary);
@@ -619,10 +706,11 @@
     .concept-group {
       margin-top: 1.9rem;
       scroll-margin-top: 1rem;
+      max-width: 82ch;
     }
     .concept-heading {
       margin: 0 0 1.1rem;
-      font-size: 1.45rem;
+      font-size: 1.38rem;
       font-weight: 700;
       line-height: 1.3;
       color: var(--text);
@@ -630,9 +718,6 @@
       background: var(--surface-alt);
       border-left: 5px solid var(--primary);
       border-radius: 0 6px 6px 0;
-      display: flex;
-      align-items: center;
-      gap: 0.55rem;
     }
     .sec-icon {
       flex: 0 0 auto;
@@ -647,6 +732,7 @@
       border: 2px solid var(--extra-border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
+      max-width: 84ch;
     }
     .concept-group.extra-group > .concept-heading {
       background: var(--extra-header-bg);
@@ -660,6 +746,7 @@
       border: 2px solid var(--variant-border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
+      max-width: 84ch;
     }
     .concept-group.variant-group > .concept-heading {
       background: var(--variant-header-bg);
@@ -667,7 +754,7 @@
       border-left: 6px solid var(--variant-border);
     }
 
-    /* Sotto-sezione interna (es. Considerazioni generali, In generale, Stato di focus, Stato disabilitato, Bottoni solo con icona) */
+    /* Sotto-sezione interna */
     .concept-subgroup {
       margin-top: 1.35rem;
       scroll-margin-top: 1rem;
@@ -677,7 +764,7 @@
     }
     .concept-subheading {
       margin: 0 0 0.9rem;
-      font-size: 1.22rem;
+      font-size: 1.2rem;
       font-weight: 700;
       line-height: 1.3;
       color: var(--text);
@@ -685,7 +772,7 @@
       border-bottom: 1.5px solid var(--border-subtle);
     }
 
-    /* Card Regole: colonna unica ordinata per evitare righe "spaginate" o mezze vuote */
+    /* Card Regole: larghezza calibrata su 82ch per evitare spazio vuoto a destra */
     .cards-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -700,6 +787,7 @@
       display: flex;
       flex-direction: column;
       gap: 0.85rem;
+      max-width: 82ch;
     }
     .card-title {
       margin: 0;
@@ -718,7 +806,7 @@
       max-width: 75ch;
     }
 
-    /* Badge WCAG + Best Practice in magenta/ciclamino freddo chiaramente distinto dal rosso Percepibile */
+    /* Badge WCAG + Best Practice */
     .badges-list {
       list-style: none;
       margin: 0;
@@ -728,20 +816,23 @@
       flex-wrap: wrap;
       gap: 0.5rem;
     }
+    .badges-list li {
+      list-style: none;
+    }
     .wcag-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
+      display: inline-block;
       padding: 0.38rem 0.75rem;
       border-radius: 6px;
       font-size: 1rem;
       font-weight: 700;
       border: 1.5px solid transparent;
       text-decoration: none;
+      max-width: 100%;
+      white-space: normal;
+      line-height: 1.35;
     }
     a.wcag-badge {
       text-decoration: underline;
-      text-underline-offset: 3px;
     }
     a.wcag-badge:hover {
       filter: brightness(0.95);
@@ -754,7 +845,7 @@
 
     /* Modale nativa (<dialog>) */
     dialog.atom-dialog {
-      width: min(92vw, 980px);
+      width: min(92vw, 920px);
       max-height: 86vh;
       padding: 0;
       border: 2px solid var(--border);
@@ -810,7 +901,7 @@
     }
     .modal-illustration-wrap {
       margin-bottom: 1.25rem;
-      padding: 0.75rem;
+      padding: 0.65rem;
       background: var(--surface);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius);
@@ -836,41 +927,20 @@
     footer a {
       color: var(--primary);
       font-weight: 700;
-      text-underline-offset: 3px;
     }
 
-    /* Fix Reflow & Mobile Overflow (WCAG 1.4.10 Reflow fino a 320px) */
-    html, body {
-      max-width: 100%;
-    }
-    img, svg {
-      max-width: 100%;
-      height: auto;
-    }
-    h1, h2, h3, h4, h5, h6, p, a, li, label, legend, button, select, input {
-      overflow-wrap: break-word;
-      word-wrap: break-word;
-    }
-    .wcag-badge {
-      max-width: 100%;
-      white-space: normal;
-      line-height: 1.35;
-    }
-    @media (max-width: 900px) {
-      .layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-      .layout > * {
-        min-width: 0;
-      }
-    }
     @media (max-width: 600px) {
       header {
         padding: 1.1rem 1rem;
       }
       .header-text {
         flex-basis: 100%;
-        min-width: 0;
+      }
+      .lang-switch {
+        order: 1;
+      }
+      .header-text {
+        order: 2;
       }
       .layout {
         padding: 1rem 1rem 2.5rem;
@@ -878,7 +948,6 @@
       }
       .filters-panel,
       .toc-box,
-      .relations-box,
       .concept-group.extra-group,
       .concept-group.variant-group,
       article.rule-card {
@@ -892,13 +961,9 @@
       }
       .comp-title-wrap {
         flex-basis: 100%;
-        min-width: 0;
       }
       .comp-header-top {
         padding: 0 0 0.9rem;
-      }
-      .comp-illustration {
-        width: 100%;
       }
       .concept-heading {
         font-size: 1.22rem;
@@ -911,23 +976,23 @@
         padding: 1rem;
       }
     }
-
   </style>
 </head>
-<body>
+<body lang="en">
   <div class="skip-links">
     <a href="#primo-componente" id="skip-to-first">Skip to first component</a>
-    <a href="#heading-filtri">Skip to search and filters</a>
-    <a href="#nav-componenti">Skip to components menu</a>
+    <a href="#heading-filtri" id="skip-to-filters">Skip to search and filters</a>
+    <a href="#nav-componenti" id="skip-to-nav">Skip to components menu</a>
   </div>
 
-  <header>
+  <header lang="en">
     <div class="header-inner">
+      <a href="index.html" class="lang-switch" lang="it" hreflang="it">Versione italiana</a>
       <div class="header-text">
         <h1>Accessible Design Components</h1>
         <div class="header-meta">
           <p>
-            Material used for the “Workshop: Get in the game! Hands-on accessible design workshop”, <a href="https://accessibilitydays.it" target="_blank" rel="noopener noreferrer">Accessibility Days<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="sr-only"> (opens Accessibility Days website in a new tab)</span></a> 2026.
+            Material used for the “<span lang="it">Workshop: Mettiti in gioco! Workshop pratico di design accessibile</span>”, <a href="https://accessibilitydays.it" target="_blank" rel="noopener noreferrer">Accessibility Days<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="sr-only"> (opens Accessibility Days website in a new tab)</span></a> 2026.
           </p>
           <p>
             Created by <a href="https://www.linkedin.com/in/chiaracielo-longobardi-a140737/" target="_blank" rel="noopener noreferrer">ChiaraCielo Longobardi<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="sr-only"> (opens LinkedIn profile in a new tab)</span></a>.
@@ -937,12 +1002,11 @@
           </p>
         </div>
       </div>
-      <a href="index.html" class="lang-switch" lang="it" hreflang="it">Versione italiana</a>
     </div>
   </header>
 
-  <div class="layout">
-    <nav id="nav-componenti" class="sidebar" aria-label="Components menu">
+  <div class="layout" lang="en">
+    <nav id="nav-componenti" class="sidebar" tabindex="-1" aria-label="Components menu">
       <a href="#all" class="comp-link" data-comp="ALL" aria-current="page">All components</a>
 
       <h2 class="nav-group-title">Base components (Atoms)</h2>
@@ -952,59 +1016,68 @@
       <ul class="comp-list" id="list-molecole"></ul>
     </nav>
 
-    <main id="main-content">
-      <section class="filters-panel" aria-labelledby="heading-filtri">
-        <h2 id="heading-filtri" class="filters-heading">Search and filters</h2>
-        <div class="filters-grid">
-          <div class="field-group">
-            <label for="search-input">Search guidelines or WCAG criteria</label>
-            <input type="search" id="search-input" placeholder="E.g., focus, 1.4.3, screen reader, contrast...">
-          </div>
-
-          <div class="field-group">
-            <label for="scope-select">Aspect to check</label>
-            <div class="select-wrap">
-              <select id="scope-select">
-                <option value="ALL">All aspects</option>
-                <option value="colore">Color and contrast</option>
-                <option value="dimensioni">Size and target area</option>
-                <option value="focus">Focus and keyboard</option>
-                <option value="label">Labels, text, and language</option>
-                <option value="stati">States and status messages</option>
-              </select>
-              <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </div>
-          </div>
+    <main id="main-content" lang="en">
+      <section class="filters-panel">
+        <div class="filters-header">
+          <h2 id="heading-filtri" class="filters-heading" tabindex="-1">Search and filters</h2>
+          <button type="button" class="toggle-filters-btn" id="toggle-filters-btn" aria-expanded="true" aria-controls="filters-body">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <span id="toggle-filters-label">Collapse search panel</span>
+          </button>
         </div>
 
-        <fieldset>
-          <legend>WCAG Conformance Level / Best Practice</legend>
-          <div class="checkbox-row">
-            <label class="checkbox-label"><input type="checkbox" name="level" value="A" checked> Level A</label>
-            <label class="checkbox-label"><input type="checkbox" name="level" value="AA" checked> Level <span aria-hidden="true">AA</span><span class="sr-only">Double A</span></label>
-            <label class="checkbox-label"><input type="checkbox" name="level" value="AAA" checked> Level <span aria-hidden="true">AAA</span><span class="sr-only">Triple A</span></label>
-            <label class="checkbox-label"><input type="checkbox" name="level" value="BP" checked> Best Practice</label>
-          </div>
-        </fieldset>
+        <div class="filters-body" id="filters-body">
+          <div class="filters-grid">
+            <div class="field-group">
+              <label for="search-input">Search guidelines or WCAG criteria</label>
+              <input type="search" id="search-input" placeholder="E.g., focus, 1.4.3, screen reader, contrast...">
+            </div>
 
-        <div class="filter-actions">
-          <p class="sr-only" role="status" aria-live="polite" id="results-status"></p>
-          <button type="button" class="reset-btn" id="reset-filters">Reset filters</button>
+            <div class="field-group">
+              <label for="scope-select">Aspect to check</label>
+              <div class="select-wrap">
+                <select id="scope-select">
+                  <option value="ALL">All aspects</option>
+                  <option value="colore">Color and contrast</option>
+                  <option value="dimensioni">Size and target area</option>
+                  <option value="focus">Focus and keyboard</option>
+                  <option value="label">Labels, text, and language</option>
+                  <option value="stati">States and status messages</option>
+                </select>
+                <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <fieldset>
+            <legend>Show only guidelines by level</legend>
+            <div class="checkbox-row">
+              <label class="checkbox-label"><input type="checkbox" name="level" value="A" checked> Level A</label>
+              <label class="checkbox-label"><input type="checkbox" name="level" value="AA" checked> Level <span aria-hidden="true">AA</span><span class="sr-only">Double A</span></label>
+              <label class="checkbox-label"><input type="checkbox" name="level" value="AAA" checked> Level <span aria-hidden="true">AAA</span><span class="sr-only">Triple A</span></label>
+              <label class="checkbox-label"><input type="checkbox" name="level" value="BP" checked> Best Practice</label>
+            </div>
+          </fieldset>
+
+          <div class="filter-actions">
+            <p class="sr-only" role="status" aria-live="polite" id="results-status"></p>
+            <button type="button" class="reset-btn" id="reset-filters">Reset filters</button>
+          </div>
         </div>
       </section>
 
-      <hr class="section-divider">
+      <hr class="section-divider" aria-hidden="true">
 
-      <section id="results-wrapper" aria-labelledby="heading-elenco-componenti">
+      <section id="results-wrapper">
         <h2 id="heading-elenco-componenti" class="components-section-heading" tabindex="-1">Components list</h2>
         <div id="content-area"></div>
       </section>
     </main>
   </div>
 
-  <dialog id="atom-modal" class="atom-dialog" aria-labelledby="dialog-title">
+  <dialog id="atom-modal" class="atom-dialog" lang="en" aria-labelledby="dialog-title">
     <div class="dialog-header">
       <h2 id="dialog-title">Base component details</h2>
       <div class="dialog-actions">
@@ -1015,7 +1088,7 @@
     <div class="dialog-body" id="dialog-body"></div>
   </dialog>
 
-  <footer>
+  <footer lang="en">
     <p>
       <a href="https://www.linkedin.com/in/chiaracielo-longobardi-a140737/" target="_blank" rel="noopener noreferrer">Contact me on LinkedIn<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="sr-only"> (opens LinkedIn profile in a new tab)</span></a>.
     </p>
@@ -1040,7 +1113,7 @@
           "1.4.6 Contrast (Enhanced) - AAA",
           "1.4.11 Non-text Contrast - AA"
         ],
-        "note": ""
+        "note": "Minimum contrast for text is 4.5:1 at Level AA (3:1 for large text, i.e., over 24px or over 19px bold) and increases to 7:1 at Level AAA (4.5:1 for large text). For icons, borders, and graphical elements, minimum required contrast is 3:1."
       },
       {
         "section": "Color",
@@ -1065,7 +1138,7 @@
           "2.5.8 Target Size (Minimum) - AA",
           "2.5.5 Target Size (Enhanced) - AAA"
         ],
-        "note": "Mobile guidelines: 48px × 48px (Android), 44px × 44px (Apple/iOS)."
+        "note": "An interactive target area must be at least 24px × 24px at Level AA, and 44px × 44px at Level AAA. Mobile guidelines are: 48px × 48px (Android) and 44px × 44px (Apple/iOS)."
       },
       {
         "section": "Labels",
@@ -1097,7 +1170,7 @@
         "wcag": [
           "1.4.4 Resize Text - AA"
         ],
-        "note": ""
+        "note": "Text must be resizable up to 200% via browser settings without loss of content or functionality and without overlapping."
       },
       {
         "section": "Extra considerations and variants",
@@ -1221,7 +1294,7 @@
           "2.5.8 Target Size (Minimum) - AA",
           "2.5.5 Target Size (Enhanced) - AAA"
         ],
-        "note": "Inline text links are exempt and may match text line-height.\nMobile target guidelines: 48px × 48px (Android), 44px × 44px (Apple/iOS)."
+        "note": "Inline text links are exempt and may match text line-height.\nAn interactive target area must be at least 24px × 24px at Level AA, and 44px × 44px at Level AAA. Mobile guidelines are: 48px × 48px (Android) and 44px × 44px (Apple/iOS)."
       },
       {
         "section": "Labels",
@@ -1314,7 +1387,7 @@
           "2.5.8 Target Size (Minimum) - AA",
           "2.5.5 Target Size (Enhanced) - AAA"
         ],
-        "note": "Mobile guidelines: 48px × 48px (Android), 44px × 44px (Apple/iOS)."
+        "note": "An interactive target area must be at least 24px × 24px at Level AA, and 44px × 44px at Level AAA. Mobile guidelines are: 48px × 48px (Android) and 44px × 44px (Apple/iOS)."
       },
       {
         "section": "Labels",
@@ -1437,7 +1510,7 @@
           "1.4.3 Contrast (Minimum) - AA",
           "1.4.6 Contrast (Enhanced) - AAA"
         ],
-        "note": ""
+        "note": "Minimum contrast against the background is 4.5:1 at Level AA (3:1 for text over 24px or over 19px bold) and increases to 7:1 at Level AAA (4.5:1 for large text)."
       },
       {
         "section": "Visual aspects",
@@ -1478,7 +1551,7 @@
           "2.5.5 Target Size (Enhanced) - AAA",
           "2.5.8 Target Size (Minimum) - AA"
         ],
-        "note": ""
+        "note": "An interactive target area must be at least 24px × 24px at Level AA, and 44px × 44px at Level AAA. Mobile guidelines are: 48px × 48px (Android) and 44px × 44px (Apple/iOS)."
       },
       {
         "section": "Extra considerations and variants",
@@ -1546,7 +1619,7 @@
           "1.4.3 Contrast (Minimum) - AA",
           "1.4.6 Contrast (Enhanced) - AAA"
         ],
-        "note": ""
+        "note": "Minimum contrast against the background is 4.5:1 at Level AA (3:1 for text over 24px or over 19px bold) and increases to 7:1 at Level AAA (4.5:1 for large text)."
       },
       {
         "section": "Visual aspects",
@@ -1589,7 +1662,7 @@
           "1.4.3 Contrast (Minimum) - AA",
           "1.4.6 Contrast (Enhanced) - AAA"
         ],
-        "note": ""
+        "note": "Minimum contrast against the background is 4.5:1 at Level AA (3:1 for text over 24px or over 19px bold) and increases to 7:1 at Level AAA (4.5:1 for large text)."
       },
       {
         "section": "Visual aspects",
@@ -1637,7 +1710,7 @@
         "wcag": [
           "1.4.4 Resize Text - AA"
         ],
-        "note": ""
+        "note": "Text must be resizable up to 200% via browser settings without loss of content or functionality and without overlapping."
       },
       {
         "section": "Language",
@@ -1821,7 +1894,7 @@
         "wcag": [
           "1.4.11 Non-text Contrast - AA"
         ],
-        "note": ""
+        "note": "Minimum contrast against the background is at least 3:1."
       },
       {
         "section": "Motion",
@@ -1837,7 +1910,7 @@
         "wcag": [
           "2.2.2 Pause, Stop, Hide - A"
         ],
-        "note": ""
+        "note": "If an animation or indicator starts automatically, lasts more than 5 seconds, and is presented alongside other content, a mechanism must be available to pause, stop, or hide it, while also respecting the prefers-reduced-motion system setting."
       },
       {
         "section": "Text",
@@ -1873,7 +1946,7 @@
           "1.4.6 Contrast (Enhanced) - AAA",
           "1.4.11 Non-text Contrast - AA"
         ],
-        "note": ""
+        "note": "Minimum contrast for text is 4.5:1 at Level AA (3:1 for large text, i.e., over 24px or over 19px bold) and increases to 7:1 at Level AAA (4.5:1 for large text). For icons, borders, and graphical elements, minimum required contrast is 3:1."
       },
       {
         "section": "Color",
@@ -1898,7 +1971,7 @@
           "2.5.8 Target Size (Minimum) - AA",
           "2.5.5 Target Size (Enhanced) - AAA"
         ],
-        "note": ""
+        "note": "An interactive target area must be at least 24px × 24px at Level AA, and 44px × 44px at Level AAA. Mobile guidelines are: 48px × 48px (Android) and 44px × 44px (Apple/iOS)."
       },
       {
         "section": "Labels",
@@ -1941,7 +2014,7 @@
           "1.4.3 Contrast (Minimum) - AA",
           "1.4.6 Contrast (Enhanced) - AAA"
         ],
-        "note": ""
+        "note": "Minimum contrast for text is 4.5:1 at Level AA (3:1 for large text, i.e., over 24px or over 19px bold) and increases to 7:1 at Level AAA (4.5:1 for large text). For icons, borders, and graphical elements, minimum required contrast is 3:1."
       },
       {
         "section": "Color",
@@ -1949,7 +2022,7 @@
         "wcag": [
           "1.4.11 Non-text Contrast - AA"
         ],
-        "note": ""
+        "note": "Minimum contrast against the background is at least 3:1."
       },
       {
         "section": "Color",
@@ -1966,7 +2039,7 @@
           "2.5.8 Target Size (Minimum) - AA",
           "2.5.5 Target Size (Enhanced) - AAA"
         ],
-        "note": ""
+        "note": "An interactive target area must be at least 24px × 24px at Level AA, and 44px × 44px at Level AAA. Mobile guidelines are: 48px × 48px (Android) and 44px × 44px (Apple/iOS)."
       },
       {
         "section": "Labels",
@@ -2155,7 +2228,7 @@
           "2.4.7 Focus Visible - AA",
           "2.4.13 Focus Appearance - AAA"
         ],
-        "note": ""
+        "note": "The focus indicator must never be removed and must always remain visible (AA)."
       },
       {
         "section": "Completion and submission",
@@ -2207,7 +2280,7 @@
         "wcag": [
           "1.4.10 Reflow - AA"
         ],
-        "note": "Ensure card content remains legible without overlapping even at high zoom levels."
+        "note": "Content must reflow without horizontal scrolling (or vertical scrolling for vertical text) up to 400% zoom on desktop (equivalent to a 320px viewport width or 256px height), without clipping text or overlapping elements."
       },
       {
         "section": "Focus and keyboard navigation",
@@ -2241,7 +2314,7 @@
           "2.4.7 Focus Visible - AA",
           "2.4.13 Focus Appearance - AAA"
         ],
-        "note": ""
+        "note": "The focus indicator must never be removed and must always remain visible (AA)."
       }
     ]
   },
@@ -2277,7 +2350,7 @@
           "2.5.8 Target Size (Minimum) - AA",
           "1.4.3 Contrast (Minimum) - AA"
         ],
-        "note": ""
+        "note": "Minimum contrast for text is 4.5:1 at Level AA (3:1 for large text, i.e., over 24px or over 19px bold) and increases to 7:1 at Level AAA (4.5:1 for large text). For icons, borders, and graphical elements, minimum required contrast is 3:1.\nAn interactive target area must be at least 24px × 24px at Level AA, and 44px × 44px at Level AAA. Mobile guidelines are: 48px × 48px (Android) and 44px × 44px (Apple/iOS)."
       },
       {
         "section": "Interaction",
@@ -2326,7 +2399,7 @@
           "2.4.7 Focus Visible - AA",
           "2.4.13 Focus Appearance - AAA"
         ],
-        "note": ""
+        "note": "The focus indicator must never be removed and must always remain visible (AA)."
       }
     ]
   },
@@ -2388,7 +2461,7 @@
         "wcag": [
           "1.4.10 Reflow - AA"
         ],
-        "note": "Ensure all elements remain available when page zoom is applied."
+        "note": "Content must reflow without horizontal scrolling (or vertical scrolling for vertical text) up to 400% zoom on desktop (equivalent to a 320px viewport width or 256px height), without clipping text or overlapping elements."
       },
       {
         "section": "Focus and keyboard navigation",
@@ -2405,7 +2478,7 @@
           "2.4.7 Focus Visible - AA",
           "2.4.13 Focus Appearance - AAA"
         ],
-        "note": ""
+        "note": "The focus indicator must never be removed and must always remain visible (AA)."
       }
     ]
   },
@@ -2454,7 +2527,7 @@
           "2.4.7 Focus Visible - AA",
           "2.4.13 Focus Appearance - AAA"
         ],
-        "note": ""
+        "note": "The focus indicator must never be removed and must always remain visible (AA)."
       },
       {
         "section": "Screen reader navigation",
@@ -2517,7 +2590,7 @@
         "wcag": [
           "1.4.10 Reflow - AA"
         ],
-        "note": "Ensure all breadcrumbs remain available when page zoom is applied."
+        "note": "Content must reflow without horizontal scrolling (or vertical scrolling for vertical text) up to 400% zoom on desktop (equivalent to a 320px viewport width or 256px height), without clipping text or overlapping elements."
       },
       {
         "section": "Screen reader output",
@@ -2551,7 +2624,7 @@
           "2.4.7 Focus Visible - AA",
           "2.4.13 Focus Appearance - AAA"
         ],
-        "note": ""
+        "note": "The focus indicator must never be removed and must always remain visible (AA)."
       }
     ]
   },
@@ -2637,7 +2710,7 @@
           "2.4.7 Focus Visible - AA",
           "2.4.13 Focus Appearance - AAA"
         ],
-        "note": ""
+        "note": "The focus indicator must never be removed and must always remain visible (AA)."
       },
       {
         "section": "Extra considerations",
@@ -2730,7 +2803,7 @@
           "2.4.7 Focus Visible - AA",
           "2.4.13 Focus Appearance - AAA"
         ],
-        "note": ""
+        "note": "The focus indicator must never be removed and must always remain visible (AA)."
       },
       {
         "section": "Screen reader navigation",
@@ -2808,7 +2881,7 @@
           "2.4.7 Focus Visible - AA",
           "2.4.13 Focus Appearance - AAA"
         ],
-        "note": ""
+        "note": "The focus indicator must never be removed and must always remain visible (AA)."
       },
       {
         "section": "Focus and keyboard navigation",
@@ -2917,7 +2990,7 @@
           "2.4.7 Focus Visible - AA",
           "2.4.13 Focus Appearance - AAA"
         ],
-        "note": ""
+        "note": "The focus indicator must never be removed and must always remain visible (AA)."
       }
     ]
   },
@@ -3001,7 +3074,7 @@
           "2.4.7 Focus Visible - AA",
           "2.4.13 Focus Appearance - AAA"
         ],
-        "note": ""
+        "note": "The focus indicator must never be removed and must always remain visible (AA)."
       }
     ]
   },
@@ -3121,7 +3194,7 @@
           "2.4.7 Focus Visible - AA",
           "2.4.13 Focus Appearance - AAA"
         ],
-        "note": ""
+        "note": "The focus indicator must never be removed and must always remain visible (AA)."
       },
       {
         "section": "Screen reader navigation",
@@ -3309,7 +3382,7 @@
   </script>
 
   <script type="application/json" id="comp-svgs">
-{"bottoni": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"34\" width=\"118\" height=\"44\" rx=\"8\" fill=\"var(--primary)\"/>\n    <rect x=\"16\" y=\"30\" width=\"126\" height=\"52\" rx=\"11\" stroke=\"var(--focus-ring)\" stroke-width=\"2.5\" stroke-dasharray=\"4 3\"/>\n    <rect x=\"44\" y=\"52\" width=\"70\" height=\"8\" rx=\"4\" fill=\"var(--primary-contrast)\"/>\n    <rect x=\"152\" y=\"34\" width=\"48\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"176\" cy=\"56\" r=\"8\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <path d=\"M176 52v8M172 56h8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n  <\/svg>", "link": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"30\" width=\"180\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"20\" y=\"50\" width=\"64\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"92\" y=\"50\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"92\" y1=\"62\" x2=\"176\" y2=\"62\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <path d=\"M182 50h6v6M188 50l-6 6\" stroke=\"var(--primary)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"20\" y=\"74\" width=\"140\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "campi-di-input": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"20\" width=\"72\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <circle cx=\"102\" cy=\"24\" r=\"3\" fill=\"#b91c1c\"/>\n    <rect x=\"24\" y=\"36\" width=\"172\" height=\"40\" rx=\"6\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <line x1=\"36\" y1=\"46\" x2=\"36\" y2=\"66\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <rect x=\"44\" y=\"52\" width=\"86\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"24\" y=\"84\" width=\"124\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "icone-e-icon-buttons": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"34\" width=\"110\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"48\" cy=\"56\" r=\"9\" stroke=\"var(--primary)\" stroke-width=\"2.2\"/>\n    <path d=\"M55 63l5 5\" stroke=\"var(--primary)\" stroke-width=\"2.2\" stroke-linecap=\"round\"/>\n    <rect x=\"68\" y=\"52\" width=\"50\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"150\" y=\"34\" width=\"44\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M165 49l14 14M179 49l-14 14\" stroke=\"var(--text)\" stroke-width=\"2.2\" stroke-linecap=\"round\"/>\n  <\/svg>", "intestazioni": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"20\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--primary)\"/>\n    <text x=\"33\" y=\"32\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--primary-contrast)\">H1<\/text>\n    <rect x=\"54\" y=\"23\" width=\"136\" height=\"10\" rx=\"5\" fill=\"var(--text)\"/>\n    <rect x=\"28\" y=\"48\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <text x=\"41\" y=\"60\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--text)\">H2<\/text>\n    <rect x=\"62\" y=\"52\" width=\"110\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"36\" y=\"76\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <text x=\"49\" y=\"88\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--text-muted)\">H3<\/text>\n    <rect x=\"70\" y=\"80\" width=\"88\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "testi-e-errori": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"20\" width=\"176\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"22\" y=\"34\" width=\"154\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n    <rect x=\"22\" y=\"48\" width=\"166\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n    <rect x=\"22\" y=\"68\" width=\"176\" height=\"32\" rx=\"6\" fill=\"#fee2e2\" stroke=\"#b91c1c\" stroke-width=\"2\"/>\n    <circle cx=\"38\" cy=\"84\" r=\"7\" fill=\"#b91c1c\"/>\n    <path d=\"M38 80v5M38 88h.01\" stroke=\"#ffffff\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"52\" y=\"80\" width=\"128\" height=\"8\" rx=\"4\" fill=\"#7f1d1d\"/>\n  <\/svg>", "immagini": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"18\" width=\"172\" height=\"64\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"64\" cy=\"40\" r=\"9\" fill=\"var(--primary)\"/>\n    <path d=\"M36 74l36-28 26 20 28-24 48 32H36z\" fill=\"var(--border)\"/>\n    <rect x=\"24\" y=\"88\" width=\"42\" height=\"16\" rx=\"4\" fill=\"var(--primary)\"/>\n    <text x=\"45\" y=\"99\" text-anchor=\"middle\" font-size=\"9\" font-weight=\"700\" fill=\"var(--primary-contrast)\">ALT<\/text>\n    <rect x=\"74\" y=\"92\" width=\"122\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "loader-e-progress-bar": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <g stroke-linecap=\"round\" stroke-width=\"3.2\">\n      <line x1=\"110\" y1=\"22\" x2=\"110\" y2=\"29\" stroke=\"var(--primary)\"/>\n      <line x1=\"122.7\" y1=\"27.3\" x2=\"117.8\" y2=\"32.2\" stroke=\"var(--primary)\" stroke-opacity=\"0.88\"/>\n      <line x1=\"128\" y1=\"40\" x2=\"121\" y2=\"40\" stroke=\"var(--primary)\" stroke-opacity=\"0.74\"/>\n      <line x1=\"122.7\" y1=\"52.7\" x2=\"117.8\" y2=\"47.8\" stroke=\"var(--primary)\" stroke-opacity=\"0.60\"/>\n      <line x1=\"110\" y1=\"58\" x2=\"110\" y2=\"51\" stroke=\"var(--primary)\" stroke-opacity=\"0.46\"/>\n      <line x1=\"97.3\" y1=\"52.7\" x2=\"102.2\" y2=\"47.8\" stroke=\"var(--primary)\" stroke-opacity=\"0.34\"/>\n      <line x1=\"92\" y1=\"40\" x2=\"99\" y2=\"40\" stroke=\"var(--primary)\" stroke-opacity=\"0.24\"/>\n      <line x1=\"97.3\" y1=\"27.3\" x2=\"102.2\" y2=\"32.2\" stroke=\"var(--primary)\" stroke-opacity=\"0.16\"/>\n    <\/g>\n    <rect x=\"24\" y=\"76\" width=\"172\" height=\"18\" rx=\"9\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"26\" y=\"78\" width=\"114\" height=\"14\" rx=\"7\" fill=\"var(--primary)\"/>\n  <\/svg>", "chips-e-tags": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"28\" width=\"84\" height=\"28\" rx=\"14\" fill=\"var(--primary)\"/>\n    <path d=\"M32 42l4 4 7-7\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"48\" y=\"38\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--primary-contrast)\"/>\n    <rect x=\"114\" y=\"28\" width=\"86\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"128\" y=\"38\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M179 38l8 8M187 38l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"20\" y=\"68\" width=\"96\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"36\" cy=\"82\" r=\"4\" fill=\"var(--primary)\"/>\n    <rect x=\"46\" y=\"78\" width=\"54\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n  <\/svg>", "toggle-e-switch": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"26\" width=\"54\" height=\"28\" rx=\"14\" fill=\"var(--primary)\"/>\n    <circle cx=\"64\" cy=\"40\" r=\"10\" fill=\"var(--primary-contrast)\"/>\n    <path d=\"M35 40l3 3 6-6\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"90\" y=\"36\" width=\"96\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"24\" y=\"68\" width=\"54\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"38\" cy=\"82\" r=\"10\" fill=\"var(--text-muted)\"/>\n    <rect x=\"90\" y=\"78\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "tabelle": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"18\" width=\"180\" height=\"84\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M20 42h180\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"21\" y=\"19\" width=\"178\" height=\"23\" rx=\"4\" fill=\"var(--surface-alt)\"/>\n    <line x1=\"20\" y1=\"42\" x2=\"200\" y2=\"42\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <line x1=\"20\" y1=\"62\" x2=\"200\" y2=\"62\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <line x1=\"20\" y1=\"82\" x2=\"200\" y2=\"82\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <line x1=\"84\" y1=\"18\" x2=\"84\" y2=\"102\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <line x1=\"144\" y1=\"18\" x2=\"144\" y2=\"102\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"30\" y=\"27\" width=\"42\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"94\" y=\"27\" width=\"38\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"154\" y=\"27\" width=\"34\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"49\" width=\"36\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"69\" width=\"40\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"89\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n  <\/svg>", "form": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"14\" width=\"176\" height=\"92\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"34\" y=\"24\" width=\"60\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"34\" width=\"152\" height=\"18\" rx=\"4\" fill=\"var(--bg)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"34\" y=\"58\" width=\"52\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"68\" width=\"152\" height=\"18\" rx=\"4\" fill=\"var(--bg)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"126\" y=\"91\" width=\"60\" height=\"10\" rx=\"5\" fill=\"var(--primary)\"/>\n  <\/svg>", "card": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"34\" y=\"12\" width=\"152\" height=\"96\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"35\" y=\"13\" width=\"150\" height=\"38\" rx=\"6\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"46\" y=\"60\" width=\"94\" height=\"9\" rx=\"4.5\" fill=\"var(--text)\"/>\n    <rect x=\"46\" y=\"75\" width=\"124\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"46\" y=\"88\" width=\"64\" height=\"12\" rx=\"4\" fill=\"var(--primary)\"/>\n  <\/svg>", "caroselli": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"48\" y=\"20\" width=\"124\" height=\"64\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"28\" cy=\"52\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M31 47l-6 5 6 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"192\" cy=\"52\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M189 47l6 5-6 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"96\" cy=\"98\" r=\"5\" fill=\"var(--primary)\"/>\n    <circle cx=\"110\" cy=\"98\" r=\"4\" fill=\"var(--border)\"/>\n    <circle cx=\"124\" cy=\"98\" r=\"4\" fill=\"var(--border)\"/>\n  <\/svg>", "dataviz": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <line x1=\"30\" y1=\"94\" x2=\"194\" y2=\"94\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <line x1=\"30\" y1=\"20\" x2=\"30\" y2=\"94\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"46\" y=\"46\" width=\"28\" height=\"48\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"92\" y=\"28\" width=\"28\" height=\"66\" rx=\"3\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <path d=\"M94 42l24-12M94 58l24-12M94 74l24-12M94 90l24-12\" stroke=\"var(--text)\" stroke-width=\"1.5\"/>\n    <rect x=\"138\" y=\"58\" width=\"28\" height=\"36\" rx=\"3\" fill=\"var(--accent-special)\"/>\n  <\/svg>", "pop-up-e-modali": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"14\" y=\"12\" width=\"192\" height=\"96\" rx=\"8\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"38\" y=\"22\" width=\"144\" height=\"76\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2.2\"/>\n    <rect x=\"50\" y=\"34\" width=\"84\" height=\"9\" rx=\"4.5\" fill=\"var(--text)\"/>\n    <rect x=\"152\" y=\"30\" width=\"18\" height=\"18\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <path d=\"M157 35l8 8M165 35l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"50\" y=\"52\" width=\"116\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"50\" y=\"64\" width=\"96\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"118\" y=\"76\" width=\"52\" height=\"14\" rx=\"4\" fill=\"var(--primary)\"/>\n  <\/svg>", "breadcrumbs": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"52\" width=\"38\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"20\" y1=\"63\" x2=\"58\" y2=\"63\" stroke=\"var(--primary)\" stroke-width=\"2\"/>\n    <path d=\"M66 51l5 5-5 5\" stroke=\"var(--text-muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"80\" y=\"52\" width=\"48\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"80\" y1=\"63\" x2=\"128\" y2=\"63\" stroke=\"var(--primary)\" stroke-width=\"2\"/>\n    <path d=\"M136 51l5 5-5 5\" stroke=\"var(--text-muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"150\" y=\"52\" width=\"50\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n  <\/svg>", "menu-navigazione": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"18\" y=\"24\" width=\"184\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"30\" y=\"36\" width=\"36\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"30\" y1=\"49\" x2=\"66\" y2=\"49\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <rect x=\"80\" y=\"36\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M126 38l4 4 4-4\" stroke=\"var(--text)\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n    <rect x=\"148\" y=\"36\" width=\"40\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"76\" y=\"60\" width=\"76\" height=\"42\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"86\" y=\"70\" width=\"52\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"86\" y=\"84\" width=\"44\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "notifiche": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"34\" width=\"176\" height=\"52\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"22\" y=\"34\" width=\"8\" height=\"52\" rx=\"3\" fill=\"var(--primary)\"/>\n    <circle cx=\"46\" cy=\"60\" r=\"9\" fill=\"var(--primary)\"/>\n    <path d=\"M46 56v5M46 64h.01\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"64\" y=\"48\" width=\"86\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"64\" y=\"63\" width=\"102\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <path d=\"M178 46l8 8M186 46l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n  <\/svg>", "accordion": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"16\" width=\"172\" height=\"52\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"36\" y=\"26\" width=\"96\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M174 32l5-5 5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <line x1=\"24\" y1=\"42\" x2=\"196\" y2=\"42\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"36\" y=\"51\" width=\"138\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"24\" y=\"76\" width=\"172\" height=\"28\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"36\" y=\"86\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M174 88l5 5 5-5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n  <\/svg>", "ricerca": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"22\" width=\"130\" height=\"36\" rx=\"6\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"34\" y=\"36\" width=\"76\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"158\" y=\"22\" width=\"40\" height=\"36\" rx=\"6\" fill=\"var(--primary)\"/>\n    <circle cx=\"176\" cy=\"38\" r=\"6\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\"/>\n    <path d=\"M181 43l4 4\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"22\" y=\"64\" width=\"130\" height=\"38\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"34\" y=\"74\" width=\"88\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"87\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "tabs": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"20\" width=\"58\" height=\"26\" rx=\"5\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <rect x=\"30\" y=\"29\" width=\"38\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"22\" y1=\"44\" x2=\"76\" y2=\"44\" stroke=\"var(--primary)\" stroke-width=\"4\"/>\n    <rect x=\"82\" y=\"22\" width=\"56\" height=\"24\" rx=\"5\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"1.8\"/>\n    <rect x=\"92\" y=\"31\" width=\"36\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"142\" y=\"22\" width=\"56\" height=\"24\" rx=\"5\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"1.8\"/>\n    <rect x=\"152\" y=\"31\" width=\"36\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"20\" y=\"46\" width=\"180\" height=\"56\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2.2\"/>\n    <rect x=\"34\" y=\"62\" width=\"136\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"78\" width=\"110\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "picker-data-e-ora": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"38\" y=\"14\" width=\"144\" height=\"24\" rx=\"5\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"1.8\"/>\n    <rect x=\"48\" y=\"23\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"38\" y=\"42\" width=\"144\" height=\"66\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"52\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"76\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"100\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"124\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"148\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"52\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"76\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"100\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n  <\/svg>", "tooltip-e-pop-over": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"42\" y=\"18\" width=\"136\" height=\"44\" rx=\"6\" fill=\"var(--text)\"/>\n    <rect x=\"54\" y=\"30\" width=\"92\" height=\"7\" rx=\"3.5\" fill=\"var(--bg)\"/>\n    <rect x=\"54\" y=\"43\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <path d=\"M104 62l6 8 6-8\" fill=\"var(--text)\"/>\n    <circle cx=\"110\" cy=\"86\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <text x=\"110\" y=\"90\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"700\" fill=\"var(--primary)\">i<\/text>\n  <\/svg>", "pager": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <path d=\"M38 55l-5 5 5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"58\" y=\"44\" width=\"30\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <text x=\"73\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--text)\">1<\/text>\n    <rect x=\"94\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--primary)\"/>\n    <text x=\"110\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--primary-contrast)\">2<\/text>\n    <rect x=\"132\" y=\"44\" width=\"30\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <text x=\"147\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--text)\">3<\/text>\n    <rect x=\"168\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <path d=\"M182 55l5 5-5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n  <\/svg>", "stepper": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <line x1=\"44\" y1=\"48\" x2=\"176\" y2=\"48\" stroke=\"var(--border)\" stroke-width=\"2.5\"/>\n    <line x1=\"44\" y1=\"48\" x2=\"110\" y2=\"48\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <circle cx=\"44\" cy=\"48\" r=\"14\" fill=\"var(--primary)\"/>\n    <path d=\"M39 48l3 3 7-7\" stroke=\"var(--primary-contrast)\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"110\" cy=\"48\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <text x=\"110\" y=\"52\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"700\" fill=\"var(--primary)\">2<\/text>\n    <circle cx=\"176\" cy=\"48\" r=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <text x=\"176\" y=\"52\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"700\" fill=\"var(--text-muted)\">3<\/text>\n    <rect x=\"28\" y=\"70\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"92\" y=\"70\" width=\"36\" height=\"6\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"160\" y=\"70\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>"}
+{"bottoni": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"34\" width=\"118\" height=\"44\" rx=\"8\" fill=\"var(--primary)\"/>\n    <rect x=\"16\" y=\"30\" width=\"126\" height=\"52\" rx=\"11\" stroke=\"var(--focus-ring)\" stroke-width=\"2.5\" stroke-dasharray=\"4 3\"/>\n    <rect x=\"44\" y=\"52\" width=\"70\" height=\"8\" rx=\"4\" fill=\"var(--primary-contrast)\"/>\n    <rect x=\"152\" y=\"34\" width=\"48\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"176\" cy=\"56\" r=\"8\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <path d=\"M176 52v8M172 56h8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n  <\/svg>", "link": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"30\" width=\"180\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"20\" y=\"50\" width=\"64\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"92\" y=\"50\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"92\" y1=\"62\" x2=\"176\" y2=\"62\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <path d=\"M182 50h6v6M188 50l-6 6\" stroke=\"var(--primary)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"20\" y=\"74\" width=\"140\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "campi-di-input": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"20\" width=\"72\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <circle cx=\"102\" cy=\"24\" r=\"3\" fill=\"#b91c1c\"/>\n    <rect x=\"24\" y=\"36\" width=\"172\" height=\"40\" rx=\"6\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <line x1=\"36\" y1=\"46\" x2=\"36\" y2=\"66\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <rect x=\"44\" y=\"52\" width=\"86\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"24\" y=\"84\" width=\"124\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "icone-e-icon-buttons": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"34\" width=\"110\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"48\" cy=\"56\" r=\"9\" stroke=\"var(--primary)\" stroke-width=\"2.2\"/>\n    <path d=\"M55 63l5 5\" stroke=\"var(--primary)\" stroke-width=\"2.2\" stroke-linecap=\"round\"/>\n    <rect x=\"68\" y=\"52\" width=\"50\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"150\" y=\"34\" width=\"44\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M165 49l14 14M179 49l-14 14\" stroke=\"var(--text)\" stroke-width=\"2.2\" stroke-linecap=\"round\"/>\n  <\/svg>", "intestazioni": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"20\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--primary)\"/>\n    <text x=\"33\" y=\"32\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--primary-contrast)\">H1<\/text>\n    <rect x=\"54\" y=\"23\" width=\"136\" height=\"10\" rx=\"5\" fill=\"var(--text)\"/>\n    <rect x=\"28\" y=\"48\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <text x=\"41\" y=\"60\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--text)\">H2<\/text>\n    <rect x=\"62\" y=\"52\" width=\"110\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"36\" y=\"76\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <text x=\"49\" y=\"88\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--text-muted)\">H3<\/text>\n    <rect x=\"70\" y=\"80\" width=\"88\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "testi-e-errori": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"20\" width=\"176\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"22\" y=\"34\" width=\"154\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n    <rect x=\"22\" y=\"48\" width=\"166\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n    <rect x=\"22\" y=\"68\" width=\"176\" height=\"32\" rx=\"6\" fill=\"#fee2e2\" stroke=\"#b91c1c\" stroke-width=\"2\"/>\n    <circle cx=\"38\" cy=\"84\" r=\"7\" fill=\"#b91c1c\"/>\n    <path d=\"M38 80v5M38 88h.01\" stroke=\"#ffffff\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"52\" y=\"80\" width=\"128\" height=\"8\" rx=\"4\" fill=\"#7f1d1d\"/>\n  <\/svg>", "immagini": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"18\" width=\"172\" height=\"64\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"64\" cy=\"40\" r=\"9\" fill=\"var(--primary)\"/>\n    <path d=\"M36 74l36-28 26 20 28-24 48 32H36z\" fill=\"var(--border)\"/>\n    <rect x=\"24\" y=\"88\" width=\"42\" height=\"16\" rx=\"4\" fill=\"var(--primary)\"/>\n    <text x=\"45\" y=\"99\" text-anchor=\"middle\" font-size=\"9\" font-weight=\"700\" fill=\"var(--primary-contrast)\">ALT<\/text>\n    <rect x=\"74\" y=\"92\" width=\"122\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "loader-e-progress-bar": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <g stroke-linecap=\"round\" stroke-width=\"3.2\">\n      <line x1=\"110\" y1=\"22\" x2=\"110\" y2=\"29\" stroke=\"var(--primary)\"/>\n      <line x1=\"122.7\" y1=\"27.3\" x2=\"117.8\" y2=\"32.2\" stroke=\"var(--primary)\" stroke-opacity=\"0.88\"/>\n      <line x1=\"128\" y1=\"40\" x2=\"121\" y2=\"40\" stroke=\"var(--primary)\" stroke-opacity=\"0.74\"/>\n      <line x1=\"122.7\" y1=\"52.7\" x2=\"117.8\" y2=\"47.8\" stroke=\"var(--primary)\" stroke-opacity=\"0.60\"/>\n      <line x1=\"110\" y1=\"58\" x2=\"110\" y2=\"51\" stroke=\"var(--primary)\" stroke-opacity=\"0.46\"/>\n      <line x1=\"97.3\" y1=\"52.7\" x2=\"102.2\" y2=\"47.8\" stroke=\"var(--primary)\" stroke-opacity=\"0.34\"/>\n      <line x1=\"92\" y1=\"40\" x2=\"99\" y2=\"40\" stroke=\"var(--primary)\" stroke-opacity=\"0.24\"/>\n      <line x1=\"97.3\" y1=\"27.3\" x2=\"102.2\" y2=\"32.2\" stroke=\"var(--primary)\" stroke-opacity=\"0.16\"/>\n    <\/g>\n    <rect x=\"24\" y=\"76\" width=\"172\" height=\"18\" rx=\"9\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"26\" y=\"78\" width=\"114\" height=\"14\" rx=\"7\" fill=\"var(--primary)\"/>\n  <\/svg>", "chips-e-tags": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"28\" width=\"84\" height=\"28\" rx=\"14\" fill=\"var(--primary)\"/>\n    <path d=\"M32 42l4 4 7-7\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"48\" y=\"38\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--primary-contrast)\"/>\n    <rect x=\"114\" y=\"28\" width=\"86\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"128\" y=\"38\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M179 38l8 8M187 38l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"20\" y=\"68\" width=\"96\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"36\" cy=\"82\" r=\"4\" fill=\"var(--primary)\"/>\n    <rect x=\"46\" y=\"78\" width=\"54\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n  <\/svg>", "toggle-e-switch": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"26\" width=\"54\" height=\"28\" rx=\"14\" fill=\"var(--primary)\"/>\n    <circle cx=\"64\" cy=\"40\" r=\"10\" fill=\"var(--primary-contrast)\"/>\n    <path d=\"M35 40l3 3 6-6\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"90\" y=\"36\" width=\"96\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"24\" y=\"68\" width=\"54\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"38\" cy=\"82\" r=\"10\" fill=\"var(--text-muted)\"/>\n    <rect x=\"90\" y=\"78\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "tabelle": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"18\" width=\"180\" height=\"84\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M20 42h180\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"21\" y=\"19\" width=\"178\" height=\"23\" rx=\"4\" fill=\"var(--surface-alt)\"/>\n    <line x1=\"20\" y1=\"42\" x2=\"200\" y2=\"42\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <line x1=\"20\" y1=\"62\" x2=\"200\" y2=\"62\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <line x1=\"20\" y1=\"82\" x2=\"200\" y2=\"82\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <line x1=\"84\" y1=\"18\" x2=\"84\" y2=\"102\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <line x1=\"144\" y1=\"18\" x2=\"144\" y2=\"102\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"30\" y=\"27\" width=\"42\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"94\" y=\"27\" width=\"38\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"154\" y=\"27\" width=\"34\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"49\" width=\"36\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"69\" width=\"40\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"89\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n  <\/svg>", "form": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"14\" width=\"176\" height=\"92\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"34\" y=\"24\" width=\"60\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"34\" width=\"152\" height=\"18\" rx=\"4\" fill=\"var(--bg)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"34\" y=\"58\" width=\"52\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"68\" width=\"152\" height=\"18\" rx=\"4\" fill=\"var(--bg)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"126\" y=\"91\" width=\"60\" height=\"10\" rx=\"5\" fill=\"var(--primary)\"/>\n  <\/svg>", "card": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"34\" y=\"12\" width=\"152\" height=\"96\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"35\" y=\"13\" width=\"150\" height=\"38\" rx=\"6\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"46\" y=\"60\" width=\"94\" height=\"9\" rx=\"4.5\" fill=\"var(--text)\"/>\n    <rect x=\"46\" y=\"75\" width=\"124\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"46\" y=\"88\" width=\"64\" height=\"12\" rx=\"4\" fill=\"var(--primary)\"/>\n  <\/svg>", "caroselli": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"48\" y=\"20\" width=\"124\" height=\"64\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"28\" cy=\"52\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M31 47l-6 5 6 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"192\" cy=\"52\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M189 47l6 5-6 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"96\" cy=\"98\" r=\"5\" fill=\"var(--primary)\"/>\n    <circle cx=\"110\" cy=\"98\" r=\"4\" fill=\"var(--border)\"/>\n    <circle cx=\"124\" cy=\"98\" r=\"4\" fill=\"var(--border)\"/>\n  <\/svg>", "dataviz": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <line x1=\"30\" y1=\"94\" x2=\"194\" y2=\"94\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <line x1=\"30\" y1=\"20\" x2=\"30\" y2=\"94\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"46\" y=\"46\" width=\"28\" height=\"48\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"92\" y=\"28\" width=\"28\" height=\"66\" rx=\"3\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <path d=\"M94 42l24-12M94 58l24-12M94 74l24-12M94 90l24-12\" stroke=\"var(--text)\" stroke-width=\"1.5\"/>\n    <rect x=\"138\" y=\"58\" width=\"28\" height=\"36\" rx=\"3\" fill=\"var(--accent-special)\"/>\n  <\/svg>", "pop-up-e-modali": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"14\" y=\"12\" width=\"192\" height=\"96\" rx=\"8\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"38\" y=\"22\" width=\"144\" height=\"76\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2.2\"/>\n    <rect x=\"50\" y=\"34\" width=\"84\" height=\"9\" rx=\"4.5\" fill=\"var(--text)\"/>\n    <rect x=\"152\" y=\"30\" width=\"18\" height=\"18\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <path d=\"M157 35l8 8M165 35l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"50\" y=\"52\" width=\"116\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"50\" y=\"64\" width=\"96\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"118\" y=\"76\" width=\"52\" height=\"14\" rx=\"4\" fill=\"var(--primary)\"/>\n  <\/svg>", "breadcrumbs": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"52\" width=\"38\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"20\" y1=\"63\" x2=\"58\" y2=\"63\" stroke=\"var(--primary)\" stroke-width=\"2\"/>\n    <path d=\"M66 51l5 5-5 5\" stroke=\"var(--text-muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"80\" y=\"52\" width=\"48\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"80\" y1=\"63\" x2=\"128\" y2=\"63\" stroke=\"var(--primary)\" stroke-width=\"2\"/>\n    <path d=\"M136 51l5 5-5 5\" stroke=\"var(--text-muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"150\" y=\"52\" width=\"50\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n  <\/svg>", "menu-navigazione": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"18\" y=\"24\" width=\"184\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"30\" y=\"36\" width=\"36\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"30\" y1=\"49\" x2=\"66\" y2=\"49\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <rect x=\"80\" y=\"36\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M126 38l4 4 4-4\" stroke=\"var(--text)\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n    <rect x=\"148\" y=\"36\" width=\"40\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"76\" y=\"60\" width=\"76\" height=\"42\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"86\" y=\"70\" width=\"52\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"86\" y=\"84\" width=\"44\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "notifiche": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"34\" width=\"176\" height=\"52\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"22\" y=\"34\" width=\"8\" height=\"52\" rx=\"3\" fill=\"var(--primary)\"/>\n    <circle cx=\"46\" cy=\"60\" r=\"9\" fill=\"var(--primary)\"/>\n    <path d=\"M46 56v5M46 64h.01\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"64\" y=\"48\" width=\"86\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"64\" y=\"63\" width=\"102\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <path d=\"M178 46l8 8M186 46l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n  <\/svg>", "accordion": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"16\" width=\"172\" height=\"52\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"36\" y=\"26\" width=\"96\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M174 32l5-5 5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <line x1=\"24\" y1=\"42\" x2=\"196\" y2=\"42\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"36\" y=\"51\" width=\"138\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"24\" y=\"76\" width=\"172\" height=\"28\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"36\" y=\"86\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M174 88l5 5 5-5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n  <\/svg>", "ricerca": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"22\" width=\"130\" height=\"36\" rx=\"6\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"34\" y=\"36\" width=\"76\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"158\" y=\"22\" width=\"40\" height=\"36\" rx=\"6\" fill=\"var(--primary)\"/>\n    <circle cx=\"176\" cy=\"38\" r=\"6\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\"/>\n    <path d=\"M181 43l4 4\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"22\" y=\"64\" width=\"130\" height=\"38\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"34\" y=\"74\" width=\"88\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"87\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "tabs": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"20\" width=\"58\" height=\"26\" rx=\"5\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <rect x=\"30\" y=\"29\" width=\"38\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"22\" y1=\"44\" x2=\"76\" y2=\"44\" stroke=\"var(--primary)\" stroke-width=\"4\"/>\n    <rect x=\"82\" y=\"22\" width=\"56\" height=\"24\" rx=\"5\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"1.8\"/>\n    <rect x=\"92\" y=\"31\" width=\"36\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"142\" y=\"22\" width=\"56\" height=\"24\" rx=\"5\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"1.8\"/>\n    <rect x=\"152\" y=\"31\" width=\"36\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"20\" y=\"46\" width=\"180\" height=\"56\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2.2\"/>\n    <rect x=\"34\" y=\"62\" width=\"136\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"78\" width=\"110\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "picker-data-e-ora": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"38\" y=\"14\" width=\"144\" height=\"24\" rx=\"5\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"1.8\"/>\n    <rect x=\"48\" y=\"23\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"38\" y=\"42\" width=\"144\" height=\"66\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"52\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"76\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"100\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"124\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"148\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"52\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"76\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"100\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n  <\/svg>", "tooltip-e-pop-over": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"42\" y=\"18\" width=\"136\" height=\"44\" rx=\"6\" fill=\"var(--text)\"/>\n    <rect x=\"54\" y=\"30\" width=\"92\" height=\"7\" rx=\"3.5\" fill=\"var(--bg)\"/>\n    <rect x=\"54\" y=\"43\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <path d=\"M104 62l6 8 6-8\" fill=\"var(--text)\"/>\n    <circle cx=\"110\" cy=\"86\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <text x=\"110\" y=\"90\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"700\" fill=\"var(--primary)\">i<\/text>\n  <\/svg>", "pager": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <path d=\"M38 55l-5 5 5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"58\" y=\"44\" width=\"30\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <text x=\"73\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--text)\">1<\/text>\n    <rect x=\"94\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--primary)\"/>\n    <text x=\"110\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--primary-contrast)\">2<\/text>\n    <rect x=\"132\" y=\"44\" width=\"30\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <text x=\"147\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--text)\">3<\/text>\n    <rect x=\"168\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <path d=\"M182 55l5 5-5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n  <\/svg>", "stepper": "<svg viewBox=\"0 0 220 120\" width=\"156\" height=\"86\" fill=\"none\" aria-hidden=\"true\">\n    <line x1=\"44\" y1=\"48\" x2=\"176\" y2=\"48\" stroke=\"var(--border)\" stroke-width=\"2.5\"/>\n    <line x1=\"44\" y1=\"48\" x2=\"110\" y2=\"48\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <circle cx=\"44\" cy=\"48\" r=\"14\" fill=\"var(--primary)\"/>\n    <path d=\"M39 48l3 3 7-7\" stroke=\"var(--primary-contrast)\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"110\" cy=\"48\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <text x=\"110\" y=\"52\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"700\" fill=\"var(--primary)\">2<\/text>\n    <circle cx=\"176\" cy=\"48\" r=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <text x=\"176\" y=\"52\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"700\" fill=\"var(--text-muted)\">3<\/text>\n    <rect x=\"28\" y=\"70\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"92\" y=\"70\" width=\"36\" height=\"6\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"160\" y=\"70\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>"}
   </script>
 
   <script>
@@ -3323,13 +3396,7 @@
       let currentModalAtomId = null;
 
       const EXT_ICON_SVG = '<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
-
-      const SECTION_ICONS = {
-        extra: '<svg class="sec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6m-3 3v-3M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/></svg>',
-        variant: '<svg class="sec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',
-        state: '<svg class="sec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>',
-        error: '<svg class="sec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
-      };
+      const BULB_ICON_SVG = '<svg class="sec-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1.8" x2="12" y2="3.8"/><line x1="4.8" y1="4.8" x2="6.2" y2="6.2"/><line x1="19.2" y1="4.8" x2="17.8" y2="6.2"/><line x1="2" y1="11.5" x2="4" y2="11.5"/><line x1="20" y1="11.5" x2="22" y2="11.5"/><line x1="5.2" y1="17.8" x2="6.6" y2="16.4"/><line x1="18.8" y1="17.8" x2="17.4" y2="16.4"/><path d="M9.5 18.2h5v2.3a1.2 1.2 0 0 1-1.2 1.2h-2.6a1.2 1.2 0 0 1-1.2-1.2v-2.3z"/><path d="M9.5 18.2v-1.7c0-.9-.5-1.7-1.2-2.3A5.8 5.8 0 1 1 17.8 11.5c0 1.8-.8 3.4-2.1 4.5-.7.6-1.2 1.4-1.2 2.2"/><path d="M12 8.2a3.3 3.3 0 0 1 3.3 3.3"/></svg>';
 
       function escapeHtml(str) {
         return String(str)
@@ -3356,21 +3423,11 @@
 
         const lower = parentTitle.toLowerCase();
         let category = "base";
-        let iconSvg = "";
 
-        if (lower.startsWith("extra considerations")) {
-          category = "extra";
-          iconSvg = SECTION_ICONS.extra;
-        } else if (lower.startsWith("variants")) {
-          category = "variant";
-          iconSvg = SECTION_ICONS.variant;
-        } else if (lower.startsWith("states")) {
-          category = "state";
-          iconSvg = SECTION_ICONS.state;
-        } else if (lower.startsWith("errors")) {
-          category = "error";
-          iconSvg = SECTION_ICONS.error;
-        }
+        if (lower.startsWith("extra considerations")) category = "extra";
+        else if (lower.startsWith("variants")) category = "variant";
+        else if (lower.startsWith("states")) category = "state";
+        else if (lower.startsWith("errors")) category = "error";
 
         let subLabel = childTitle;
         if (!childTitle) {
@@ -3387,8 +3444,7 @@
           childTitle: childTitle,
           subLabel: subLabel,
           category: category,
-          isSpecial: category !== "base",
-          iconSvg: iconSvg
+          isSpecial: category !== "base"
         };
       }
 
@@ -3415,7 +3471,7 @@
           href = WCAG_BASE_URL + WCAG_SLUGS[codeMatch[1]];
         }
 
-        const fullHtml = principle + " · " + formatBadgeLevelHtml(t);
+        const fullHtml = principle + '<span aria-hidden="true"> · </span>' + formatBadgeLevelHtml(t);
         return { htmlLabel: fullHtml, cls: cls, level: level, href: href };
       }
 
@@ -3423,7 +3479,7 @@
         if (scope === "ALL") return true;
         const hay = (item.section + " " + item.cosa + " " + item.note).toLowerCase();
         if (scope === "colore") return /color|contrast|dark mode|background/.test(hay);
-        if (scope === "dimensioni") return /size|48px|44px|target|zoom|resiz/.test(hay);
+        if (scope === "dimensioni") return /size|48px|44px|24px|target|zoom|resiz/.test(hay);
         if (scope === "focus") return /focus|keyboard|tab|esc|trap/.test(hay);
         if (scope === "label") return /label|text|language|alt|purpose|heading/.test(hay);
         if (scope === "stati") return /state|message|announc|error|disabled|loading|timeout/.test(hay);
@@ -3454,7 +3510,6 @@
 
           const ul = document.createElement("ul");
           ul.className = "badges-list";
-          ul.setAttribute("aria-label", "WCAG 2.2 criteria and references");
           item.wcag.forEach(function(w) {
             const b = classifyBadge(w);
             const li = document.createElement("li");
@@ -3499,7 +3554,6 @@
                 isSpecial: false,
                 category: "base",
                 parentTitle: meta.title,
-                iconSvg: "",
                 anchorId: "",
                 items: []
               };
@@ -3514,7 +3568,6 @@
                 isSpecial: true,
                 category: meta.category,
                 parentTitle: meta.parentTitle,
-                iconSvg: meta.iconSvg,
                 subgroups: [],
                 subMap: new Map()
               };
@@ -3547,11 +3600,9 @@
             const secEl = document.createElement("section");
             secEl.className = "concept-group";
             secEl.id = secId;
-            secEl.setAttribute("aria-labelledby", secId + "-h");
 
             const hSec = document.createElement(secTag);
             hSec.className = "concept-heading";
-            hSec.id = secId + "-h";
             hSec.textContent = grp.parentTitle;
             secEl.appendChild(hSec);
 
@@ -3562,17 +3613,10 @@
             const secEl = document.createElement("section");
             secEl.className = "concept-group " + (grp.category === "extra" ? "extra-group" : "variant-group");
             secEl.id = parentId;
-            secEl.setAttribute("aria-labelledby", parentId + "-h");
 
             const hParent = document.createElement(secTag);
             hParent.className = "concept-heading";
-            hParent.id = parentId + "-h";
-            if (grp.iconSvg) {
-              hParent.innerHTML = grp.iconSvg;
-            }
-            const spanTitle = document.createElement("span");
-            spanTitle.textContent = grp.parentTitle;
-            hParent.appendChild(spanTitle);
+            hParent.textContent = grp.parentTitle;
             secEl.appendChild(hParent);
 
             grp.subgroups.forEach(function(sub, subIdx) {
@@ -3600,108 +3644,178 @@
         return { fragment: fragment, tocData: tocData, firstAnchorId: firstAnchorId };
       }
 
-      function buildHierarchicalToc(compName, tocData, afterTocId, tocColHeadingTag) {
-        const subParentTag = "h" + (parseInt(tocColHeadingTag.replace("h", ""), 10) + 1);
-        const wrap = document.createElement("div");
+      function buildUnifiedTocBox(comp, tocData, afterTocId, tocBoxHeadingTag) {
+        const boxLvl = parseInt(tocBoxHeadingTag.replace("h", ""), 10);
+        const colHeadingTag = "h" + (boxLvl + 1);
+        const subParentTag = "h" + Math.min(6, boxLvl + 2);
+
+        const nav = document.createElement("nav");
+        nav.className = "toc-box";
+        nav.setAttribute("aria-label", "Component contents for " + comp.name);
+
+        const topBar = document.createElement("div");
+        topBar.className = "toc-top-bar";
+
+        const hBox = document.createElement(tocBoxHeadingTag);
+        hBox.className = "toc-main-title";
+        hBox.textContent = "Component contents";
+        topBar.appendChild(hBox);
 
         const skipToc = document.createElement("a");
         skipToc.className = "skip-toc-link";
         skipToc.href = "#" + afterTocId;
-        skipToc.textContent = "Skip table of contents for " + compName;
-        wrap.appendChild(skipToc);
-
-        const nav = document.createElement("nav");
-        nav.className = "toc-box";
-        nav.setAttribute("aria-label", "Table of contents for " + compName);
+        skipToc.textContent = "Skip index";
+        skipToc.addEventListener("click", function(e) {
+          const targetEl = document.getElementById(afterTocId);
+          if (targetEl) {
+            e.preventDefault();
+            targetEl.setAttribute("tabindex", "-1");
+            targetEl.focus({ preventScroll: false });
+            targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+        topBar.appendChild(skipToc);
+        nav.appendChild(topBar);
 
         const baseGroups = tocData.filter(function(g) { return !g.isSpecial; });
         const specialGroups = tocData.filter(function(g) { return g.isSpecial; });
 
-        const cols = document.createElement("div");
-        cols.className = "toc-columns";
+        if (baseGroups.length || specialGroups.length) {
+          const cols = document.createElement("div");
+          cols.className = "toc-columns";
 
-        if (baseGroups.length) {
-          const colBase = document.createElement("div");
-          const hBase = document.createElement(tocColHeadingTag);
-          hBase.className = "toc-group-heading";
-          hBase.textContent = "Core considerations";
-          colBase.appendChild(hBase);
+          if (baseGroups.length) {
+            const colBase = document.createElement("div");
+            const hBase = document.createElement(colHeadingTag);
+            hBase.className = "toc-group-heading";
+            hBase.textContent = "Core considerations";
+            colBase.appendChild(hBase);
 
-          if (baseGroups.length === 1) {
-            const pSingle = document.createElement("p");
-            pSingle.className = "toc-single-link";
-            const a = document.createElement("a");
-            a.className = "toc-link";
-            a.href = "#" + baseGroups[0].anchorId;
-            a.textContent = baseGroups[0].parentTitle;
-            pSingle.appendChild(a);
-            colBase.appendChild(pSingle);
-          } else {
-            const ulBase = document.createElement("ul");
-            ulBase.className = "toc-tree";
-            baseGroups.forEach(function(grp) {
-              const li = document.createElement("li");
-              const a = document.createElement("a");
-              a.className = "toc-link";
-              a.href = "#" + grp.anchorId;
-              a.textContent = grp.parentTitle;
-              li.appendChild(a);
-              ulBase.appendChild(li);
-            });
-            colBase.appendChild(ulBase);
-          }
-          cols.appendChild(colBase);
-        }
-
-        if (specialGroups.length) {
-          const colSpec = document.createElement("div");
-          const hSpec = document.createElement(tocColHeadingTag);
-          hSpec.className = "toc-group-heading";
-          hSpec.innerHTML = SECTION_ICONS.extra + "<span>Deep dives</span>";
-          colSpec.appendChild(hSpec);
-
-          specialGroups.forEach(function(parentGrp) {
-            const subDiv = document.createElement("div");
-            subDiv.className = "toc-subgroup";
-
-            const hParent = document.createElement(subParentTag);
-            hParent.className = "toc-parent-subhead";
-            hParent.innerHTML = (parentGrp.iconSvg || "") + "<span>" + escapeHtml(parentGrp.parentTitle) + "</span>";
-            subDiv.appendChild(hParent);
-
-            if (parentGrp.subgroups.length === 1) {
+            if (baseGroups.length === 1) {
               const pSingle = document.createElement("p");
               pSingle.className = "toc-single-link";
-              const subA = document.createElement("a");
-              subA.className = "toc-link";
-              subA.href = "#" + parentGrp.subgroups[0].anchorId;
-              subA.textContent = parentGrp.subgroups[0].subLabel;
-              pSingle.appendChild(subA);
-              subDiv.appendChild(pSingle);
+              const a = document.createElement("a");
+              a.className = "toc-link";
+              a.href = "#" + baseGroups[0].anchorId;
+              a.textContent = baseGroups[0].parentTitle;
+              pSingle.appendChild(a);
+              colBase.appendChild(pSingle);
             } else {
-              const subUl = document.createElement("ul");
-              subUl.className = "toc-sublist";
-              parentGrp.subgroups.forEach(function(sub) {
-                const subLi = document.createElement("li");
+              const ulBase = document.createElement("ul");
+              ulBase.className = "toc-tree";
+              baseGroups.forEach(function(grp) {
+                const li = document.createElement("li");
+                const a = document.createElement("a");
+                a.className = "toc-link";
+                a.href = "#" + grp.anchorId;
+                a.textContent = grp.parentTitle;
+                li.appendChild(a);
+                ulBase.appendChild(li);
+              });
+              colBase.appendChild(ulBase);
+            }
+            cols.appendChild(colBase);
+          }
+
+          if (specialGroups.length) {
+            const colSpec = document.createElement("div");
+            const hSpec = document.createElement(colHeadingTag);
+            hSpec.className = "toc-group-heading";
+            hSpec.innerHTML = BULB_ICON_SVG + "<span>Deep dives</span>";
+            colSpec.appendChild(hSpec);
+
+            specialGroups.forEach(function(parentGrp) {
+              const subDiv = document.createElement("div");
+              subDiv.className = "toc-subgroup";
+
+              const hParent = document.createElement(subParentTag);
+              hParent.className = "toc-parent-subhead";
+              hParent.textContent = parentGrp.parentTitle;
+              subDiv.appendChild(hParent);
+
+              if (parentGrp.subgroups.length === 1) {
+                const pSingle = document.createElement("p");
+                pSingle.className = "toc-single-link";
                 const subA = document.createElement("a");
                 subA.className = "toc-link";
-                subA.href = "#" + sub.anchorId;
-                subA.textContent = sub.subLabel;
-                subLi.appendChild(subA);
-                subUl.appendChild(subLi);
-              });
-              subDiv.appendChild(subUl);
-            }
+                subA.href = "#" + parentGrp.subgroups[0].anchorId;
+                subA.textContent = parentGrp.subgroups[0].subLabel;
+                pSingle.appendChild(subA);
+                subDiv.appendChild(pSingle);
+              } else {
+                const subUl = document.createElement("ul");
+                subUl.className = "toc-sublist";
+                parentGrp.subgroups.forEach(function(sub) {
+                  const subLi = document.createElement("li");
+                  const subA = document.createElement("a");
+                  subA.className = "toc-link";
+                  subA.href = "#" + sub.anchorId;
+                  subA.textContent = sub.subLabel;
+                  subLi.appendChild(subA);
+                  subUl.appendChild(subLi);
+                });
+                subDiv.appendChild(subUl);
+              }
 
-            colSpec.appendChild(subDiv);
-          });
+              colSpec.appendChild(subDiv);
+            });
 
-          cols.appendChild(colSpec);
+            cols.appendChild(colSpec);
+          }
+
+          nav.appendChild(cols);
         }
 
-        nav.appendChild(cols);
-        wrap.appendChild(nav);
-        return wrap;
+        if (comp.always.length || comp.sometimes.length) {
+          const atomsDiv = document.createElement("div");
+          atomsDiv.className = "toc-atoms-section";
+
+          const relH = document.createElement(colHeadingTag);
+          relH.className = "toc-atoms-title";
+          relH.textContent = "Base components (atoms) to consider";
+          atomsDiv.appendChild(relH);
+
+          const hintP = document.createElement("p");
+          hintP.className = "relations-hint";
+          hintP.textContent = "Select a base component to inspect its rules in an overlay dialog without losing your place.";
+          atomsDiv.appendChild(hintP);
+
+          function buildRelRow(titleText, list) {
+            if (!list.length) return;
+            const row = document.createElement("div");
+            row.className = "rel-row";
+            const strong = document.createElement("strong");
+            strong.textContent = titleText + ": ";
+            row.appendChild(strong);
+
+            list.forEach(function(atomName) {
+              const found = DATA.find(function(d) { return d.name.toLowerCase() === atomName.toLowerCase(); });
+              if (found) {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "rel-chip";
+                btn.textContent = atomName;
+                btn.setAttribute("aria-haspopup", "dialog");
+                btn.addEventListener("click", function() {
+                  openAtomModal(found, btn);
+                });
+                row.appendChild(btn);
+              } else {
+                const span = document.createElement("span");
+                span.className = "rel-chip";
+                span.textContent = atomName;
+                row.appendChild(span);
+              }
+            });
+            atomsDiv.appendChild(row);
+          }
+
+          buildRelRow("Always", comp.always);
+          buildRelRow("In some cases", comp.sometimes);
+          nav.appendChild(atomsDiv);
+        }
+
+        return nav;
       }
 
       const dialogEl = document.getElementById("atom-modal");
@@ -3759,8 +3873,12 @@
         updateUI();
         const targetFocus = compId === "ALL"
           ? document.getElementById("heading-elenco-componenti")
-          : document.getElementById("primo-componente");
-        if (targetFocus) targetFocus.focus({ preventScroll: false });
+          : document.getElementById("heading-" + compId);
+        if (targetFocus) {
+          targetFocus.setAttribute("tabindex", "-1");
+          targetFocus.focus({ preventScroll: false });
+          targetFocus.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
       }
 
       function syncFromHash() {
@@ -3819,20 +3937,12 @@
         const activeLevels = Array.from(document.querySelectorAll('input[name="level"]:checked')).map(function(el) { return el.value; });
 
         const isSingleComp = selectedComp !== "ALL";
-        const resultsWrapper = document.getElementById("results-wrapper");
         const listHeading = document.getElementById("heading-elenco-componenti");
-
-        if (isSingleComp) {
-          listHeading.hidden = true;
-          resultsWrapper.removeAttribute("aria-labelledby");
-        } else {
-          listHeading.hidden = false;
-          resultsWrapper.setAttribute("aria-labelledby", "heading-elenco-componenti");
-        }
+        listHeading.hidden = isSingleComp;
 
         const compHeadingTag = isSingleComp ? "h2" : "h3";
         const sectionBaseLevel = isSingleComp ? 3 : 4;
-        const tocColHeadingTag = isSingleComp ? "h3" : "h4";
+        const tocBoxHeadingTag = isSingleComp ? "h3" : "h4";
 
         const contentArea = document.getElementById("content-area");
         contentArea.innerHTML = "";
@@ -3860,7 +3970,6 @@
           compSection.className = "component-block";
           compSection.id = compIdx === 0 ? "primo-componente" : ("card-comp-" + comp.id);
           compSection.setAttribute("tabindex", "-1");
-          compSection.setAttribute("aria-labelledby", "heading-" + comp.id);
 
           const headerDiv = document.createElement("div");
           headerDiv.className = "comp-header";
@@ -3874,6 +3983,7 @@
           const hComp = document.createElement(compHeadingTag);
           hComp.className = "comp-title";
           hComp.id = "heading-" + comp.id;
+          hComp.setAttribute("tabindex", "-1");
           hComp.innerHTML = escapeHtml(comp.name) + ' <span class="comp-type-tag">(' + comp.type + ')</span>';
           titleWrap.appendChild(hComp);
 
@@ -3898,57 +4008,11 @@
 
           const built = buildConceptGroups(filteredItems, "comp-" + comp.id, sectionBaseLevel);
           const afterTocTarget = built.firstAnchorId || ("heading-" + comp.id);
+          const hasAtoms = comp.always.length > 0 || comp.sometimes.length > 0;
+          const showTocBox = (built.tocData.length > 1 && (comp.type === "atom" || isSingleComp)) || hasAtoms;
 
-          if (built.tocData.length > 1 && (comp.type === "atom" || isSingleComp)) {
-            headerDiv.appendChild(buildHierarchicalToc(comp.name, built.tocData, afterTocTarget, tocColHeadingTag));
-          }
-
-          if (comp.always.length || comp.sometimes.length) {
-            const relBox = document.createElement("div");
-            relBox.className = "relations-box";
-
-            const relH = document.createElement(tocColHeadingTag);
-            relH.textContent = "Base components (atoms) to consider";
-            relBox.appendChild(relH);
-
-            const hintP = document.createElement("p");
-            hintP.className = "relations-hint";
-            hintP.textContent = "Select a base component to inspect its rules in an overlay dialog without losing your place.";
-            relBox.appendChild(hintP);
-
-            function buildRelRow(titleText, list) {
-              if (!list.length) return;
-              const row = document.createElement("div");
-              row.className = "rel-row";
-              const strong = document.createElement("strong");
-              strong.textContent = titleText + ": ";
-              row.appendChild(strong);
-
-              list.forEach(function(atomName) {
-                const found = DATA.find(function(d) { return d.name.toLowerCase() === atomName.toLowerCase(); });
-                if (found) {
-                  const btn = document.createElement("button");
-                  btn.type = "button";
-                  btn.className = "rel-chip";
-                  btn.textContent = atomName;
-                  btn.setAttribute("aria-haspopup", "dialog");
-                  btn.addEventListener("click", function() {
-                    openAtomModal(found, btn);
-                  });
-                  row.appendChild(btn);
-                } else {
-                  const span = document.createElement("span");
-                  span.className = "rel-chip";
-                  span.textContent = atomName;
-                  row.appendChild(span);
-                }
-              });
-              relBox.appendChild(row);
-            }
-
-            buildRelRow("Always", comp.always);
-            buildRelRow("In some cases", comp.sometimes);
-            headerDiv.appendChild(relBox);
+          if (showTocBox) {
+            headerDiv.appendChild(buildUnifiedTocBox(comp, built.tocData, afterTocTarget, tocBoxHeadingTag));
           }
 
           compSection.appendChild(headerDiv);
@@ -3967,6 +4031,30 @@
           skipFirst.href = shownCompsCount > 0 ? "#primo-componente" : "#main-content";
         }
       }
+
+      document.querySelectorAll(".skip-links a").forEach(function(link) {
+        link.addEventListener("click", function(e) {
+          const targetId = link.getAttribute("href").replace(/^#/, "");
+          const targetEl = document.getElementById(targetId);
+          if (targetEl) {
+            e.preventDefault();
+            targetEl.setAttribute("tabindex", "-1");
+            targetEl.focus({ preventScroll: false });
+            targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      });
+
+      const toggleFiltersBtn = document.getElementById("toggle-filters-btn");
+      const toggleFiltersLabel = document.getElementById("toggle-filters-label");
+      const filtersBody = document.getElementById("filters-body");
+      toggleFiltersBtn.addEventListener("click", function() {
+        const isExpanded = toggleFiltersBtn.getAttribute("aria-expanded") === "true";
+        const nextState = !isExpanded;
+        toggleFiltersBtn.setAttribute("aria-expanded", String(nextState));
+        filtersBody.hidden = !nextState;
+        toggleFiltersLabel.textContent = nextState ? "Collapse search panel" : "Expand search panel";
+      });
 
       window.addEventListener("hashchange", function() {
         syncFromHash();
