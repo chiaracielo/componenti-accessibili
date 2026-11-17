@@ -139,7 +139,7 @@
 
     .skip-toc-link {
       display: inline-block;
-      margin-top: 0.65rem;
+      margin-top: 0.75rem;
       font-size: 1rem;
       font-weight: 600;
       color: var(--primary);
@@ -159,7 +159,7 @@
     header {
       background: var(--surface);
       border-bottom: 2px solid var(--border-subtle);
-      padding: 1.35rem 1.5rem;
+      padding: 1.5rem;
     }
     .header-inner {
       max-width: 1380px;
@@ -167,23 +167,31 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-      align-items: center;
-      gap: 1rem 1.5rem;
+      align-items: flex-start;
+      gap: 1.25rem 2rem;
+    }
+    .header-text {
+      flex: 1 1 540px;
     }
     h1 {
-      margin: 0;
+      margin: 0 0 0.65rem;
       font-size: clamp(1.85rem, 3vw, 2.35rem);
       font-weight: 700;
       line-height: 1.2;
       color: var(--text);
     }
-    .subtitle {
-      margin: 0.4rem 0 0;
+    .header-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
       color: var(--text-muted);
       font-size: 1rem;
-      max-width: 68ch;
+      line-height: 1.5;
     }
-    .subtitle a {
+    .header-meta p {
+      margin: 0;
+    }
+    .header-meta a {
       color: var(--primary);
       font-weight: 700;
       text-underline-offset: 3px;
@@ -193,7 +201,7 @@
       align-items: center;
       gap: 0.45rem;
       min-height: 44px;
-      padding: 0.5rem 1rem;
+      padding: 0.55rem 1.1rem;
       border-radius: var(--radius);
       border: 2px solid var(--primary);
       background: var(--surface-alt);
@@ -201,6 +209,7 @@
       font-weight: 700;
       font-size: 1rem;
       text-decoration: none;
+      flex-shrink: 0;
     }
     .lang-switch:hover {
       background: var(--primary);
@@ -223,7 +232,7 @@
       }
     }
 
-    /* Sidebar Navigazione Componenti (display: block per preservare sempre gli spazi attorno a <span lang="en">) */
+    /* Sidebar Navigazione Componenti */
     nav.sidebar {
       background: var(--surface);
       border: 1px solid var(--border-subtle);
@@ -290,7 +299,7 @@
     }
     .filters-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
       gap: 1.1rem;
       align-items: end;
     }
@@ -401,9 +410,12 @@
     }
     .components-section-heading {
       margin: 0 0 1.5rem;
-      font-size: 1.65rem;
+      font-size: 1.75rem;
       font-weight: 700;
       color: var(--primary);
+    }
+    .components-section-heading[hidden] {
+      display: none;
     }
 
     /* Blocco Componente */
@@ -436,9 +448,9 @@
     .comp-title-wrap {
       flex: 1 1 280px;
     }
-    .comp-header h3.comp-title {
+    .comp-title {
       margin: 0;
-      font-size: 1.65rem;
+      font-size: 1.7rem;
       font-weight: 700;
       line-height: 1.25;
       color: var(--text);
@@ -488,8 +500,9 @@
     }
     .toc-columns {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
       gap: 1.25rem 2rem;
+      align-items: start;
     }
     .toc-group-heading {
       font-size: 1.15rem;
@@ -508,9 +521,9 @@
     .toc-subgroup:last-child {
       margin-bottom: 0;
     }
-    .toc-parent-h5 {
+    .toc-parent-subhead {
       margin: 0 0 0.3rem;
-      font-size: 1.02rem;
+      font-size: 1.04rem;
       font-weight: 700;
       color: var(--text);
       display: flex;
@@ -564,7 +577,7 @@
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius);
     }
-    .relations-box h4 {
+    .relations-box h3, .relations-box h4 {
       margin: 0 0 0.3rem;
       font-size: 1.12rem;
       font-weight: 700;
@@ -604,14 +617,14 @@
       border-color: var(--primary);
     }
 
-    /* Sotto-sezioni concettuali: senza pecette ridondanti */
+    /* Sezioni concettuali e gerarchia speculare all'indice */
     .concept-group {
-      margin-top: 1.85rem;
+      margin-top: 1.9rem;
       scroll-margin-top: 1rem;
     }
     .concept-heading {
       margin: 0 0 1rem;
-      font-size: 1.32rem;
+      font-size: 1.38rem;
       font-weight: 700;
       line-height: 1.3;
       color: var(--text);
@@ -629,65 +642,82 @@
       height: 22px;
     }
 
-    /* Attenzioni extra: sfondino molto chiaro grigio-violaceo */
+    /* Contenitore padre per Approfondimenti (Attenzioni extra, Varianti, Stati, Errori) */
     .concept-group.extra-group {
-      padding: 1.2rem;
+      padding: 1.25rem;
       background: var(--extra-bg);
       border: 2px solid var(--extra-border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
     }
-    .concept-group.extra-group .concept-heading {
+    .concept-group.extra-group > .concept-heading {
       background: var(--extra-header-bg);
       color: var(--extra-text);
       border-left: 6px solid var(--extra-border);
     }
 
-    /* Varianti / Stati / Errori */
     .concept-group.variant-group {
-      padding: 1.2rem;
+      padding: 1.25rem;
       background: var(--variant-bg);
       border: 2px solid var(--variant-border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
     }
-    .concept-group.variant-group .concept-heading {
+    .concept-group.variant-group > .concept-heading {
       background: var(--variant-header-bg);
       color: var(--variant-text);
       border-left: 6px solid var(--variant-border);
     }
 
-    /* Card Regole */
+    /* Sotto-sezione interna (es. Considerazioni generali, In generale, Stato di focus, Stato disabilitato, Bottoni solo con icona) */
+    .concept-subgroup {
+      margin-top: 1.35rem;
+      scroll-margin-top: 1rem;
+    }
+    .concept-subgroup:first-of-type {
+      margin-top: 0.5rem;
+    }
+    .concept-subheading {
+      margin: 0 0 0.85rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--text);
+      padding-bottom: 0.35rem;
+      border-bottom: 1.5px solid var(--border-subtle);
+    }
+
+    /* Card Regole: colonna unica ordinata per evitare righe "spaginate" o mezze vuote */
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr));
-      gap: 1.1rem;
+      grid-template-columns: 1fr;
+      gap: 1rem;
     }
     article.rule-card {
       background: var(--surface);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius);
-      padding: 1.15rem 1.25rem;
+      padding: 1.15rem 1.3rem;
       box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      gap: 0.95rem;
+      gap: 0.85rem;
     }
     .card-title {
       margin: 0;
-      font-size: 1.18rem;
+      font-size: 1.16rem;
       font-weight: 700;
       line-height: 1.35;
       color: var(--text);
     }
     .card-note {
-      margin: 0.6rem 0 0;
+      margin: 0.55rem 0 0;
       font-size: 1rem;
       font-weight: 400;
       line-height: 1.55;
       color: var(--text-muted);
       white-space: pre-line;
+      max-width: 75ch;
     }
 
     /* Badge WCAG + Best Practice in magenta/ciclamino freddo chiaramente distinto dal rosso Percepibile */
@@ -722,7 +752,6 @@
     .badge-utilizzabile { background: #e0e7ff; color: #1e1b4b; border-color: #4f46e5; }
     .badge-comprensibile { background: #dcfce7; color: #14532d; border-color: #16a34a; }
     .badge-robusto { background: #f1f5f9; color: #0f172a; border-color: #475569; }
-    /* Best Practice: magenta / fucsia-orchidea freddo (contrasto 10.6:1, ben distinto dal rosso #fee2e2) */
     .badge-bp { background: #fae8ff; color: #701a75; border-color: #a21caf; }
 
     /* Modale nativa (<dialog>) */
@@ -811,20 +840,78 @@
       font-weight: 700;
       text-underline-offset: 3px;
     }
-    .contact-btn {
-      background: none;
-      border: none;
-      padding: 0;
-      font: inherit;
-      font-weight: 700;
-      color: var(--primary);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      cursor: pointer;
+
+    /* Fix Reflow & Mobile Overflow (WCAG 1.4.10 Reflow fino a 320px) */
+    html, body {
+      max-width: 100%;
     }
-    .contact-btn:hover {
-      color: var(--text);
+    img, svg {
+      max-width: 100%;
+      height: auto;
     }
+    h1, h2, h3, h4, h5, h6, p, a, li, label, legend, button, select, input {
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+    }
+    .wcag-badge {
+      max-width: 100%;
+      white-space: normal;
+      line-height: 1.35;
+    }
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .layout > * {
+        min-width: 0;
+      }
+    }
+    @media (max-width: 600px) {
+      header {
+        padding: 1.1rem 1rem;
+      }
+      .header-text {
+        flex-basis: 100%;
+        min-width: 0;
+      }
+      .layout {
+        padding: 1rem 1rem 2.5rem;
+        gap: 1.25rem;
+      }
+      .filters-panel,
+      .comp-header-top,
+      .toc-box,
+      .relations-box,
+      .concept-group.extra-group,
+      .concept-group.variant-group,
+      article.rule-card {
+        padding: 1rem;
+      }
+      .filters-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .toc-columns {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .comp-title-wrap {
+        flex-basis: 100%;
+        min-width: 0;
+      }
+      .comp-illustration {
+        width: 100%;
+      }
+      .concept-heading {
+        font-size: 1.22rem;
+        padding: 0.5rem 0.75rem;
+      }
+      .dialog-header {
+        padding: 0.85rem 1rem;
+      }
+      .dialog-body {
+        padding: 1rem;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -836,13 +923,19 @@
 
   <header>
     <div class="header-inner">
-      <div>
+      <div class="header-text">
         <h1>Accessible Design Components</h1>
-        <p class="subtitle">
-          Material used for the “Workshop: Get in the game! Hands-on accessible design workshop, <a href="https://accessibilitydays.it" target="_blank" rel="noopener noreferrer">Accessibility Days 2026<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="sr-only"> (opens Accessibility Days website in a new tab)</span></a>” ·
-          <a href="https://www.linkedin.com/in/chiaracielo-longobardi-a140737/" target="_blank" rel="noopener noreferrer">ChiaraCielo Longobardi<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="sr-only"> (opens LinkedIn profile in a new tab)</span></a> ·
-          Normative reference: <a href="https://www.w3.org/TR/WCAG22/" target="_blank" rel="noopener noreferrer"><abbr title="Web Content Accessibility Guidelines">WCAG</abbr> 2.2 (<abbr title="World Wide Web Consortium">W3C</abbr> Recommendation)<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="sr-only"> (opens WCAG 2.2 criteria in a new tab)</span></a>
-        </p>
+        <div class="header-meta">
+          <p>
+            Material used for the “Workshop: Get in the game! Hands-on accessible design workshop”, <a href="https://accessibilitydays.it" target="_blank" rel="noopener noreferrer">Accessibility Days<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="sr-only"> (opens Accessibility Days website in a new tab)</span></a> 2026.
+          </p>
+          <p>
+            Created by <a href="https://www.linkedin.com/in/chiaracielo-longobardi-a140737/" target="_blank" rel="noopener noreferrer">ChiaraCielo Longobardi<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="sr-only"> (opens LinkedIn profile in a new tab)</span></a>.
+          </p>
+          <p>
+            Normative reference: <a href="https://www.w3.org/TR/WCAG22/" target="_blank" rel="noopener noreferrer"><abbr title="Web Content Accessibility Guidelines">WCAG</abbr> 2.2 (<abbr title="World Wide Web Consortium">W3C</abbr> Recommendation)<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="sr-only"> (opens WCAG 2.2 criteria in a new tab)</span></a>.
+          </p>
+        </div>
       </div>
       <a href="index.html" class="lang-switch" lang="it" hreflang="it">Versione italiana</a>
     </div>
@@ -904,8 +997,8 @@
 
       <hr class="section-divider">
 
-      <section aria-labelledby="heading-elenco-componenti">
-        <h2 id="heading-elenco-componenti" class="components-section-heading">Components list</h2>
+      <section id="results-wrapper" aria-labelledby="heading-elenco-componenti">
+        <h2 id="heading-elenco-componenti" class="components-section-heading" tabindex="-1">Components list</h2>
         <div id="content-area"></div>
       </section>
     </main>
@@ -924,9 +1017,7 @@
 
   <footer>
     <p>
-      Found an inaccuracy or an accessibility issue?
-      <a href="https://www.linkedin.com/in/chiaracielo-longobardi-a140737/" target="_blank" rel="noopener noreferrer">Contact me on LinkedIn<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="sr-only"> (opens LinkedIn profile in a new tab)</span></a>
-      or <button type="button" class="contact-btn" id="contact-mail-btn">send a report via email</button>.
+      <a href="https://www.linkedin.com/in/chiaracielo-longobardi-a140737/" target="_blank" rel="noopener noreferrer">Contact me on LinkedIn<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="sr-only"> (opens LinkedIn profile in a new tab)</span></a>.
     </p>
     <p>This work is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg><span class="sr-only"> (opens in a new tab)</span></a>.</p>
   </footer>
@@ -3218,7 +3309,7 @@
   </script>
 
   <script type="application/json" id="comp-svgs">
-{"bottoni": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"34\" width=\"118\" height=\"44\" rx=\"8\" fill=\"var(--primary)\"/>\n    <rect x=\"16\" y=\"30\" width=\"126\" height=\"52\" rx=\"11\" stroke=\"var(--focus-ring)\" stroke-width=\"2.5\" stroke-dasharray=\"4 3\"/>\n    <rect x=\"44\" y=\"52\" width=\"70\" height=\"8\" rx=\"4\" fill=\"var(--primary-contrast)\"/>\n    <rect x=\"152\" y=\"34\" width=\"48\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"176\" cy=\"56\" r=\"8\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <path d=\"M176 52v8M172 56h8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n  <\/svg>", "link": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"30\" width=\"180\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"20\" y=\"50\" width=\"64\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"92\" y=\"50\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"92\" y1=\"62\" x2=\"176\" y2=\"62\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <path d=\"M182 50h6v6M188 50l-6 6\" stroke=\"var(--primary)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"20\" y=\"74\" width=\"140\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "campi-di-input": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"20\" width=\"72\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <circle cx=\"102\" cy=\"24\" r=\"3\" fill=\"#b91c1c\"/>\n    <rect x=\"24\" y=\"36\" width=\"172\" height=\"40\" rx=\"6\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <line x1=\"36\" y1=\"46\" x2=\"36\" y2=\"66\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <rect x=\"44\" y=\"52\" width=\"86\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"24\" y=\"84\" width=\"124\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "icone-e-icon-buttons": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"34\" width=\"110\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"48\" cy=\"56\" r=\"9\" stroke=\"var(--primary)\" stroke-width=\"2.2\"/>\n    <path d=\"M55 63l5 5\" stroke=\"var(--primary)\" stroke-width=\"2.2\" stroke-linecap=\"round\"/>\n    <rect x=\"68\" y=\"52\" width=\"50\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"150\" y=\"34\" width=\"44\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M165 49l14 14M179 49l-14 14\" stroke=\"var(--text)\" stroke-width=\"2.2\" stroke-linecap=\"round\"/>\n  <\/svg>", "intestazioni": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"20\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--primary)\"/>\n    <text x=\"33\" y=\"32\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--primary-contrast)\">H1<\/text>\n    <rect x=\"54\" y=\"23\" width=\"136\" height=\"10\" rx=\"5\" fill=\"var(--text)\"/>\n    <rect x=\"28\" y=\"48\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <text x=\"41\" y=\"60\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--text)\">H2<\/text>\n    <rect x=\"62\" y=\"52\" width=\"110\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"36\" y=\"76\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <text x=\"49\" y=\"88\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--text-muted)\">H3<\/text>\n    <rect x=\"70\" y=\"80\" width=\"88\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "testi-e-errori": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"20\" width=\"176\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"22\" y=\"34\" width=\"154\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n    <rect x=\"22\" y=\"48\" width=\"166\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n    <rect x=\"22\" y=\"68\" width=\"176\" height=\"32\" rx=\"6\" fill=\"#fee2e2\" stroke=\"#b91c1c\" stroke-width=\"2\"/>\n    <circle cx=\"38\" cy=\"84\" r=\"7\" fill=\"#b91c1c\"/>\n    <path d=\"M38 80v5M38 88h.01\" stroke=\"#ffffff\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"52\" y=\"80\" width=\"128\" height=\"8\" rx=\"4\" fill=\"#7f1d1d\"/>\n  <\/svg>", "immagini": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"18\" width=\"172\" height=\"64\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"64\" cy=\"40\" r=\"9\" fill=\"var(--primary)\"/>\n    <path d=\"M36 74l36-28 26 20 28-24 48 32H36z\" fill=\"var(--border)\"/>\n    <rect x=\"24\" y=\"88\" width=\"42\" height=\"16\" rx=\"4\" fill=\"var(--primary)\"/>\n    <text x=\"45\" y=\"99\" text-anchor=\"middle\" font-size=\"9\" font-weight=\"700\" fill=\"var(--primary-contrast)\">ALT<\/text>\n    <rect x=\"74\" y=\"92\" width=\"122\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "loader-e-progress-bar": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <g stroke-linecap=\"round\" stroke-width=\"3.2\">\n      <line x1=\"110\" y1=\"16\" x2=\"110\" y2=\"23\" stroke=\"var(--primary)\"/>\n      <line x1=\"122.7\" y1=\"21.3\" x2=\"117.8\" y2=\"26.2\" stroke=\"var(--primary)\" stroke-opacity=\"0.88\"/>\n      <line x1=\"128\" y1=\"34\" x2=\"121\" y2=\"34\" stroke=\"var(--primary)\" stroke-opacity=\"0.74\"/>\n      <line x1=\"122.7\" y1=\"46.7\" x2=\"117.8\" y2=\"41.8\" stroke=\"var(--primary)\" stroke-opacity=\"0.60\"/>\n      <line x1=\"110\" y1=\"52\" x2=\"110\" y2=\"45\" stroke=\"var(--primary)\" stroke-opacity=\"0.46\"/>\n      <line x1=\"97.3\" y1=\"46.7\" x2=\"102.2\" y2=\"41.8\" stroke=\"var(--primary)\" stroke-opacity=\"0.34\"/>\n      <line x1=\"92\" y1=\"34\" x2=\"99\" y2=\"34\" stroke=\"var(--primary)\" stroke-opacity=\"0.24\"/>\n      <line x1=\"97.3\" y1=\"21.3\" x2=\"102.2\" y2=\"26.2\" stroke=\"var(--primary)\" stroke-opacity=\"0.16\"/>\n    <\/g>\n    <rect x=\"24\" y=\"66\" width=\"172\" height=\"16\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"26\" y=\"68\" width=\"114\" height=\"12\" rx=\"6\" fill=\"var(--primary)\"/>\n    <rect x=\"24\" y=\"92\" width=\"96\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"164\" y=\"92\" width=\"32\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n  <\/svg>", "chips-e-tags": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"28\" width=\"84\" height=\"28\" rx=\"14\" fill=\"var(--primary)\"/>\n    <path d=\"M32 42l4 4 7-7\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"48\" y=\"38\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--primary-contrast)\"/>\n    <rect x=\"114\" y=\"28\" width=\"86\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"128\" y=\"38\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M179 38l8 8M187 38l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"20\" y=\"68\" width=\"96\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"36\" cy=\"82\" r=\"4\" fill=\"var(--primary)\"/>\n    <rect x=\"46\" y=\"78\" width=\"54\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n  <\/svg>", "toggle-e-switch": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"26\" width=\"54\" height=\"28\" rx=\"14\" fill=\"var(--primary)\"/>\n    <circle cx=\"64\" cy=\"40\" r=\"10\" fill=\"var(--primary-contrast)\"/>\n    <path d=\"M35 40l3 3 6-6\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"90\" y=\"36\" width=\"96\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"24\" y=\"68\" width=\"54\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"38\" cy=\"82\" r=\"10\" fill=\"var(--text-muted)\"/>\n    <rect x=\"90\" y=\"78\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "tabelle": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"18\" width=\"180\" height=\"84\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M20 42h180\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"21\" y=\"19\" width=\"178\" height=\"23\" rx=\"4\" fill=\"var(--surface-alt)\"/>\n    <line x1=\"20\" y1=\"42\" x2=\"200\" y2=\"42\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <line x1=\"20\" y1=\"62\" x2=\"200\" y2=\"62\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <line x1=\"20\" y1=\"82\" x2=\"200\" y2=\"82\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <line x1=\"84\" y1=\"18\" x2=\"84\" y2=\"102\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <line x1=\"144\" y1=\"18\" x2=\"144\" y2=\"102\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"30\" y=\"27\" width=\"42\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"94\" y=\"27\" width=\"38\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"154\" y=\"27\" width=\"34\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"49\" width=\"36\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"69\" width=\"40\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"89\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n  <\/svg>", "form": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"14\" width=\"176\" height=\"92\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"34\" y=\"24\" width=\"60\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"34\" width=\"152\" height=\"18\" rx=\"4\" fill=\"var(--bg)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"34\" y=\"58\" width=\"52\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"68\" width=\"152\" height=\"18\" rx=\"4\" fill=\"var(--bg)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"126\" y=\"91\" width=\"60\" height=\"10\" rx=\"5\" fill=\"var(--primary)\"/>\n  <\/svg>", "card": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"34\" y=\"12\" width=\"152\" height=\"96\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"35\" y=\"13\" width=\"150\" height=\"38\" rx=\"6\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"46\" y=\"60\" width=\"94\" height=\"9\" rx=\"4.5\" fill=\"var(--text)\"/>\n    <rect x=\"46\" y=\"75\" width=\"124\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"46\" y=\"88\" width=\"64\" height=\"12\" rx=\"4\" fill=\"var(--primary)\"/>\n  <\/svg>", "caroselli": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"48\" y=\"20\" width=\"124\" height=\"64\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"28\" cy=\"52\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M31 47l-6 5 6 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"192\" cy=\"52\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M189 47l6 5-6 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"96\" cy=\"98\" r=\"5\" fill=\"var(--primary)\"/>\n    <circle cx=\"110\" cy=\"98\" r=\"4\" fill=\"var(--border)\"/>\n    <circle cx=\"124\" cy=\"98\" r=\"4\" fill=\"var(--border)\"/>\n  <\/svg>", "dataviz": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <line x1=\"30\" y1=\"94\" x2=\"194\" y2=\"94\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <line x1=\"30\" y1=\"20\" x2=\"30\" y2=\"94\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"46\" y=\"46\" width=\"28\" height=\"48\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"92\" y=\"28\" width=\"28\" height=\"66\" rx=\"3\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <path d=\"M94 42l24-12M94 58l24-12M94 74l24-12M94 90l24-12\" stroke=\"var(--text)\" stroke-width=\"1.5\"/>\n    <rect x=\"138\" y=\"58\" width=\"28\" height=\"36\" rx=\"3\" fill=\"var(--accent-special)\"/>\n  <\/svg>", "pop-up-e-modali": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"14\" y=\"12\" width=\"192\" height=\"96\" rx=\"8\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"38\" y=\"22\" width=\"144\" height=\"76\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2.2\"/>\n    <rect x=\"50\" y=\"34\" width=\"84\" height=\"9\" rx=\"4.5\" fill=\"var(--text)\"/>\n    <rect x=\"152\" y=\"30\" width=\"18\" height=\"18\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <path d=\"M157 35l8 8M165 35l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"50\" y=\"52\" width=\"116\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"50\" y=\"64\" width=\"96\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"118\" y=\"76\" width=\"52\" height=\"14\" rx=\"4\" fill=\"var(--primary)\"/>\n  <\/svg>", "breadcrumbs": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"52\" width=\"38\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"20\" y1=\"63\" x2=\"58\" y2=\"63\" stroke=\"var(--primary)\" stroke-width=\"2\"/>\n    <path d=\"M66 51l5 5-5 5\" stroke=\"var(--text-muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"80\" y=\"52\" width=\"48\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"80\" y1=\"63\" x2=\"128\" y2=\"63\" stroke=\"var(--primary)\" stroke-width=\"2\"/>\n    <path d=\"M136 51l5 5-5 5\" stroke=\"var(--text-muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"150\" y=\"52\" width=\"50\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n  <\/svg>", "menu-navigazione": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"18\" y=\"24\" width=\"184\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"30\" y=\"36\" width=\"36\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"30\" y1=\"49\" x2=\"66\" y2=\"49\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <rect x=\"80\" y=\"36\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M126 38l4 4 4-4\" stroke=\"var(--text)\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n    <rect x=\"148\" y=\"36\" width=\"40\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"76\" y=\"60\" width=\"76\" height=\"42\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"86\" y=\"70\" width=\"52\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"86\" y=\"84\" width=\"44\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "notifiche": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"34\" width=\"176\" height=\"52\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"22\" y=\"34\" width=\"8\" height=\"52\" rx=\"3\" fill=\"var(--primary)\"/>\n    <circle cx=\"46\" cy=\"60\" r=\"9\" fill=\"var(--primary)\"/>\n    <path d=\"M46 56v5M46 64h.01\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"64\" y=\"48\" width=\"86\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"64\" y=\"63\" width=\"102\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <path d=\"M178 46l8 8M186 46l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n  <\/svg>", "accordion": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"16\" width=\"172\" height=\"52\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"36\" y=\"26\" width=\"96\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M174 32l5-5 5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <line x1=\"24\" y1=\"42\" x2=\"196\" y2=\"42\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"36\" y=\"51\" width=\"138\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"24\" y=\"76\" width=\"172\" height=\"28\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"36\" y=\"86\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M174 88l5 5 5-5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n  <\/svg>", "ricerca": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"22\" width=\"130\" height=\"36\" rx=\"6\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"34\" y=\"36\" width=\"76\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"158\" y=\"22\" width=\"40\" height=\"36\" rx=\"6\" fill=\"var(--primary)\"/>\n    <circle cx=\"176\" cy=\"38\" r=\"6\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\"/>\n    <path d=\"M181 43l4 4\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"22\" y=\"64\" width=\"130\" height=\"38\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"34\" y=\"74\" width=\"88\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"87\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "tabs": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"20\" width=\"58\" height=\"26\" rx=\"5\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <rect x=\"30\" y=\"29\" width=\"38\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"22\" y1=\"44\" x2=\"76\" y2=\"44\" stroke=\"var(--primary)\" stroke-width=\"4\"/>\n    <rect x=\"82\" y=\"22\" width=\"56\" height=\"24\" rx=\"5\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"1.8\"/>\n    <rect x=\"92\" y=\"31\" width=\"36\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"142\" y=\"22\" width=\"56\" height=\"24\" rx=\"5\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"1.8\"/>\n    <rect x=\"152\" y=\"31\" width=\"36\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"20\" y=\"46\" width=\"180\" height=\"56\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2.2\"/>\n    <rect x=\"34\" y=\"62\" width=\"136\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"78\" width=\"110\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "picker-data-e-ora": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"38\" y=\"14\" width=\"144\" height=\"24\" rx=\"5\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"1.8\"/>\n    <rect x=\"48\" y=\"23\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"38\" y=\"42\" width=\"144\" height=\"66\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"52\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"76\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"100\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"124\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"148\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"52\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"76\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"100\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n  <\/svg>", "tooltip-e-pop-over": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"42\" y=\"18\" width=\"136\" height=\"44\" rx=\"6\" fill=\"var(--text)\"/>\n    <rect x=\"54\" y=\"30\" width=\"92\" height=\"7\" rx=\"3.5\" fill=\"var(--bg)\"/>\n    <rect x=\"54\" y=\"43\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <path d=\"M104 62l6 8 6-8\" fill=\"var(--text)\"/>\n    <circle cx=\"110\" cy=\"86\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <text x=\"110\" y=\"90\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"700\" fill=\"var(--primary)\">i<\/text>\n  <\/svg>", "pager": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <path d=\"M38 55l-5 5 5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"58\" y=\"44\" width=\"30\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <text x=\"73\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--text)\">1<\/text>\n    <rect x=\"94\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--primary)\"/>\n    <text x=\"110\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--primary-contrast)\">2<\/text>\n    <rect x=\"132\" y=\"44\" width=\"30\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <text x=\"147\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--text)\">3<\/text>\n    <rect x=\"168\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <path d=\"M182 55l5 5-5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n  <\/svg>", "stepper": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <line x1=\"44\" y1=\"48\" x2=\"176\" y2=\"48\" stroke=\"var(--border)\" stroke-width=\"2.5\"/>\n    <line x1=\"44\" y1=\"48\" x2=\"110\" y2=\"48\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <circle cx=\"44\" cy=\"48\" r=\"14\" fill=\"var(--primary)\"/>\n    <path d=\"M39 48l3 3 7-7\" stroke=\"var(--primary-contrast)\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"110\" cy=\"48\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <text x=\"110\" y=\"52\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"700\" fill=\"var(--primary)\">2<\/text>\n    <circle cx=\"176\" cy=\"48\" r=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <text x=\"176\" y=\"52\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"700\" fill=\"var(--text-muted)\">3<\/text>\n    <rect x=\"28\" y=\"70\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"92\" y=\"70\" width=\"36\" height=\"6\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"160\" y=\"70\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>"}
+{"bottoni": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"34\" width=\"118\" height=\"44\" rx=\"8\" fill=\"var(--primary)\"/>\n    <rect x=\"16\" y=\"30\" width=\"126\" height=\"52\" rx=\"11\" stroke=\"var(--focus-ring)\" stroke-width=\"2.5\" stroke-dasharray=\"4 3\"/>\n    <rect x=\"44\" y=\"52\" width=\"70\" height=\"8\" rx=\"4\" fill=\"var(--primary-contrast)\"/>\n    <rect x=\"152\" y=\"34\" width=\"48\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"176\" cy=\"56\" r=\"8\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <path d=\"M176 52v8M172 56h8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n  <\/svg>", "link": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"30\" width=\"180\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"20\" y=\"50\" width=\"64\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"92\" y=\"50\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"92\" y1=\"62\" x2=\"176\" y2=\"62\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <path d=\"M182 50h6v6M188 50l-6 6\" stroke=\"var(--primary)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"20\" y=\"74\" width=\"140\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "campi-di-input": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"20\" width=\"72\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <circle cx=\"102\" cy=\"24\" r=\"3\" fill=\"#b91c1c\"/>\n    <rect x=\"24\" y=\"36\" width=\"172\" height=\"40\" rx=\"6\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <line x1=\"36\" y1=\"46\" x2=\"36\" y2=\"66\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <rect x=\"44\" y=\"52\" width=\"86\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"24\" y=\"84\" width=\"124\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "icone-e-icon-buttons": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"34\" width=\"110\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"48\" cy=\"56\" r=\"9\" stroke=\"var(--primary)\" stroke-width=\"2.2\"/>\n    <path d=\"M55 63l5 5\" stroke=\"var(--primary)\" stroke-width=\"2.2\" stroke-linecap=\"round\"/>\n    <rect x=\"68\" y=\"52\" width=\"50\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"150\" y=\"34\" width=\"44\" height=\"44\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M165 49l14 14M179 49l-14 14\" stroke=\"var(--text)\" stroke-width=\"2.2\" stroke-linecap=\"round\"/>\n  <\/svg>", "intestazioni": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"20\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--primary)\"/>\n    <text x=\"33\" y=\"32\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--primary-contrast)\">H1<\/text>\n    <rect x=\"54\" y=\"23\" width=\"136\" height=\"10\" rx=\"5\" fill=\"var(--text)\"/>\n    <rect x=\"28\" y=\"48\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <text x=\"41\" y=\"60\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--text)\">H2<\/text>\n    <rect x=\"62\" y=\"52\" width=\"110\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"36\" y=\"76\" width=\"26\" height=\"16\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <text x=\"49\" y=\"88\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"700\" fill=\"var(--text-muted)\">H3<\/text>\n    <rect x=\"70\" y=\"80\" width=\"88\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "testi-e-errori": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"20\" width=\"176\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"22\" y=\"34\" width=\"154\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n    <rect x=\"22\" y=\"48\" width=\"166\" height=\"7\" rx=\"3.5\" fill=\"var(--text-muted)\"/>\n    <rect x=\"22\" y=\"68\" width=\"176\" height=\"32\" rx=\"6\" fill=\"#fee2e2\" stroke=\"#b91c1c\" stroke-width=\"2\"/>\n    <circle cx=\"38\" cy=\"84\" r=\"7\" fill=\"#b91c1c\"/>\n    <path d=\"M38 80v5M38 88h.01\" stroke=\"#ffffff\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"52\" y=\"80\" width=\"128\" height=\"8\" rx=\"4\" fill=\"#7f1d1d\"/>\n  <\/svg>", "immagini": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"18\" width=\"172\" height=\"64\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"64\" cy=\"40\" r=\"9\" fill=\"var(--primary)\"/>\n    <path d=\"M36 74l36-28 26 20 28-24 48 32H36z\" fill=\"var(--border)\"/>\n    <rect x=\"24\" y=\"88\" width=\"42\" height=\"16\" rx=\"4\" fill=\"var(--primary)\"/>\n    <text x=\"45\" y=\"99\" text-anchor=\"middle\" font-size=\"9\" font-weight=\"700\" fill=\"var(--primary-contrast)\">ALT<\/text>\n    <rect x=\"74\" y=\"92\" width=\"122\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "loader-e-progress-bar": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <g stroke-linecap=\"round\" stroke-width=\"3.2\">\n      <line x1=\"110\" y1=\"22\" x2=\"110\" y2=\"29\" stroke=\"var(--primary)\"/>\n      <line x1=\"122.7\" y1=\"27.3\" x2=\"117.8\" y2=\"32.2\" stroke=\"var(--primary)\" stroke-opacity=\"0.88\"/>\n      <line x1=\"128\" y1=\"40\" x2=\"121\" y2=\"40\" stroke=\"var(--primary)\" stroke-opacity=\"0.74\"/>\n      <line x1=\"122.7\" y1=\"52.7\" x2=\"117.8\" y2=\"47.8\" stroke=\"var(--primary)\" stroke-opacity=\"0.60\"/>\n      <line x1=\"110\" y1=\"58\" x2=\"110\" y2=\"51\" stroke=\"var(--primary)\" stroke-opacity=\"0.46\"/>\n      <line x1=\"97.3\" y1=\"52.7\" x2=\"102.2\" y2=\"47.8\" stroke=\"var(--primary)\" stroke-opacity=\"0.34\"/>\n      <line x1=\"92\" y1=\"40\" x2=\"99\" y2=\"40\" stroke=\"var(--primary)\" stroke-opacity=\"0.24\"/>\n      <line x1=\"97.3\" y1=\"27.3\" x2=\"102.2\" y2=\"32.2\" stroke=\"var(--primary)\" stroke-opacity=\"0.16\"/>\n    <\/g>\n    <rect x=\"24\" y=\"76\" width=\"172\" height=\"18\" rx=\"9\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"26\" y=\"78\" width=\"114\" height=\"14\" rx=\"7\" fill=\"var(--primary)\"/>\n  <\/svg>", "chips-e-tags": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"28\" width=\"84\" height=\"28\" rx=\"14\" fill=\"var(--primary)\"/>\n    <path d=\"M32 42l4 4 7-7\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"48\" y=\"38\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--primary-contrast)\"/>\n    <rect x=\"114\" y=\"28\" width=\"86\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"128\" y=\"38\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M179 38l8 8M187 38l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"20\" y=\"68\" width=\"96\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"36\" cy=\"82\" r=\"4\" fill=\"var(--primary)\"/>\n    <rect x=\"46\" y=\"78\" width=\"54\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n  <\/svg>", "toggle-e-switch": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"26\" width=\"54\" height=\"28\" rx=\"14\" fill=\"var(--primary)\"/>\n    <circle cx=\"64\" cy=\"40\" r=\"10\" fill=\"var(--primary-contrast)\"/>\n    <path d=\"M35 40l3 3 6-6\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"90\" y=\"36\" width=\"96\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"24\" y=\"68\" width=\"54\" height=\"28\" rx=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"38\" cy=\"82\" r=\"10\" fill=\"var(--text-muted)\"/>\n    <rect x=\"90\" y=\"78\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "tabelle": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"18\" width=\"180\" height=\"84\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M20 42h180\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"21\" y=\"19\" width=\"178\" height=\"23\" rx=\"4\" fill=\"var(--surface-alt)\"/>\n    <line x1=\"20\" y1=\"42\" x2=\"200\" y2=\"42\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <line x1=\"20\" y1=\"62\" x2=\"200\" y2=\"62\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <line x1=\"20\" y1=\"82\" x2=\"200\" y2=\"82\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <line x1=\"84\" y1=\"18\" x2=\"84\" y2=\"102\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <line x1=\"144\" y1=\"18\" x2=\"144\" y2=\"102\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"30\" y=\"27\" width=\"42\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"94\" y=\"27\" width=\"38\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"154\" y=\"27\" width=\"34\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"49\" width=\"36\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"69\" width=\"40\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"30\" y=\"89\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n  <\/svg>", "form": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"14\" width=\"176\" height=\"92\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"34\" y=\"24\" width=\"60\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"34\" width=\"152\" height=\"18\" rx=\"4\" fill=\"var(--bg)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"34\" y=\"58\" width=\"52\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"68\" width=\"152\" height=\"18\" rx=\"4\" fill=\"var(--bg)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"126\" y=\"91\" width=\"60\" height=\"10\" rx=\"5\" fill=\"var(--primary)\"/>\n  <\/svg>", "card": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"34\" y=\"12\" width=\"152\" height=\"96\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"35\" y=\"13\" width=\"150\" height=\"38\" rx=\"6\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"46\" y=\"60\" width=\"94\" height=\"9\" rx=\"4.5\" fill=\"var(--text)\"/>\n    <rect x=\"46\" y=\"75\" width=\"124\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"46\" y=\"88\" width=\"64\" height=\"12\" rx=\"4\" fill=\"var(--primary)\"/>\n  <\/svg>", "caroselli": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"48\" y=\"20\" width=\"124\" height=\"64\" rx=\"8\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <circle cx=\"28\" cy=\"52\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M31 47l-6 5 6 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"192\" cy=\"52\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <path d=\"M189 47l6 5-6 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"96\" cy=\"98\" r=\"5\" fill=\"var(--primary)\"/>\n    <circle cx=\"110\" cy=\"98\" r=\"4\" fill=\"var(--border)\"/>\n    <circle cx=\"124\" cy=\"98\" r=\"4\" fill=\"var(--border)\"/>\n  <\/svg>", "dataviz": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <line x1=\"30\" y1=\"94\" x2=\"194\" y2=\"94\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <line x1=\"30\" y1=\"20\" x2=\"30\" y2=\"94\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"46\" y=\"46\" width=\"28\" height=\"48\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"92\" y=\"28\" width=\"28\" height=\"66\" rx=\"3\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <path d=\"M94 42l24-12M94 58l24-12M94 74l24-12M94 90l24-12\" stroke=\"var(--text)\" stroke-width=\"1.5\"/>\n    <rect x=\"138\" y=\"58\" width=\"28\" height=\"36\" rx=\"3\" fill=\"var(--accent-special)\"/>\n  <\/svg>", "pop-up-e-modali": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"14\" y=\"12\" width=\"192\" height=\"96\" rx=\"8\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"38\" y=\"22\" width=\"144\" height=\"76\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2.2\"/>\n    <rect x=\"50\" y=\"34\" width=\"84\" height=\"9\" rx=\"4.5\" fill=\"var(--text)\"/>\n    <rect x=\"152\" y=\"30\" width=\"18\" height=\"18\" rx=\"4\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <path d=\"M157 35l8 8M165 35l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"50\" y=\"52\" width=\"116\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"50\" y=\"64\" width=\"96\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"118\" y=\"76\" width=\"52\" height=\"14\" rx=\"4\" fill=\"var(--primary)\"/>\n  <\/svg>", "breadcrumbs": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"52\" width=\"38\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"20\" y1=\"63\" x2=\"58\" y2=\"63\" stroke=\"var(--primary)\" stroke-width=\"2\"/>\n    <path d=\"M66 51l5 5-5 5\" stroke=\"var(--text-muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"80\" y=\"52\" width=\"48\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"80\" y1=\"63\" x2=\"128\" y2=\"63\" stroke=\"var(--primary)\" stroke-width=\"2\"/>\n    <path d=\"M136 51l5 5-5 5\" stroke=\"var(--text-muted)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"150\" y=\"52\" width=\"50\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n  <\/svg>", "menu-navigazione": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"18\" y=\"24\" width=\"184\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"30\" y=\"36\" width=\"36\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"30\" y1=\"49\" x2=\"66\" y2=\"49\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <rect x=\"80\" y=\"36\" width=\"42\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M126 38l4 4 4-4\" stroke=\"var(--text)\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n    <rect x=\"148\" y=\"36\" width=\"40\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"76\" y=\"60\" width=\"76\" height=\"42\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"86\" y=\"70\" width=\"52\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"86\" y=\"84\" width=\"44\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "notifiche": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"34\" width=\"176\" height=\"52\" rx=\"8\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"22\" y=\"34\" width=\"8\" height=\"52\" rx=\"3\" fill=\"var(--primary)\"/>\n    <circle cx=\"46\" cy=\"60\" r=\"9\" fill=\"var(--primary)\"/>\n    <path d=\"M46 56v5M46 64h.01\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"64\" y=\"48\" width=\"86\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"64\" y=\"63\" width=\"102\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <path d=\"M178 46l8 8M186 46l-8 8\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n  <\/svg>", "accordion": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"24\" y=\"16\" width=\"172\" height=\"52\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"36\" y=\"26\" width=\"96\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M174 32l5-5 5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <line x1=\"24\" y1=\"42\" x2=\"196\" y2=\"42\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"36\" y=\"51\" width=\"138\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <rect x=\"24\" y=\"76\" width=\"172\" height=\"28\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <rect x=\"36\" y=\"86\" width=\"84\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <path d=\"M174 88l5 5 5-5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n  <\/svg>", "ricerca": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"22\" y=\"22\" width=\"130\" height=\"36\" rx=\"6\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"2\"/>\n    <rect x=\"34\" y=\"36\" width=\"76\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n    <rect x=\"158\" y=\"22\" width=\"40\" height=\"36\" rx=\"6\" fill=\"var(--primary)\"/>\n    <circle cx=\"176\" cy=\"38\" r=\"6\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\"/>\n    <path d=\"M181 43l4 4\" stroke=\"var(--primary-contrast)\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n    <rect x=\"22\" y=\"64\" width=\"130\" height=\"38\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.5\"/>\n    <rect x=\"34\" y=\"74\" width=\"88\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"87\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "tabs": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"20\" width=\"58\" height=\"26\" rx=\"5\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <rect x=\"30\" y=\"29\" width=\"38\" height=\"8\" rx=\"4\" fill=\"var(--primary)\"/>\n    <line x1=\"22\" y1=\"44\" x2=\"76\" y2=\"44\" stroke=\"var(--primary)\" stroke-width=\"4\"/>\n    <rect x=\"82\" y=\"22\" width=\"56\" height=\"24\" rx=\"5\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"1.8\"/>\n    <rect x=\"92\" y=\"31\" width=\"36\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"142\" y=\"22\" width=\"56\" height=\"24\" rx=\"5\" fill=\"var(--surface-alt)\" stroke=\"var(--text)\" stroke-width=\"1.8\"/>\n    <rect x=\"152\" y=\"31\" width=\"36\" height=\"7\" rx=\"3.5\" fill=\"var(--text)\"/>\n    <rect x=\"20\" y=\"46\" width=\"180\" height=\"56\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--text)\" stroke-width=\"2.2\"/>\n    <rect x=\"34\" y=\"62\" width=\"136\" height=\"8\" rx=\"4\" fill=\"var(--text)\"/>\n    <rect x=\"34\" y=\"78\" width=\"110\" height=\"8\" rx=\"4\" fill=\"var(--text-muted)\"/>\n  <\/svg>", "picker-data-e-ora": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"38\" y=\"14\" width=\"144\" height=\"24\" rx=\"5\" fill=\"var(--bg)\" stroke=\"var(--text)\" stroke-width=\"1.8\"/>\n    <rect x=\"48\" y=\"23\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"38\" y=\"42\" width=\"144\" height=\"66\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <rect x=\"52\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"76\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"100\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"124\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"148\" y=\"54\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"52\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"76\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n    <rect x=\"100\" y=\"76\" width=\"16\" height=\"14\" rx=\"3\" fill=\"var(--surface-alt)\"/>\n  <\/svg>", "tooltip-e-pop-over": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"42\" y=\"18\" width=\"136\" height=\"44\" rx=\"6\" fill=\"var(--text)\"/>\n    <rect x=\"54\" y=\"30\" width=\"92\" height=\"7\" rx=\"3.5\" fill=\"var(--bg)\"/>\n    <rect x=\"54\" y=\"43\" width=\"68\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n    <path d=\"M104 62l6 8 6-8\" fill=\"var(--text)\"/>\n    <circle cx=\"110\" cy=\"86\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"2.5\"/>\n    <text x=\"110\" y=\"90\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"700\" fill=\"var(--primary)\">i<\/text>\n  <\/svg>", "pager": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <rect x=\"20\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <path d=\"M38 55l-5 5 5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <rect x=\"58\" y=\"44\" width=\"30\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <text x=\"73\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--text)\">1<\/text>\n    <rect x=\"94\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--primary)\"/>\n    <text x=\"110\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--primary-contrast)\">2<\/text>\n    <rect x=\"132\" y=\"44\" width=\"30\" height=\"32\" rx=\"6\" fill=\"var(--surface)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <text x=\"147\" y=\"64\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"var(--text)\">3<\/text>\n    <rect x=\"168\" y=\"44\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"1.8\"/>\n    <path d=\"M182 55l5 5-5 5\" stroke=\"var(--text)\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n  <\/svg>", "stepper": "<svg viewBox=\"0 0 220 120\" width=\"220\" height=\"120\" fill=\"none\" aria-hidden=\"true\">\n    <line x1=\"44\" y1=\"48\" x2=\"176\" y2=\"48\" stroke=\"var(--border)\" stroke-width=\"2.5\"/>\n    <line x1=\"44\" y1=\"48\" x2=\"110\" y2=\"48\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <circle cx=\"44\" cy=\"48\" r=\"14\" fill=\"var(--primary)\"/>\n    <path d=\"M39 48l3 3 7-7\" stroke=\"var(--primary-contrast)\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n    <circle cx=\"110\" cy=\"48\" r=\"14\" fill=\"var(--surface)\" stroke=\"var(--primary)\" stroke-width=\"3\"/>\n    <text x=\"110\" y=\"52\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"700\" fill=\"var(--primary)\">2<\/text>\n    <circle cx=\"176\" cy=\"48\" r=\"14\" fill=\"var(--surface-alt)\" stroke=\"var(--border)\" stroke-width=\"2\"/>\n    <text x=\"176\" y=\"52\" text-anchor=\"middle\" font-size=\"11\" font-weight=\"700\" fill=\"var(--text-muted)\">3<\/text>\n    <rect x=\"28\" y=\"70\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text)\"/>\n    <rect x=\"92\" y=\"70\" width=\"36\" height=\"6\" rx=\"3\" fill=\"var(--primary)\"/>\n    <rect x=\"160\" y=\"70\" width=\"32\" height=\"6\" rx=\"3\" fill=\"var(--text-muted)\"/>\n  <\/svg>"}
   </script>
 
   <script>
@@ -3230,13 +3321,6 @@
       let selectedComp = "ALL";
       let lastTriggerEl = null;
       let currentModalAtomId = null;
-
-      document.getElementById("contact-mail-btn").addEventListener("click", function() {
-        const codes = [99,104,105,97,114,97,99,105,101,108,111,46,108,111,110,103,111,98,97,114,100,105,64,103,109,97,105,108,46,99,111,109];
-        const addr = String.fromCharCode.apply(null, codes);
-        const subj = encodeURIComponent("Report on Accessible Design Components");
-        window.location.href = "mailto:" + addr + "?subject=" + subj;
-      });
 
       const EXT_ICON_SVG = '<svg class="ext-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
 
@@ -3288,20 +3372,20 @@
           iconSvg = SECTION_ICONS.error;
         }
 
-        let tocLeafLabel = childTitle;
+        let subLabel = childTitle;
         if (!childTitle) {
-          tocLeafLabel = category === "state" ? "In general" : "General considerations";
+          subLabel = category === "state" ? "In general" : "General considerations";
         } else if (category === "state") {
           const cLow = childTitle.toLowerCase();
-          if (cLow === "focus") tocLeafLabel = "Focus state";
-          else if (cLow === "disabled") tocLeafLabel = "Disabled state";
+          if (cLow === "focus") subLabel = "Focus state";
+          else if (cLow === "disabled") subLabel = "Disabled state";
         }
 
         return {
           title: childTitle ? (parentTitle + " · " + childTitle) : parentTitle,
           parentTitle: parentTitle,
           childTitle: childTitle,
-          tocLeafLabel: tocLeafLabel,
+          subLabel: subLabel,
           category: category,
           isSpecial: category !== "base",
           iconSvg: iconSvg
@@ -3346,98 +3430,178 @@
         return true;
       }
 
-      function buildConceptGroups(items, idPrefix) {
+      function renderCardsList(items, cardHeadingTag) {
+        const grid = document.createElement("div");
+        grid.className = "cards-grid";
+
+        items.forEach(function(item) {
+          const card = document.createElement("article");
+          card.className = "rule-card";
+
+          const topDiv = document.createElement("div");
+          const hCard = document.createElement(cardHeadingTag);
+          hCard.className = "card-title";
+          hCard.textContent = item.cosa;
+          topDiv.appendChild(hCard);
+
+          if (item.note) {
+            const noteP = document.createElement("p");
+            noteP.className = "card-note";
+            noteP.textContent = item.note;
+            topDiv.appendChild(noteP);
+          }
+          card.appendChild(topDiv);
+
+          const ul = document.createElement("ul");
+          ul.className = "badges-list";
+          ul.setAttribute("aria-label", "WCAG 2.2 criteria and references");
+          item.wcag.forEach(function(w) {
+            const b = classifyBadge(w);
+            const li = document.createElement("li");
+            if (b.href) {
+              const a = document.createElement("a");
+              a.className = "wcag-badge " + b.cls;
+              a.href = b.href;
+              a.target = "_blank";
+              a.rel = "noopener noreferrer";
+              a.innerHTML = b.htmlLabel + EXT_ICON_SVG + '<span class="sr-only"> (opens WCAG 2.2 criterion in a new tab)</span>';
+              li.appendChild(a);
+            } else {
+              const span = document.createElement("span");
+              span.className = "wcag-badge " + b.cls;
+              span.innerHTML = b.htmlLabel;
+              li.appendChild(span);
+            }
+            ul.appendChild(li);
+          });
+          card.appendChild(ul);
+          grid.appendChild(card);
+        });
+
+        return grid;
+      }
+
+      function buildConceptGroups(items, idPrefix, baseLevel) {
+        const secTag = "h" + baseLevel;
+        const subTag = "h" + (baseLevel + 1);
+        const deepCardTag = "h" + Math.min(6, baseLevel + 2);
+
         const fragment = document.createDocumentFragment();
-        const sectionGroups = [];
-        const sectionMap = new Map();
+        const tocData = [];
+        const groupMap = new Map();
 
         items.forEach(function(item) {
           const meta = normalizeSectionMeta(item.section);
-          if (!sectionMap.has(meta.title)) {
-            const grp = { meta: meta, items: [], anchorId: "" };
-            sectionMap.set(meta.title, grp);
-            sectionGroups.push(grp);
-          }
-          sectionMap.get(meta.title).items.push(item);
-        });
-
-        sectionGroups.forEach(function(grp, grpIdx) {
-          const secId = idPrefix + "-sec-" + grpIdx;
-          grp.anchorId = secId;
-
-          const conceptDiv = document.createElement("div");
-          let extraCls = "";
-          if (grp.meta.category === "extra") extraCls = " extra-group";
-          else if (grp.meta.isSpecial) extraCls = " variant-group";
-          conceptDiv.className = "concept-group" + extraCls;
-          conceptDiv.id = secId;
-
-          const hSec = document.createElement("h4");
-          hSec.className = "concept-heading";
-          if (grp.meta.iconSvg) {
-            hSec.innerHTML = grp.meta.iconSvg;
-          }
-          const textNode = document.createElement("span");
-          textNode.textContent = grp.meta.title;
-          hSec.appendChild(textNode);
-
-          conceptDiv.appendChild(hSec);
-
-          const grid = document.createElement("div");
-          grid.className = "cards-grid";
-
-          grp.items.forEach(function(item) {
-            const card = document.createElement("article");
-            card.className = "rule-card";
-
-            const topDiv = document.createElement("div");
-            const hCard = document.createElement("h5");
-            hCard.className = "card-title";
-            hCard.textContent = item.cosa;
-            topDiv.appendChild(hCard);
-
-            if (item.note) {
-              const noteP = document.createElement("p");
-              noteP.className = "card-note";
-              noteP.textContent = item.note;
-              topDiv.appendChild(noteP);
+          if (!meta.isSpecial) {
+            const key = "base::" + meta.title;
+            if (!groupMap.has(key)) {
+              const grp = {
+                isSpecial: false,
+                category: "base",
+                parentTitle: meta.title,
+                iconSvg: "",
+                anchorId: "",
+                items: []
+              };
+              groupMap.set(key, grp);
+              tocData.push(grp);
             }
-            card.appendChild(topDiv);
-
-            const ul = document.createElement("ul");
-            ul.className = "badges-list";
-            ul.setAttribute("aria-label", "WCAG 2.2 criteria and references");
-            item.wcag.forEach(function(w) {
-              const b = classifyBadge(w);
-              const li = document.createElement("li");
-              if (b.href) {
-                const a = document.createElement("a");
-                a.className = "wcag-badge " + b.cls;
-                a.href = b.href;
-                a.target = "_blank";
-                a.rel = "noopener noreferrer";
-                a.innerHTML = b.htmlLabel + EXT_ICON_SVG + '<span class="sr-only"> (opens WCAG 2.2 criterion in a new tab)</span>';
-                li.appendChild(a);
-              } else {
-                const span = document.createElement("span");
-                span.className = "wcag-badge " + b.cls;
-                span.innerHTML = b.htmlLabel;
-                li.appendChild(span);
-              }
-              ul.appendChild(li);
-            });
-            card.appendChild(ul);
-            grid.appendChild(card);
-          });
-
-          conceptDiv.appendChild(grid);
-          fragment.appendChild(conceptDiv);
+            groupMap.get(key).items.push(item);
+          } else {
+            const pKey = "spec::" + meta.parentTitle;
+            if (!groupMap.has(pKey)) {
+              const parentGrp = {
+                isSpecial: true,
+                category: meta.category,
+                parentTitle: meta.parentTitle,
+                iconSvg: meta.iconSvg,
+                subgroups: [],
+                subMap: new Map()
+              };
+              groupMap.set(pKey, parentGrp);
+              tocData.push(parentGrp);
+            }
+            const parentGrp = groupMap.get(pKey);
+            const sKey = meta.subLabel;
+            if (!parentGrp.subMap.has(sKey)) {
+              const subObj = {
+                subLabel: meta.subLabel,
+                anchorId: "",
+                items: []
+              };
+              parentGrp.subMap.set(sKey, subObj);
+              parentGrp.subgroups.push(subObj);
+            }
+            parentGrp.subMap.get(sKey).items.push(item);
+          }
         });
 
-        return { fragment: fragment, sectionGroups: sectionGroups };
+        let firstAnchorId = "";
+
+        tocData.forEach(function(grp, grpIdx) {
+          if (!grp.isSpecial) {
+            const secId = idPrefix + "-sec-" + grpIdx;
+            grp.anchorId = secId;
+            if (!firstAnchorId) firstAnchorId = secId;
+
+            const secEl = document.createElement("section");
+            secEl.className = "concept-group";
+            secEl.id = secId;
+            secEl.setAttribute("aria-labelledby", secId + "-h");
+
+            const hSec = document.createElement(secTag);
+            hSec.className = "concept-heading";
+            hSec.id = secId + "-h";
+            hSec.textContent = grp.parentTitle;
+            secEl.appendChild(hSec);
+
+            secEl.appendChild(renderCardsList(grp.items, subTag));
+            fragment.appendChild(secEl);
+          } else {
+            const parentId = idPrefix + "-grp-" + grpIdx;
+            const secEl = document.createElement("section");
+            secEl.className = "concept-group " + (grp.category === "extra" ? "extra-group" : "variant-group");
+            secEl.id = parentId;
+            secEl.setAttribute("aria-labelledby", parentId + "-h");
+
+            const hParent = document.createElement(secTag);
+            hParent.className = "concept-heading";
+            hParent.id = parentId + "-h";
+            if (grp.iconSvg) {
+              hParent.innerHTML = grp.iconSvg;
+            }
+            const spanTitle = document.createElement("span");
+            spanTitle.textContent = grp.parentTitle;
+            hParent.appendChild(spanTitle);
+            secEl.appendChild(hParent);
+
+            grp.subgroups.forEach(function(sub, subIdx) {
+              const subId = parentId + "-sub-" + subIdx;
+              sub.anchorId = subId;
+              if (!firstAnchorId) firstAnchorId = subId;
+
+              const subDiv = document.createElement("div");
+              subDiv.className = "concept-subgroup";
+              subDiv.id = subId;
+
+              const hSub = document.createElement(subTag);
+              hSub.className = "concept-subheading";
+              hSub.textContent = sub.subLabel;
+              subDiv.appendChild(hSub);
+
+              subDiv.appendChild(renderCardsList(sub.items, deepCardTag));
+              secEl.appendChild(subDiv);
+            });
+
+            fragment.appendChild(secEl);
+          }
+        });
+
+        return { fragment: fragment, tocData: tocData, firstAnchorId: firstAnchorId };
       }
 
-      function buildHierarchicalToc(compName, sectionGroups, afterTocId) {
+      function buildHierarchicalToc(compName, tocData, afterTocId, tocColHeadingTag) {
+        const subParentTag = "h" + (parseInt(tocColHeadingTag.replace("h", ""), 10) + 1);
         const wrap = document.createElement("div");
 
         const skipToc = document.createElement("a");
@@ -3450,15 +3614,15 @@
         nav.className = "toc-box";
         nav.setAttribute("aria-label", "Table of contents for " + compName);
 
-        const baseGroups = sectionGroups.filter(function(g) { return !g.meta.isSpecial; });
-        const specialGroups = sectionGroups.filter(function(g) { return g.meta.isSpecial; });
+        const baseGroups = tocData.filter(function(g) { return !g.isSpecial; });
+        const specialGroups = tocData.filter(function(g) { return g.isSpecial; });
 
         const cols = document.createElement("div");
         cols.className = "toc-columns";
 
         if (baseGroups.length) {
           const colBase = document.createElement("div");
-          const hBase = document.createElement("h4");
+          const hBase = document.createElement(tocColHeadingTag);
           hBase.className = "toc-group-heading";
           hBase.textContent = "Core considerations";
           colBase.appendChild(hBase);
@@ -3469,7 +3633,7 @@
             const a = document.createElement("a");
             a.className = "toc-link";
             a.href = "#" + baseGroups[0].anchorId;
-            a.textContent = baseGroups[0].meta.title;
+            a.textContent = baseGroups[0].parentTitle;
             pSingle.appendChild(a);
             colBase.appendChild(pSingle);
           } else {
@@ -3480,7 +3644,7 @@
               const a = document.createElement("a");
               a.className = "toc-link";
               a.href = "#" + grp.anchorId;
-              a.textContent = grp.meta.title;
+              a.textContent = grp.parentTitle;
               li.appendChild(a);
               ulBase.appendChild(li);
             });
@@ -3491,50 +3655,38 @@
 
         if (specialGroups.length) {
           const colSpec = document.createElement("div");
-          const hSpec = document.createElement("h4");
+          const hSpec = document.createElement(tocColHeadingTag);
           hSpec.className = "toc-group-heading";
           hSpec.innerHTML = SECTION_ICONS.extra + "<span>Deep dives</span>";
           colSpec.appendChild(hSpec);
 
-          const parentMap = new Map();
-          const parentOrder = [];
-          specialGroups.forEach(function(grp) {
-            const pTitle = grp.meta.parentTitle;
-            if (!parentMap.has(pTitle)) {
-              parentMap.set(pTitle, { iconSvg: grp.meta.iconSvg, items: [] });
-              parentOrder.push(pTitle);
-            }
-            parentMap.get(pTitle).items.push(grp);
-          });
-
-          parentOrder.forEach(function(pTitle) {
-            const entry = parentMap.get(pTitle);
+          specialGroups.forEach(function(parentGrp) {
             const subDiv = document.createElement("div");
             subDiv.className = "toc-subgroup";
 
-            const h5Parent = document.createElement("h5");
-            h5Parent.className = "toc-parent-h5";
-            h5Parent.innerHTML = (entry.iconSvg || "") + "<span>" + escapeHtml(pTitle) + "</span>";
-            subDiv.appendChild(h5Parent);
+            const hParent = document.createElement(subParentTag);
+            hParent.className = "toc-parent-subhead";
+            hParent.innerHTML = (parentGrp.iconSvg || "") + "<span>" + escapeHtml(parentGrp.parentTitle) + "</span>";
+            subDiv.appendChild(hParent);
 
-            if (entry.items.length === 1) {
+            if (parentGrp.subgroups.length === 1) {
               const pSingle = document.createElement("p");
               pSingle.className = "toc-single-link";
               const subA = document.createElement("a");
               subA.className = "toc-link";
-              subA.href = "#" + entry.items[0].anchorId;
-              subA.textContent = entry.items[0].meta.tocLeafLabel;
+              subA.href = "#" + parentGrp.subgroups[0].anchorId;
+              subA.textContent = parentGrp.subgroups[0].subLabel;
               pSingle.appendChild(subA);
               subDiv.appendChild(pSingle);
             } else {
               const subUl = document.createElement("ul");
               subUl.className = "toc-sublist";
-              entry.items.forEach(function(grp) {
+              parentGrp.subgroups.forEach(function(sub) {
                 const subLi = document.createElement("li");
                 const subA = document.createElement("a");
                 subA.className = "toc-link";
-                subA.href = "#" + grp.anchorId;
-                subA.textContent = grp.meta.tocLeafLabel;
+                subA.href = "#" + sub.anchorId;
+                subA.textContent = sub.subLabel;
                 subLi.appendChild(subA);
                 subUl.appendChild(subLi);
               });
@@ -3571,7 +3723,7 @@
           dialogBody.appendChild(illWrap);
         }
 
-        const built = buildConceptGroups(atomComp.items, "modal-" + atomComp.id);
+        const built = buildConceptGroups(atomComp.items, "modal-" + atomComp.id, 3);
         dialogBody.appendChild(built.fragment);
 
         dialogEl.showModal();
@@ -3605,8 +3757,10 @@
           }
         }
         updateUI();
-        const headingEl = document.getElementById("heading-elenco-componenti");
-        if (headingEl) headingEl.focus({ preventScroll: false });
+        const targetFocus = compId === "ALL"
+          ? document.getElementById("heading-elenco-componenti")
+          : document.getElementById("primo-componente");
+        if (targetFocus) targetFocus.focus({ preventScroll: false });
       }
 
       function syncFromHash() {
@@ -3664,10 +3818,26 @@
         const scope = document.getElementById("scope-select").value;
         const activeLevels = Array.from(document.querySelectorAll('input[name="level"]:checked')).map(function(el) { return el.value; });
 
+        const isSingleComp = selectedComp !== "ALL";
+        const resultsWrapper = document.getElementById("results-wrapper");
+        const listHeading = document.getElementById("heading-elenco-componenti");
+
+        if (isSingleComp) {
+          listHeading.hidden = true;
+          resultsWrapper.removeAttribute("aria-labelledby");
+        } else {
+          listHeading.hidden = false;
+          resultsWrapper.setAttribute("aria-labelledby", "heading-elenco-componenti");
+        }
+
+        const compHeadingTag = isSingleComp ? "h2" : "h3";
+        const sectionBaseLevel = isSingleComp ? 3 : 4;
+        const tocColHeadingTag = isSingleComp ? "h3" : "h4";
+
         const contentArea = document.getElementById("content-area");
         contentArea.innerHTML = "";
 
-        const visibleComps = selectedComp === "ALL" ? DATA : DATA.filter(function(c) { return c.id === selectedComp; });
+        const visibleComps = isSingleComp ? DATA.filter(function(c) { return c.id === selectedComp; }) : DATA;
         let shownCompsCount = 0;
 
         visibleComps.forEach(function(comp, compIdx) {
@@ -3689,6 +3859,7 @@
           const compSection = document.createElement("article");
           compSection.className = "component-block";
           compSection.id = compIdx === 0 ? "primo-componente" : ("card-comp-" + comp.id);
+          compSection.setAttribute("tabindex", "-1");
           compSection.setAttribute("aria-labelledby", "heading-" + comp.id);
 
           const headerDiv = document.createElement("div");
@@ -3700,11 +3871,11 @@
           const titleWrap = document.createElement("div");
           titleWrap.className = "comp-title-wrap";
 
-          const h3 = document.createElement("h3");
-          h3.className = "comp-title";
-          h3.id = "heading-" + comp.id;
-          h3.innerHTML = escapeHtml(comp.name) + ' <span class="comp-type-tag">(' + comp.type + ')</span>';
-          titleWrap.appendChild(h3);
+          const hComp = document.createElement(compHeadingTag);
+          hComp.className = "comp-title";
+          hComp.id = "heading-" + comp.id;
+          hComp.innerHTML = escapeHtml(comp.name) + ' <span class="comp-type-tag">(' + comp.type + ')</span>';
+          titleWrap.appendChild(hComp);
 
           if (comp.warning) {
             const warnP = document.createElement("p");
@@ -3725,20 +3896,20 @@
 
           headerDiv.appendChild(topRow);
 
-          const built = buildConceptGroups(filteredItems, "comp-" + comp.id);
-          const firstSectionAnchorId = built.sectionGroups.length ? built.sectionGroups[0].anchorId : ("heading-" + comp.id);
+          const built = buildConceptGroups(filteredItems, "comp-" + comp.id, sectionBaseLevel);
+          const afterTocTarget = built.firstAnchorId || ("heading-" + comp.id);
 
-          if (built.sectionGroups.length > 1 && (comp.type === "atom" || selectedComp !== "ALL")) {
-            headerDiv.appendChild(buildHierarchicalToc(comp.name, built.sectionGroups, firstSectionAnchorId));
+          if (built.tocData.length > 1 && (comp.type === "atom" || isSingleComp)) {
+            headerDiv.appendChild(buildHierarchicalToc(comp.name, built.tocData, afterTocTarget, tocColHeadingTag));
           }
 
           if (comp.always.length || comp.sometimes.length) {
             const relBox = document.createElement("div");
             relBox.className = "relations-box";
 
-            const relH4 = document.createElement("h4");
-            relH4.textContent = "Base components (atoms) to consider";
-            relBox.appendChild(relH4);
+            const relH = document.createElement(tocColHeadingTag);
+            relH.textContent = "Base components (atoms) to consider";
+            relBox.appendChild(relH);
 
             const hintP = document.createElement("p");
             hintP.className = "relations-hint";
@@ -3793,7 +3964,7 @@
 
         const skipFirst = document.getElementById("skip-to-first");
         if (skipFirst) {
-          skipFirst.href = shownCompsCount > 0 ? "#primo-componente" : "#heading-elenco-componenti";
+          skipFirst.href = shownCompsCount > 0 ? "#primo-componente" : "#main-content";
         }
       }
 
